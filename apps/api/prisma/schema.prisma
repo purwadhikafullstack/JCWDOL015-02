@@ -1,3 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Sample {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("samples") // if you want to use snake_case format
+}
+
 enum WorkerRoles {
   iron
   washer
@@ -89,7 +108,8 @@ model Address {
 model Order {
   id            Int         @id @default(autoincrement())
   userId        Int
-  addressId     Int
+  addressId     Int         
+  outletId      Int
   package       String?
   status        OrderStatus
   pickupSchedule DateTime
@@ -102,6 +122,7 @@ model Order {
 
   user    User    @relation(fields: [userId], references: [id])
   address Address @relation(fields: [addressId], references: [id])
+  outlet  Outlet @relation(fields: [outletId], references: [id])
   orderItems OrderItem[]
   pickupDeliveryRequests PickupDeliveryRequest[]
   payments Payment[]
@@ -133,6 +154,20 @@ model OrderItem {
   order Order @relation(fields: [orderId], references: [id])
 }
 
+model PickupDeliveryRequest {
+  id          Int      @id @default(autoincrement())
+  orderId     Int
+  distance    Int       //in kilometer
+  driverId    Int
+  requestType String
+  status      String    @default("pending")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  order  Order        @relation(fields: [orderId], references: [id])
+  driver OutletWorker @relation(fields: [driverId], references: [id], name: "DriverRequests")
+}
+
 model Outlet {
   id         Int      @id @default(autoincrement())
   name       String
@@ -143,6 +178,7 @@ model Outlet {
 
   workers OutletWorker[]
   addresses Address[]
+  orders Order[]
 }
 
 model OutletWorker {
@@ -171,21 +207,9 @@ model Attendance {
   createdAt  DateTime @default(now())
 
   worker OutletWorker @relation(fields: [workerId], references: [id])
+
+  @@unique([workerId, date])  
 }
-
-model PickupDeliveryRequest {
-  id          Int      @id @default(autoincrement())
-  orderId     Int
-  driverId    Int
-  requestType String
-  status      String    @default("pending")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  order  Order        @relation(fields: [orderId], references: [id])
-  driver OutletWorker @relation(fields: [driverId], references: [id], name: "DriverRequests")
-}
-
 
 model WorkerJobHistory {
   id            Int      @id @default(autoincrement())
