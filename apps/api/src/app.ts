@@ -11,6 +11,9 @@ import cors from 'cors';
 import { PORT } from './config';
 import { SampleRouter } from './routers/sample.router';
 import { AttendanceRouter } from './routers/attendence.router';
+import { AdressRouter } from './routers/address.router ';
+import { OutletRouter } from './routers/outlet.router';
+import { OrderRouter } from './routers/order.router';
 
 export default class App {
   private app: Express;
@@ -54,13 +57,19 @@ export default class App {
   private routes(): void {
     const sampleRouter = new SampleRouter();
     const attendanceRouter = new AttendanceRouter();
+    const addressRouter = new AdressRouter()
+    const outletRouter = new OutletRouter()
+    const orderRouter = new OrderRouter()
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
     });
 
     this.app.use('/api/samples', sampleRouter.getRouter());
+    this.app.use('/api/address', addressRouter.getRouter());
     this.app.use('/api/attendence', attendanceRouter.getRouter());
+    this.app.use('/api/order', orderRouter.getRouter());
+    this.app.use('/api/outlet', outletRouter.getRouter());
   }
 
   public start(): void {

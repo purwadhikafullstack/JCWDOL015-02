@@ -28,9 +28,10 @@ enum OrderStatus {
   waiting_for_pickup
   on_the_way_to_outlet
   arrived_at_outlet
-  being_washed
-  being_ironed
-  being_packed
+  weighed
+  washed
+  ironed
+  packed
   waiting_for_payment
   ready_for_delivery
   on_the_way_to_customer
@@ -86,8 +87,8 @@ model Notification {
 
 model Address {
   id         Int      @id @default(autoincrement())
-  userId     Int
-  outletId   Int
+  userId     Int      @default(0)
+  outletId   Int      @default(0)
   address    String
   city       String
   state      String
@@ -102,8 +103,9 @@ model Address {
   user   User   @relation(fields: [userId], references: [id])
   outlet Outlet @relation(fields: [outletId], references: [id])
   orders Order[]
+  fromAddress PickupDeliveryRequest[] @relation("FromAddress")
+  toAddres PickupDeliveryRequest[] @relation("ToAddress")
 }
-
 
 model Order {
   id            Int         @id @default(autoincrement())
@@ -127,13 +129,12 @@ model Order {
   pickupDeliveryRequests PickupDeliveryRequest[]
   payments Payment[]
   orderHistory OrderHistory[]
-  workerJobHistory    WorkerJobHistory[]
+  workerJobHistory WorkerJobHistory[]
 }
 
 model OrderItem {
   id          Int         @id @default(autoincrement())
   orderId     Int
-  status      OrderStatus
   iron        Int
   washer      Int
   dryer       Int
@@ -155,24 +156,30 @@ model OrderItem {
 }
 
 model PickupDeliveryRequest {
-  id          Int      @id @default(autoincrement())
-  orderId     Int
-  distance    Int       //in kilometer
-  driverId    Int
-  requestType String
-  status      String    @default("pending")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              Int      @id @default(autoincrement())
+  orderId         Int
+  distance        Int      // in kilometer
+  driverId        Int
+  fromAddressId   Int
+  toAddressId     Int 
+  requestType     String   @default("")
+  status          String   @default("Wait to pick up")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  order  Order        @relation(fields: [orderId], references: [id])
-  driver OutletWorker @relation(fields: [driverId], references: [id], name: "DriverRequests")
+  order           Order        @relation(fields: [orderId], references: [id])
+  history         WorkerJobHistory[]
+  driver          OutletWorker @relation(fields: [driverId], references: [id], name: "DriverRequests")
+  fromAddress     Address      @relation("FromAddress", fields: [fromAddressId], references: [id])
+  toAddress       Address      @relation("ToAddress", fields: [toAddressId], references: [id])
 }
+
 
 model Outlet {
   id         Int      @id @default(autoincrement())
   name       String
   password   String
-  email      String
+  email      String   @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -191,6 +198,7 @@ model OutletWorker {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
+  driverStatus DriverStatus?
   outlet Outlet @relation(fields: [outletId], references: [id])
   attendances Attendance[]
   jobHistory  WorkerJobHistory[]
@@ -216,12 +224,22 @@ model WorkerJobHistory {
   workerId      Int
   orderId       Int
   station       WorkerRoles
-  status        String    @default("in-progress")
+  pickupDelivery  Int?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   worker OutletWorker @relation(fields: [workerId], references: [id])
   order  Order        @relation(fields: [orderId], references: [id])
+  pickupDeliveryRequest   PickupDeliveryRequest? @relation(fields: [pickupDelivery], references: [id])
+}
+
+model DriverStatus {
+  id            Int     @id @default(autoincrement())
+  driverId      Int     @unique
+  status        String     @default("available")
+  PdrId           Int?   
+    
+  outletWorker  OutletWorker @relation(fields: [driverId], references: [id], onDelete: Cascade)
 }
 
 model Payment {

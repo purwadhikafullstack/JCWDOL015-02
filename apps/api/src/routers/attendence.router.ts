@@ -14,9 +14,9 @@ export class AttendanceRouter {
 
   private initializeRoutes(): void {
     this.router.get('/', this.attendeceController.getAllAttendance);
-    this.router.get('/:id', this.attendeceController.getAttendanceById);
+    this.router.get('/id/:id', this.attendeceController.getAttendanceById);
     this.router.post('/', this.attendeceController.createAttendance);
-    this.router.patch('/',this.attendeceController.updateAttendance);
+    this.router.patch('/id/:id',this.attendeceController.updateAttendance);
     this.router.get('/worker/:id', this.attendeceController.getAttendanceLogByWorker);
   }
 
