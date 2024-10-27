@@ -11,9 +11,11 @@ import cors from 'cors';
 import { PORT } from './config';
 import { SampleRouter } from './routers/sample.router';
 import { AttendanceRouter } from './routers/attendence.router';
-import { AdressRouter } from './routers/address.router ';
+import { AddressRouter} from './routers/address.router ';
 import { OutletRouter } from './routers/outlet.router';
 import { OrderRouter } from './routers/order.router';
+import { SuperAdminRouter } from './routers/superAdmin.router';
+import { NotificationRouter } from './routers/notification.router';
 
 export default class App {
   private app: Express;
@@ -56,10 +58,12 @@ export default class App {
 
   private routes(): void {
     const sampleRouter = new SampleRouter();
-    const attendanceRouter = new AttendanceRouter();
-    const addressRouter = new AdressRouter()
+    const attendanceRouter = new AttendanceRouter(); 
+    const addressRouter= new AddressRouter()
     const outletRouter = new OutletRouter()
     const orderRouter = new OrderRouter()
+    const superAdminRouter = new SuperAdminRouter()
+    const notificationRouter = new NotificationRouter()
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
@@ -70,6 +74,9 @@ export default class App {
     this.app.use('/api/attendence', attendanceRouter.getRouter());
     this.app.use('/api/order', orderRouter.getRouter());
     this.app.use('/api/outlet', outletRouter.getRouter());
+    this.app.use('/api/super-admin', superAdminRouter.getRouter())
+    this.app.use('/api/notification', notificationRouter.getRouter())
+    
   }
 
   public start(): void {

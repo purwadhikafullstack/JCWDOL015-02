@@ -2,7 +2,7 @@ import { AddressController } from '@/controllers/address.controllers';
 
 import { Router } from 'express';
 
-export class AdressRouter {
+export class AddressRouter {
   private router: Router;
   private addressController: AddressController;
 
@@ -17,6 +17,7 @@ export class AdressRouter {
     this.router.get('/id/:id', this.addressController.getAddressById);
     this.router.get('/role/:role', this.addressController.getAllAddressByRole);
     this.router.post('/', this.addressController.createAddress);
+    this.router.post('/reverse', this.addressController.createAddressReverse);
     this.router.put('/', this.addressController.updateAddress);
     this.router.delete('/', this.addressController.deleteAddress);
   }

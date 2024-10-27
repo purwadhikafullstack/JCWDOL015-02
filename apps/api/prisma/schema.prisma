@@ -39,18 +39,20 @@ enum OrderStatus {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
-  password    String?
-  role        String    @default("customer")
-  verified    Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  profile     UserProfile?
-  verifications UserVerification[]
-  notifications Notification[]
-  addresses   Address[]
-  orders      Order[]
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  password       String
+  role           String           @default("customer")
+  verified       Boolean          @default(false)
+  mainAddress    Int?             
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  profile        UserProfile?
+  verifications   UserVerification[]
+  notifications   Notification[]
+  addresses      Address[]        @relation("UserAddresses")
+  orders         Order[]
 }
 
 model UserProfile {
@@ -76,37 +78,37 @@ model UserVerification {
 
 model Notification {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    Int?
+  workerId  Int?
   title     String
   message   String?
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
+  worker OutletWorker? @relation(fields: [workerId], references: [id])
 }
 
 model Address {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @default(0)
-  outletId   Int      @default(0)
-  address    String
-  city       String
-  state      String
-  postalCode String
-  country    String
-  isPrimary  Boolean  @default(false)
-  latitude   Float?
-  longitude  Float?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  userId       Int?      
+  outletId     Int?     
+  address      String
+  city         String
+  state        String
+  postalCode   String
+  country      String
+  latitude     Float?
+  longitude    Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id])
-  outlet Outlet @relation(fields: [outletId], references: [id])
-  orders Order[]
-  fromAddress PickupDeliveryRequest[] @relation("FromAddress")
-  toAddres PickupDeliveryRequest[] @relation("ToAddress")
+  user         User?    @relation("UserAddresses", fields: [userId], references: [id])
+  outlet       Outlet?   @relation(fields: [outletId], references: [id])
+  orders       Order[]
+  fromAddress  PickupDeliveryRequest[] @relation("FromAddress")
+  toAddress    PickupDeliveryRequest[] @relation("ToAddress")
 }
-
 model Order {
   id            Int         @id @default(autoincrement())
   userId        Int
@@ -203,6 +205,7 @@ model OutletWorker {
   attendances Attendance[]
   jobHistory  WorkerJobHistory[]
   pickupDeliveries PickupDeliveryRequest[] @relation("DriverRequests")
+  notification Notification[]
 }
 
 

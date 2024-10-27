@@ -1,5 +1,5 @@
 type AUser = {
-    userId: number;
+    id: number;
     email: string;
     role: string;
 }
