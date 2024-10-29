@@ -1,5 +1,3 @@
-// auth.middleware.ts
-
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -26,12 +24,11 @@ export const authMiddleware = (
 
   jwt.verify(token, secret, (err: jwt.VerifyErrors | null, decoded: any) => {
     if (err) return res.status(403).send('Access denied.');
-    (req as any).user = decoded as User; // Penambahan type assertion di sini
+    (req as any).user = decoded as User;
     next();
   });
 };
 
-// Middleware untuk otorisasi admin
 export const adminMiddleware = (
   req: Request,
   res: Response,

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import styles from '../app/page.module.css'; // Impor CSS module
+import styles from '../app/page.module.css';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');

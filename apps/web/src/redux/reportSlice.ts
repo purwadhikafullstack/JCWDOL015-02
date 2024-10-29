@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface ReportState {
-  data: any[]; // Ganti dengan tipe data yang sesuai
+  data: any[];
 }
 
 const initialState: ReportState = {
@@ -15,7 +15,6 @@ const reportSlice = createSlice({
     setReportData(state, action: PayloadAction<any[]>) {
       state.data = action.payload;
     },
-    // Tambahkan reducer lain jika diperlukan
   },
 });
 

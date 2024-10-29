@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ReportFilter from '../components/ReportFilter'; // Komponen untuk filter laporan
-import ReportTable from '../components/ReportTable'; // Komponen untuk menampilkan tabel laporan
+import ReportFilter from '../components/ReportFilter';
+import ReportTable from '../components/ReportTable';
 
 const ReportsPage: React.FC = () => {
   const [selectedOutlet, setSelectedOutlet] = useState<string | null>(null);

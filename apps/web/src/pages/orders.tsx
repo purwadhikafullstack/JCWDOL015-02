@@ -1,7 +1,7 @@
 // /pages/orders.tsx
 import React from 'react';
-import { OrderList } from '../components/OrderList'; // Impor OrderList dengan kurung kurawal karena named export
-import OrderForm from '../components/OrderForm'; // Impor sebagai default
+import { OrderList } from '../components/OrderList';
+import OrderForm from '../components/OrderForm';
 
 const OrdersPage: React.FC = () => (
   <div>

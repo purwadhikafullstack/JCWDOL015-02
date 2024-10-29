@@ -2,18 +2,18 @@ import React from 'react';
 
 const Header: React.FC = () => {
   const headerStyle: React.CSSProperties = {
-    backgroundColor: '#4A90E2', // A calming blue color
-    color: '#FFFFFF', // White text for contrast
-    padding: '20px', // Spacing around the text
-    textAlign: 'center', // Center the text
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Subtle shadow for depth
-    borderRadius: '8px', // Rounded corners
-    fontFamily: 'Arial, sans-serif', // Clean font
+    backgroundColor: '#4A90E2',
+    color: '#FFFFFF',
+    padding: '20px',
+    textAlign: 'center',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    borderRadius: '8px',
+    fontFamily: 'Arial, sans-serif',
   };
 
   const titleStyle: React.CSSProperties = {
-    margin: 0, // Remove default margin
-    fontSize: '2.5rem', // Larger font size for the title
+    margin: 0,
+    fontSize: '2.5rem',
   };
 
   return (

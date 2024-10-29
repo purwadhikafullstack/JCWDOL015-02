@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username, password }); // Pastikan untuk menggunakan hashing password di produksi
+  const user = await User.findOne({ username, password });
   if (!user) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }

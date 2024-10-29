@@ -1,4 +1,3 @@
-// src/custom.d.ts
 import { JwtPayload } from 'jsonwebtoken';
 
 declare global {
@@ -9,4 +8,4 @@ declare global {
   }
 }
 
-export {}; // Menandai file sebagai modul
+export {};

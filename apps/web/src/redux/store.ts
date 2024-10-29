@@ -1,14 +1,13 @@
-// src/redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import orderReducer from './orderSlice'; // Impor orderSlice
+import orderReducer from './orderSlice';
 
 const store = configureStore({
   reducer: {
-    orders: orderReducer, // Daftarkan reducer untuk orders
+    orders: orderReducer,
   },
 });
 
 // Ekspor store
-export type RootState = ReturnType<typeof store.getState>; // Mendapatkan tipe state
-export type AppDispatch = typeof store.dispatch; // Mendapatkan tipe dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 export default store;

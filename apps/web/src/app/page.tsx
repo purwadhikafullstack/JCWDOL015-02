@@ -23,23 +23,27 @@ export default function Home() {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
   };
 
   return (
     <main className={styles.main}>
       <LoginPage /> {/* Menampilkan komponen LoginPage */}
       <div className={styles.carouselContainer}>
-        <h2>Image Carousel</h2>
+        <h2>Laundry</h2>
         <Slider {...settings}>
           {carouselItems.map((item) => (
-            <div key={item.id}>
-              <Image
-                src={item.src}
-                alt={item.alt}
-                width={600}
-                height={400}
-                priority
-              />
+            <div key={item.id} className={styles.slide}>
+              <div className={styles.imageWrapper}>
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  width={600}
+                  height={400}
+                  priority
+                />
+              </div>
             </div>
           ))}
         </Slider>

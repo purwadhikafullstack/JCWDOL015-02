@@ -1,68 +1,95 @@
-/* LoginPage.module.css */
 .container {
-  background-color: #f9fafb; /* Tailwind's gray-50 */
+  background-color: #f9fafb;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem; /* Padding untuk menjaga jarak di mobile */
+  padding: 1rem;
 }
 
 .card {
   width: 100%;
   max-width: 400px;
-  background-color: #ffffff; /* Tailwind's white */
-  border-radius: 0.5rem; /* Tailwind's rounded-lg */
+  background-color: #ffffff;
+  border-radius: 0.5rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 2rem;
-  transition: transform 0.2s; /* Transisi untuk efek hover */
+  transition: transform 0.2s;
 }
 
 .card:hover {
-  transform: translateY(-5px); /* Efek hover untuk kartu */
+  transform: translateY(-5px);
 }
 
 .title {
   margin-bottom: 1.5rem;
-  font-size: 1.875rem; /* Tailwind's text-3xl */
+  font-size: 1.875rem;
   font-weight: bold;
   text-align: center;
 }
 
 .error {
   margin-bottom: 1rem;
-  color: #f87171; /* Tailwind's red-500 */
+  color: #f87171;
   text-align: center;
 }
 
 .input {
-  background-color: #f3f4f6; /* Tailwind's gray-100 */
-  border: 1px solid #d1d5db; /* Tailwind's gray-300 */
-  border-radius: 0.5rem; /* Tailwind's rounded-lg */
-  padding: 1rem; /* Consistent padding */
-  width: 100%; /* Full width */
-  margin-bottom: 1rem; /* Space between inputs */
-  box-sizing: border-box; /* Ensure padding is included in width */
-  transition: border-color 0.2s; /* Transisi untuk efek fokus */
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
 .input:focus {
-  border-color: #3b82f6; /* Tailwind's primary color */
+  border-color: #3b82f6;
   outline: none;
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5); /* Fokus bayangan */
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
 }
 
 .button {
   width: 100%;
-  background-color: #3b82f6; /* Tailwind's primary color */
+  background-color: #3b82f6;
   color: white;
   padding: 0.75rem;
-  border-radius: 0.5rem; /* Tailwind's rounded-lg */
+  border-radius: 0.5rem;
   transition: background-color 0.2s;
-  border: none; /* Menghapus border default */
-  cursor: pointer; /* Pointer saat hover */
+  border: none;
+  cursor: pointer;
 }
 
 .button:hover {
-  background-color: #2563eb; /* Tailwind's hover color */
+  background-color: #2563eb;
+}
+
+.carouselContainer {
+  text-align: center;
+}
+
+.slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.imageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  background-color: #f1f1f1;
+  padding: 10px;
+  text-align: center;
 }

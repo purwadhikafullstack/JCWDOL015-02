@@ -1,5 +1,4 @@
-// /services/order.service.ts
-import { PrismaClient, OrderStatus } from '@prisma/client'; // Import enum OrderStatus dari Prisma Client
+import { PrismaClient, OrderStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -14,7 +13,7 @@ export const OrderService = {
     return await prisma.order.create({
       data: {
         ...data,
-        status: OrderStatus.waiting_for_pickup, // Sesuaikan nilai dengan enum di Prisma
+        status: OrderStatus.waiting_for_pickup,
       },
       include: { items: true },
     });
@@ -22,7 +21,7 @@ export const OrderService = {
   confirmOrder: async (orderId: string, confirm: boolean) => {
     const status = confirm
       ? OrderStatus.delivered_to_customer
-      : OrderStatus.ready_for_delivery; // Gunakan enum dari Prisma
+      : OrderStatus.ready_for_delivery;
     return await prisma.order.updateMany({
       where: { id: parseInt(orderId) },
       data: { status },

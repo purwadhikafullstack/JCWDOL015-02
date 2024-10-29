@@ -1,4 +1,3 @@
-// File: src/routers/user.router.ts
 import express from 'express';
 import {
   createUser,
@@ -10,7 +9,7 @@ import { body, param, validationResult } from 'express-validator';
 import {
   authMiddleware,
   adminMiddleware,
-} from '../middlewares/auth.middleware'; // Mengimpor middleware
+} from '../middlewares/auth.middleware';
 
 const router = express.Router();
 
@@ -79,7 +78,6 @@ router.put(
   },
 );
 
-// Rute untuk menghapus user
 router.delete(
   '/users/:id',
   authMiddleware,

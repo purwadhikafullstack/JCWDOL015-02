@@ -3,7 +3,7 @@ import reportRoutes from './routers/report.router';
 const app = express();
 
 app.use(express.json());
-app.use('/api', reportRoutes); // Menggunakan rute laporan
+app.use('/api', reportRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -1,20 +1,17 @@
-// File: src/controllers/user.controller.ts
 import { Request, Response } from 'express';
-import User from '../models/user.model'; // Mengimpor User sebagai default
+import User from '../models/user.model';
 
-// Melihat semua pengguna
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.find(); // Mengambil semua pengguna
+    const users = await User.find();
     return res.status(200).json(users);
   } catch (error) {
     return res.status(500).json({ message: 'Error fetching users' });
   }
 };
 
-// Membuat pengguna baru
 export const createUser = async (req: Request, res: Response) => {
-  const { username, password, role } = req.body; // Pastikan Anda menerima data yang diperlukan
+  const { username, password, role } = req.body;
   try {
     const user = new User({ username, password, role });
     await user.save();
@@ -24,10 +21,9 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-// Memperbarui pengguna
 export const updateUser = async (req: Request, res: Response) => {
-  const { id } = req.params; // Mengambil ID dari parameter
-  const updates = req.body; // Mengambil data yang akan diperbarui
+  const { id } = req.params;
+  const updates = req.body;
   try {
     const user = await User.findByIdAndUpdate(id, updates, { new: true });
     if (!user) {
@@ -39,15 +35,14 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-// Menghapus pengguna
 export const deleteUser = async (req: Request, res: Response) => {
-  const { id } = req.params; // Mengambil ID dari parameter
+  const { id } = req.params;
   try {
     const user = await User.findByIdAndDelete(id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    return res.status(204).send(); // Mengembalikan status 204 jika berhasil dihapus
+    return res.status(204).send();
   } catch (error) {
     return res.status(500).json({ message: 'Error deleting user' });
   }

@@ -1,22 +1,18 @@
-// src/redux/orderSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { createOrder } from '../api'; // Impor fungsi createOrder
+import { createOrder } from '../api';
 
-// Definisikan tipe Order
 export interface Order {
-  id: number; // ID pesanan
-  title: string; // Judul pesanan
-  status: string; // Status pesanan, misalnya "pending", "completed", dll.
+  id: number;
+  title: string;
+  status: string;
 }
 
-// Contoh inisialisasi state
 const initialState: Order[] = [];
 
-// Fungsi untuk mengambil pesanan dari API
 export const fetchOrders = createAsyncThunk('orders/fetchOrders', async () => {
-  const response = await fetch('http://localhost:8000/api/orders'); // Ganti dengan URL API Anda
+  const response = await fetch('http://localhost:8000/api/orders');
   const data = await response.json();
-  return data; // Mengembalikan data yang diterima dari API
+  return data;
 });
 
 const orderSlice = createSlice({
@@ -29,15 +25,13 @@ const orderSlice = createSlice({
     addOrder: (state, action: PayloadAction<Order>) => {
       state.push(action.payload);
     },
-    // Tambahkan reducer lain sesuai kebutuhan
   },
   extraReducers: (builder) => {
     builder.addCase(fetchOrders.fulfilled, (state, action) => {
-      return action.payload; // Mengupdate state dengan data yang diambil dari API
+      return action.payload;
     });
   },
 });
 
-// Ekspor reducer dan action
 export const { setOrders, addOrder } = orderSlice.actions;
 export default orderSlice.reducer;
