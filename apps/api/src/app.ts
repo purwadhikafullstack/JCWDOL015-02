@@ -28,7 +28,7 @@ export default class App {
   }
 
   private configure(): void {
-    this.app.use(cors());
+    this.app.use(cors({credentials: true,origin:'http://localhost:3000'}));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
   }
