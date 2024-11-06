@@ -183,7 +183,6 @@ export class AddressController {
       return res.status(500).send({ error: 'Error creating address' });
     }
   }
-  
 
   async updateAddress(req: Request, res: Response) { ////<--------------------------------
     const { id } = req.params;
@@ -226,12 +225,10 @@ export class AddressController {
 
   async deleteAddress(req: Request, res: Response) {  ////<--------------------------------
     const { id } = req.params;
-
     try {
       await prisma.address.delete({
         where: { id: Number(id) },
       });
-
       return res.status(204).send();
     } catch (error: any) {
       if (error.code === 'P2025') {

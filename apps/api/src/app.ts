@@ -16,6 +16,7 @@ import { OutletRouter } from './routers/outlet.router';
 import { OrderRouter } from './routers/order.router';
 import { SuperAdminRouter } from './routers/superAdmin.router';
 import { NotificationRouter } from './routers/notification.router';
+import { OutletWorkerRouter } from './routers/outletWorker.router';
 
 export default class App {
   private app: Express;
@@ -64,6 +65,7 @@ export default class App {
     const orderRouter = new OrderRouter()
     const superAdminRouter = new SuperAdminRouter()
     const notificationRouter = new NotificationRouter()
+    const outletWorkerRouter = new OutletWorkerRouter()
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
@@ -76,7 +78,7 @@ export default class App {
     this.app.use('/api/outlet', outletRouter.getRouter());
     this.app.use('/api/super-admin', superAdminRouter.getRouter())
     this.app.use('/api/notification', notificationRouter.getRouter())
-    
+    this.app.use('/api/worker', outletWorkerRouter.getRouter())
   }
 
   public start(): void {
