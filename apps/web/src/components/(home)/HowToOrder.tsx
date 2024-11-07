@@ -28,16 +28,6 @@ const HowToOrder = () => {
       </div>
 
       <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
-        <TbHandClick className="w-12 h-12 md:w-16 md:h-16" />
-        <h1 className="text-lg md:text-xl font-bold">
-          Choose Laundry Service
-        </h1>
-        <p className="text-lg font-medium">
-        Setelah berhasil masuk, pilih layanan laundry yang Anda inginkan. Anda dapat memilih jenis layanan seperti pencucian biasa, penyetrikaan, atau layanan lengkap. Pastikan untuk memilih layanan yang sesuai dengan kebutuhan laundry Anda.
-        </p>
-      </div>
-
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
         <MdOutlineScheduleSend className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
           Request a Laundry Pickup

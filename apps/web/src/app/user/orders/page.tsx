@@ -1,6 +1,10 @@
+import AllOrderPage from "@/components/(orders)/(all-orders)/AllOrderPage"
+
 const page = () => {
   return (
-    <div>page</div>
+    <section>
+      <AllOrderPage/>
+    </section>
   )
 }
 

@@ -16,9 +16,10 @@ const CardServices = () => {
                 <Image
                   src={item.image}
                   alt={item.services}
-                  className="w-full h-auto object-cover"
+                  className="object-cover"
                   width={350}
                   height={200}
+                  priority
                 />
               </div>
               <h1 className="w-full bg-black rounded-lg py-2 text-center text-lg sm:text-xl lg:text-2xl font-bold tracking-wider text-beigeCustom">

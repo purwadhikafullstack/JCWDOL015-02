@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,262 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Sample {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("samples") // if you want to use snake_case format
+}
+
+enum WorkerRoles {
+  iron
+  washer
+  dryer
+  driver
+}
+
+enum OrderStatus {
+  waiting_for_pickup
+  on_the_way_to_outlet
+  arrived_at_outlet
+  weighed
+  washed
+  ironed
+  packed
+  waiting_for_payment
+  ready_for_delivery
+  on_the_way_to_customer
+  delivered_to_customer
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  password       String
+  role           String           @default("customer")
+  verified       Boolean          @default(false)
+  mainAddress    Int?             
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  profile        UserProfile?
+  verifications   UserVerification[]
+  notifications   Notification[]
+  addresses      Address[]        @relation("UserAddresses")
+  orders         Order[]
+}
+
+model UserProfile {
+  id             Int       @id @default(autoincrement())
+  userId         Int       @unique
+  firstName      String?
+  lastName       String?
+  profilePicture String?
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model UserVerification {
+  id               Int       @id @default(autoincrement())
+  userId           Int
+  verificationCode String
+  used             Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  workerId  Int?
+  title     String
+  message   String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+  worker OutletWorker? @relation(fields: [workerId], references: [id])
+}
+
+model Address {
+  id            Int      @id @default(autoincrement())
+  userId       Int?      
+  outletId     Int?     
+  address      String
+  city         String
+  state        String
+  postalCode   String
+  country      String
+  latitude     Float?
+  longitude    Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User?    @relation("UserAddresses", fields: [userId], references: [id])
+  outlet       Outlet?   @relation(fields: [outletId], references: [id])
+  orders       Order[]
+  fromAddress  PickupDeliveryRequest[] @relation("FromAddress")
+  toAddress    PickupDeliveryRequest[] @relation("ToAddress")
+}
+model Order {
+  id            Int         @id @default(autoincrement())
+  userId        Int
+  addressId     Int         
+  outletId      Int
+  package       String?
+  status        OrderStatus
+  pickupSchedule DateTime
+  totalWeight   Float?
+  totalItems    Int         @default(0)
+  totalPrice    Float?
+  paymentStatus String      @default("unpaid")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  address Address @relation(fields: [addressId], references: [id])
+  outlet  Outlet @relation(fields: [outletId], references: [id])
+  orderItems OrderItem[]
+  pickupDeliveryRequests PickupDeliveryRequest[]
+  payments Payment[]
+  orderHistory OrderHistory[]
+  workerJobHistory WorkerJobHistory[]
+}
+
+model OrderItem {
+  id          Int         @id @default(autoincrement())
+  orderId     Int
+  iron        Int
+  washer      Int
+  dryer       Int
+  shirt       Int         @default(0)
+  longShirt   Int         @default(0)
+  pants       Int         @default(0)
+  longPant    Int         @default(0)
+  veil        Int         @default(0)
+  underwear   Int         @default(0)
+  bedsheet    Int         @default(0)
+  pillowCase  Int         @default(0)
+  blanket     Int         @default(0)
+  towel       Int         @default(0)
+  curtain     Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model PickupDeliveryRequest {
+  id              Int      @id @default(autoincrement())
+  orderId         Int
+  distance        Int      // in kilometer
+  driverId        Int
+  fromAddressId   Int
+  toAddressId     Int 
+  requestType     String   @default("")
+  status          String   @default("Wait to pick up")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  order           Order        @relation(fields: [orderId], references: [id])
+  history         WorkerJobHistory[]
+  driver          OutletWorker @relation(fields: [driverId], references: [id], name: "DriverRequests")
+  fromAddress     Address      @relation("FromAddress", fields: [fromAddressId], references: [id])
+  toAddress       Address      @relation("ToAddress", fields: [toAddressId], references: [id])
+}
+
+
+model Outlet {
+  id         Int      @id @default(autoincrement())
+  name       String
+  password   String
+  email      String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  workers OutletWorker[]
+  addresses Address[]
+  orders Order[]
+}
+
+model OutletWorker {
+  id         Int         @id @default(autoincrement())
+  outletId   Int
+  name       String
+  password   String
+  email      String    @unique
+  role       WorkerRoles
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  driverStatus DriverStatus?
+  outlet Outlet @relation(fields: [outletId], references: [id])
+  attendances Attendance[]
+  jobHistory  WorkerJobHistory[]
+  pickupDeliveries PickupDeliveryRequest[] @relation("DriverRequests")
+  notification Notification[]
+}
+
+
+model Attendance {
+  id         Int      @id @default(autoincrement())
+  workerId   Int
+  date       DateTime
+  checkIn    DateTime?
+  checkOut   DateTime?
+  createdAt  DateTime @default(now())
+
+  worker OutletWorker @relation(fields: [workerId], references: [id])
+
+  @@unique([workerId, date])  
+}
+
+model WorkerJobHistory {
+  id            Int      @id @default(autoincrement())
+  workerId      Int
+  orderId       Int
+  station       WorkerRoles
+  pickupDelivery  Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  worker OutletWorker @relation(fields: [workerId], references: [id])
+  order  Order        @relation(fields: [orderId], references: [id])
+  pickupDeliveryRequest   PickupDeliveryRequest? @relation(fields: [pickupDelivery], references: [id])
+}
+
+model DriverStatus {
+  id            Int     @id @default(autoincrement())
+  driverId      Int     @unique
+  status        String     @default("available")
+  PdrId           Int?   
+    
+  outletWorker  OutletWorker @relation(fields: [driverId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  orderId        Int
+  amount         Float
+  paymentMethod  String
+  paymentDate    DateTime @default(now())
+  confirmed      Boolean  @default(false)
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model OrderHistory {
+  id          Int      @id @default(autoincrement())
+  orderId     Int
+  status      String
+  changeDate  DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
 }

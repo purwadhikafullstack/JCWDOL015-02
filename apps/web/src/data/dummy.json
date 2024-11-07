@@ -21,6 +21,10 @@
             "image" : "/carousel/carousel4.jpg"
         }
     ],
+    "services" : {
+        "image" : "/services/complete.jpg",
+        "alt" : "services-img"
+    },
     "cardServices" : [
         {
             "services" : "Wash Only Package", 
@@ -28,7 +32,7 @@
             "route" : "/services/wash-only",
             "price" : 30000,
             "description" : "Serahkan urusan cuci-mencuci kepada kami! Dengan Paket Wash Only seharga Rp 30.000 per kilogram, pakaian Anda akan dibersihkan dengan standar profesional. Cocok untuk Anda yang membutuhkan cucian cepat dan berkualitas. Tidak perlu khawatir soal cucian menumpuk, kami siap menjemput dan mengantarkan kembali pakaian Anda dengan kondisi bersih dan segar. Pesan sekarang dan nikmati kemudahan tanpa repot!"
-        }, 
+        },
         {
             "services" : "Iron Only Package", 
             "image" : "/services/iron-only.jpg", 

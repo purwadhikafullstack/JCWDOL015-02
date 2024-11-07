@@ -1,54 +1,52 @@
 "use client"
-import { useState } from 'react';
+import { getAllOutletAddressFetchDb } from '@/lib/addressLib';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { FaPhoneAlt } from 'react-icons/fa';
-import { MdKeyboardDoubleArrowDown, MdKeyboardDoubleArrowUp } from "react-icons/md";
 
 const OutletList = () => {
-  const [isLongList, setIsLongList] = useState(false);
-  const list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-  const shortList = list.slice(0, 5);
+  const [allAddress, setAllAddress] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPage, setTotalPage] = useState(1)
+
+  useEffect(() => {
+    getAllOutlets()
+  },[currentPage])
+
+  const getAllOutlets = async () => {
+    try {
+      const { result,ok } = await getAllOutletAddressFetchDb(currentPage);
+      if(!ok) throw result.message
+      setAllAddress(result.data)
+      setCurrentPage(result.currentPage)
+      setTotalPage(result.totalPages)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const getOutletByState = async () => {
+    
+  }
   return (
     <div className="w-full flex flex-col justify-center items-center mt-5">
-      {!isLongList ? shortList.map((item) => {
-        return (
-          <div key={item} className="text-center my-2">
-            <h1 className="font-semibold text-lg md:text-xl">Jakarta</h1>
-            <p className="font-medium text-sm md:text-base">
-              Jl. Cempaka Putih Raya No. 1, Cempaka Putih, Jakarta Pusat, Daerah
-              Khusus Ibukota Jakarta 10220
-            </p>
-            <p className="flex justify-center items-center gap-2 font-medium text-sm md:text-base">
-              <FaPhoneAlt />
-              (021-290-9999)
-            </p>
-          </div>
-        );
-      }) : list.map((item) => {
-        return (
-          <div key={item} className="text-center my-2">
-            <h1 className="font-semibold text-lg md:text-xl">Jakarta</h1>
-            <p className="font-medium text-sm md:text-base">
-              Jl. Cempaka Putih Raya No. 1, Cempaka Putih, Jakarta Pusat, Daerah
-              Khusus Ibukota Jakarta 10220
-            </p>
-            <p className="flex justify-center items-center gap-2 font-medium text-sm md:text-base">
-              <FaPhoneAlt />
-              (021-290-9999)
-            </p>
-          </div>
-        );
-      })}
-        {!isLongList ? (
-          <div onClick={() => setIsLongList(!isLongList)} className='flex flex-col justify-center items-center text-grayCustom cursor-pointer hover:translate-y-3 duration-300'>
-          <h1 className='text-center text-base'>Show All</h1>
-          <MdKeyboardDoubleArrowDown className='w-8 h-8'/>
-        </div>
-        ) : (
-          <div onClick={() => setIsLongList(!isLongList)} className='flex flex-col justify-center items-center text-grayCustom cursor-pointer hover:-translate-y-3 duration-300'>
-          <h1 className='text-center text-base'>Short List</h1>
-          <MdKeyboardDoubleArrowUp className='w-8 h-8'/>
-        </div>
-        )}
+      {allAddress.map((address) => (
+        <div key={address.id} className="text-center my-2">
+        <h1 className="font-semibold text-lg md:text-xl">{address.city}</h1>
+        <p className="font-medium text-sm md:text-base">
+          {`${address.address}, ${address.city}, ${address.state}, ${address.country}, ${address.postalCode}`}
+        </p>
+        <p className="flex justify-center items-center gap-2 font-medium text-sm md:text-base">
+          <FaPhoneAlt />
+          {address.phone}
+        </p>
+      </div>
+      ))}
+      <div className='my-5'></div>
+      <div className="join sticky bottom-5">
+        <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)} className="join-item btn">«</button>
+        <button className="join-item btn">Page {currentPage} / {totalPage}</button>
+        <button disabled={currentPage === totalPage} onClick={() => setCurrentPage(currentPage + 1)} className="join-item btn">»</button>
+      </div>
       </div>
   );
 };

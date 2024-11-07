@@ -9,20 +9,21 @@ import { registerSchema } from '@/yup/authSchema';
 import { IRegisterUser } from '@/type/authType';
 import { toast } from 'react-toastify';
 import { registerFetchDb } from '@/lib/authLib';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const RegisterForm = () => {
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const handleRegister = async (values: IRegisterUser, resetForm: any) => {
+    setIsLoading(true);
     try {
       const {result, ok} = await registerFetchDb(values);
       if(!ok) throw result.message;
       toast.success(result.message);
       resetForm();
-      router.push('/auth/verification')
     } catch (error) {
       toast.error(error as string);
     }
+    setIsLoading(false);
   };
   return (
     <div className="relative w-full min-h-screen py-2 overflow-hidden bg-beigeCustom flex justify-center items-center">
@@ -78,6 +79,8 @@ const RegisterForm = () => {
               id="username"
               placeholder="Enter your username..."
               className="w-[80%] rounded-lg bg-[#D9D9D9] mb-2 md:mt-1 py-1 text-center placeholder:text-gray-500"
+              autoFocus 
+              required
             />
             <ErrorMessage
               name="username"
@@ -104,20 +107,18 @@ const RegisterForm = () => {
             <button
               type="submit"
               className="w-[80%] rounded-full duration-300 bg-beigeCustom text-black mb-2 hover:bg-grayCustom hover:text-beigeCustom font-bold text-2xl py-1 tracking-wider hover:scale-105"
+              disabled={isLoading}
             >
-              Sign Up
+              {isLoading ? 'Registered...' : 'Register'}
             </button>
 
             <p className="text-sm text-white md:text-lg font-medium tracking-wide my-1">
               - OR -
             </p>
-            
-            {/* PERINGATAN = KURANG ONCLICK */}
             <Link href={'http://localhost:8000/api/google/login'} className="w-[80%] rounded-full duration-300 bg-beigeCustom text-black mb-2 hover:bg-grayCustom hover:text-beigeCustom font-bold text-xl md:text-2xl py-1 tracking-wider hover:scale-105 flex justify-center items-center gap-3">
               <FcGoogle />
               Login With Google
             </Link>
-
             <p className="border-t border-t-beigeCustom text-sm text-white md:text-lg font-medium pt-1">
               Already have an account?{' '}
               <Link

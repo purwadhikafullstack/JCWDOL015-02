@@ -43,3 +43,24 @@ export const updateAvaSchema = Yup.object().shape({
       return value && ['image/jpeg','image/jpg', 'image/png', 'image/gif'].includes((value as File).type);
     }),
 });
+
+export const updateUsernameSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(4, 'Username must be at least 4 characters')
+    .required('Username is required'),
+});
+
+export const sendMailForgotPasswordSchema = Yup.object().shape({
+  sendMaail: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+});
+
+export const updateMailSchema = Yup.object().shape({
+  oldEmail: Yup.string()
+  .email('Invalid email address')
+  .required('Email is required'),
+  newEmail: Yup.string()
+  .email('Invalid email address')
+  .required('Email is required'),
+})
