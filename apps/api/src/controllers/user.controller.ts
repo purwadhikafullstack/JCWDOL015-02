@@ -73,7 +73,7 @@ export class UserController {
       const userId = decoded.id
       const user = await prisma.user.update({
         where: { id: userId },
-        data: { avatar: "http://localhost:8000/api/public/avatar/avatar-1730191112129.png" },
+        data: { avatar: "https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png" },
       })
       return res.status(200).send({status: "success",message: "Delete avatar successfully",data: user});
     } catch (error) {

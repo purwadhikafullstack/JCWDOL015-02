@@ -46,7 +46,7 @@ const AvaComp: React.FC = () => {
       <div className="avatar cursor-pointer mb-5" onClick={() => openModal("my_modal_avatar")}>
         <div className="w-36 md:w-48 rounded-full shadow-2xl">
           <img
-            src={user.avatar || "http://localhost:8000/api/public/avatar/avatar-1730191112129.png"}
+            src={user.avatar || "https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png"}
             alt={user.username || "avatar"}
           />
         </div>
