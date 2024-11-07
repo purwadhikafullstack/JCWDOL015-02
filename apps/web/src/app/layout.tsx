@@ -34,6 +34,17 @@ export default function RootLayout({
             draggable
           />
         </StoreProvider>
+        <StoreProvider>
+          <Header/>
+          {children}
+          <Footer />
+          <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            closeOnClick
+            draggable
+          />
+        </StoreProvider>
       </body>
     </html>
   );
