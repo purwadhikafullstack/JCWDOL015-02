@@ -14,7 +14,7 @@ const verifyTokenExp = dayjs().add(1, 'hour').toDate();
 export class AuthController {
   async registerUserWithMail(req: Request, res: Response) {
     const { username, email } = req.body;
-    try { 
+    try {
       const existingUser = await prisma.user.findFirst({
         where: { username },
       });
