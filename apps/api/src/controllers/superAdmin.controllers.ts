@@ -17,6 +17,7 @@ export class SuperAdminController {
             return res.status(401).send({ error: 'Invalid email or password' });
           }
     
+          if(admin.password === null) throw new Error('Password not set');
           const passwordMatch = await bcrypt.compare(password, admin.password);
     
           if (!passwordMatch) {

@@ -38,42 +38,32 @@ enum OrderStatus {
   delivered_to_customer
 }
 
+enum RoleUser {
+  customer
+  admin
+  superAdmin
+  worker
+}
+
 model User {
   id             Int              @id @default(autoincrement())
   email          String           @unique
-  password       String
-  role           String           @default("customer")
+  username       String
+  avatar         String           @default("http://localhost:8000/api/public/avatar/avatar-1730191112129.png")
+  password       String?
+  role           RoleUser         @default(customer)
   verified       Boolean          @default(false)
-  mainAddress    Int?             
+  loginToken     String?          @db.VarChar(255)
+  verifyToken    String?          @unique
+  verifyTokenExp DateTime?        
+  userToken      String?          @unique
+  userTokenExp   DateTime?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
-  profile        UserProfile?
-  verifications   UserVerification[]
   notifications   Notification[]
   addresses      Address[]        @relation("UserAddresses")
   orders         Order[]
-}
-
-model UserProfile {
-  id             Int       @id @default(autoincrement())
-  userId         Int       @unique
-  firstName      String?
-  lastName       String?
-  profilePicture String?
-  updatedAt      DateTime  @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-model UserVerification {
-  id               Int       @id @default(autoincrement())
-  userId           Int
-  verificationCode String
-  used             Boolean   @default(false)
-  createdAt        DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id])
 }
 
 model Notification {
@@ -98,6 +88,8 @@ model Address {
   state        String
   postalCode   String
   country      String
+  isMain       Boolean @default(false)
+  phone        String?
   latitude     Float?
   longitude    Float?
   createdAt    DateTime @default(now())
@@ -109,13 +101,14 @@ model Address {
   fromAddress  PickupDeliveryRequest[] @relation("FromAddress")
   toAddress    PickupDeliveryRequest[] @relation("ToAddress")
 }
+
 model Order {
   id            Int         @id @default(autoincrement())
   userId        Int
   addressId     Int         
   outletId      Int
   package       String?
-  status        OrderStatus
+  status        OrderStatus @default(waiting_for_pickup)
   pickupSchedule DateTime
   totalWeight   Float?
   totalItems    Int         @default(0)
@@ -163,7 +156,7 @@ model PickupDeliveryRequest {
   distance        Int      // in kilometer
   driverId        Int
   fromAddressId   Int
-  toAddressId     Int 
+  toAddressId     Int
   requestType     String   @default("")
   status          String   @default("Wait to pick up")
   createdAt       DateTime @default(now())

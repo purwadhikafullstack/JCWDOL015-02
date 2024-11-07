@@ -8,7 +8,9 @@ import express, {
   Router,
 } from 'express';
 import cors from 'cors';
+import '@/helpers/cron/customerCron';
 import { PORT } from './config';
+import cookieParser from 'cookie-parser';
 import { SampleRouter } from './routers/sample.router';
 import { AttendanceRouter } from './routers/attendence.router';
 import { AddressRouter} from './routers/address.router ';
@@ -16,6 +18,13 @@ import { OutletRouter } from './routers/outlet.router';
 import { OrderRouter } from './routers/order.router';
 import { SuperAdminRouter } from './routers/superAdmin.router';
 import { NotificationRouter } from './routers/notification.router';
+import path from 'path';
+import dotenv from 'dotenv';
+import { AuthRouter } from './routers/auth.router';
+import { GoogleRouter } from './routers/google.router';
+import { UserRouter } from './routers/user.router';
+import { MailRouter } from './routers/mail.router';
+dotenv.config();
 
 export default class App {
   private app: Express;
@@ -28,9 +37,11 @@ export default class App {
   }
 
   private configure(): void {
+    this.app.use(cookieParser());
     this.app.use(cors({credentials: true,origin:'http://localhost:3000'}));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
+    this.app.use('/api/public', express.static(path.join(__dirname, '../public')))
   }
 
   private handleError(): void {
@@ -57,6 +68,10 @@ export default class App {
   }
 
   private routes(): void {
+    const googleRouter = new GoogleRouter();
+    const mailRouter = new MailRouter();
+    const authRouter = new AuthRouter();
+    const userRouter = new UserRouter()
     const sampleRouter = new SampleRouter();
     const attendanceRouter = new AttendanceRouter(); 
     const addressRouter= new AddressRouter()
@@ -69,6 +84,10 @@ export default class App {
       res.send(`Hello, Purwadhika Student API!`);
     });
 
+    this.app.use('/api/google', googleRouter.getRouter());
+    this.app.use('/api/mail', mailRouter.getRouter())
+    this.app.use('/api/auth', authRouter.getRouter());
+    this.app.use('/api/user', userRouter.getRouter());
     this.app.use('/api/samples', sampleRouter.getRouter());
     this.app.use('/api/address', addressRouter.getRouter());
     this.app.use('/api/attendence', attendanceRouter.getRouter());
@@ -76,7 +95,6 @@ export default class App {
     this.app.use('/api/outlet', outletRouter.getRouter());
     this.app.use('/api/super-admin', superAdminRouter.getRouter())
     this.app.use('/api/notification', notificationRouter.getRouter())
-    
   }
 
   public start(): void {

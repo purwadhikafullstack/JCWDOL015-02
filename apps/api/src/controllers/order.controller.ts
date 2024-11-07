@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '@/prisma';
 import { Order, OrderStatus } from '@prisma/client';
+import { findNearestOutlet } from '@/helpers/haversine';
 
 export class OrderController {
   async getAllOrder(req: Request, res: Response) {
@@ -36,42 +37,23 @@ export class OrderController {
   }
 
   async createOrder(req: Request, res: Response) {
-    const {
-      userId,
-      addressId,
-      packageName,
-      outletId,
-      pickupSchedule,
-      totalWeight,
-      totalItems,
-      totalPrice,
-      paymentStatus,
-    } = req.body;
-
-    if (!userId || !addressId || !pickupSchedule || !outletId) {
-      return res.status(400).send({ error: 'Missing required fields' });
-    }
-
     try {
+      const {userId, addressId, pickupSchedule} = req.body;
+      const user = await prisma.user.findFirst({where: {id: userId}});
+      if(!user) throw "user not found !";
+      const userAddress = await prisma.address.findFirst({where: {id: addressId}});
+      if(!userAddress) throw "address not found !";
+      const { nearestOutlet, distance } = await findNearestOutlet(addressId);
+      if(!nearestOutlet?.outletId) throw "outlet not found !";
       const newOrder = await prisma.order.create({
         data: {
-          userId,
-          addressId,
-          outletId, 
-          package: packageName,
-          pickupSchedule: new Date(pickupSchedule),
-          totalWeight,
-          totalItems,
-          totalPrice,
-          paymentStatus,
-          status: OrderStatus.waiting_for_pickup,
+          userId,addressId,outletId: nearestOutlet.outletId,pickupSchedule: new Date(pickupSchedule)
         }
-      });
-
-      return res.status(201).send(newOrder);
+      })
+      res.status(200).send({status: 'ok', message: 'Successful Pickup Request', data: new Date(pickupSchedule)});
     } catch (error) {
-      console.error('Error creating order:', error);
-      return res.status(500).send({ error: 'Error creating order' });
+      if(error instanceof Error) return res.status(400).send({status: "error", message: error.message});
+      res.status(400).send({status: "error", message: error});
     }
   }
 
