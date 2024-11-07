@@ -22,7 +22,7 @@ export class AddressController {
     if (role === 'outlet') {
       try {
         const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 2;
+        const limit = parseInt(req.query.limit as string) || 6;
         const startIndex = (page - 1) * limit;
         const addresses = await prisma.address.findMany({
           where: { outletId: { not: 0 } },
@@ -118,8 +118,8 @@ export class AddressController {
           postalCode: postalCode,
           country: country,
           phone: phone,
-          latitude: latitude,   // Menyimpan latitude
-          longitude: longitude,  // Menyimpan longitude
+          latitude: latitude,
+          longitude: longitude,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

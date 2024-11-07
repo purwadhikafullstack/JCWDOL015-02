@@ -27,7 +27,9 @@ const CardUserAddress: React.FC<CardAddressProps> = (props) => {
             <BtnPinAddress addressId={addressId} />
           )}
         </div>
-        <p className="font-medium">{address}</p>
+        <div className='w-full h-16'>
+          <p className="font-medium line-clamp-2">{address}</p>
+        </div>
         <p className="font-medium flex justify-start items-center gap-1">
           <IoMdCall />({phone})
         </p>
