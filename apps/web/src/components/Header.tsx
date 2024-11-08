@@ -1,24 +1,19 @@
 import React from 'react';
 
 const Header: React.FC = () => {
-  const headerStyle: React.CSSProperties = {
-    backgroundColor: '#4A90E2',
-    color: '#FFFFFF',
-    padding: '20px',
-    textAlign: 'center',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-    borderRadius: '8px',
-    fontFamily: 'Arial, sans-serif',
-  };
-
-  const titleStyle: React.CSSProperties = {
-    margin: 0,
-    fontSize: '2.5rem',
-  };
-
   return (
-    <header style={headerStyle}>
-      <h1 style={titleStyle}>Laundry Management System</h1>
+    <header className="bg-blue-900 text-white p-6 flex justify-between items-center">
+      <div className="text-2xl font-bold">Washted.</div>
+      <nav>
+        <ul className="flex space-x-4">
+          <li>Home</li>
+          <li>About</li>
+          <li>Support</li>
+        </ul>
+      </nav>
+      <button className="bg-white text-blue-900 px-4 py-2 rounded">
+        Contact us
+      </button>
     </header>
   );
 };

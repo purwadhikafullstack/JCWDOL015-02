@@ -1,6 +1,9 @@
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import type { ReactNode } from 'react';
+import Navbar from '@/pages/Navbar';
+import LoginPage from '@/pages/LoginPage';
+import OrderForm from '@/components/OrderForm';
+import RegisterPage from '@/pages/Register';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,8 +12,8 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
-      <body>
-        <Header />
+      <body className="container">
+        <Navbar />
         <main>{children}</main>
         <Footer />
       </body>

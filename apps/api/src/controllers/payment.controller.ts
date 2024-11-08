@@ -6,6 +6,8 @@ const prisma = new PrismaClient();
 export const createOrder = async (req: Request, res: Response) => {
   const {
     userId,
+    outletId,
+    user,
     addressId,
     orderPackage,
     totalWeight,
@@ -17,6 +19,9 @@ export const createOrder = async (req: Request, res: Response) => {
     const order = await prisma.order.create({
       data: {
         userId,
+        outletId,
+        user: { connect: { id: user } },
+        address: { connect: { id: addressId } },
         addressId,
         package: orderPackage,
         totalWeight,

@@ -8,7 +8,7 @@ type User = {
   role: Role;
 };
 
-export const verifyRole = (allowedRoles: Role[]) => {
+export const roleMiddleware = (allowedRoles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = req.user as User | undefined;

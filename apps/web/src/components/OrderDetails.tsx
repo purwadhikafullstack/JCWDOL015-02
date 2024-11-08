@@ -1,4 +1,3 @@
-// /components/OrderDetails.tsx
 import React from 'react';
 
 interface OrderDetailsProps {

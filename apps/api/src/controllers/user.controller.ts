@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import User from '../models/user.model';
+import prisma from '@/prisma';
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.find();
+    const users = await prisma.user.findMany();
     return res.status(200).json(users);
   } catch (error) {
     return res.status(500).json({ message: 'Error fetching users' });
@@ -11,11 +11,16 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  const { username, password, role } = req.body;
+  const { email, password, role } = req.body;
   try {
-    const user = new User({ username, password, role });
-    await user.save();
-    return res.status(201).json(user);
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        password,
+        role,
+      },
+    });
+    return res.status(201).json(newUser);
   } catch (error) {
     return res.status(500).json({ message: 'Error creating user' });
   }
@@ -25,11 +30,14 @@ export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const updates = req.body;
   try {
-    const user = await User.findByIdAndUpdate(id, updates, { new: true });
-    if (!user) {
+    const updatedUser = await prisma.user.update({
+      where: { id: Number(id) },
+      data: updates,
+    });
+    if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
-    return res.status(200).json(user);
+    return res.status(200).json(updatedUser);
   } catch (error) {
     return res.status(500).json({ message: 'Error updating user' });
   }
@@ -38,8 +46,10 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const user = await User.findByIdAndDelete(id);
-    if (!user) {
+    const deletedUser = await prisma.user.delete({
+      where: { id: Number(id) },
+    });
+    if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
     return res.status(204).send();

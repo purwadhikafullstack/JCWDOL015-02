@@ -1,17 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
-import store from './redux/store';
-import App from './App';
-import './index.css';
+// frontend/src/pages/index.tsx
+import OrderForm from './components/OutletForm';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
-);
-root.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </Provider>,
-);
+const Home = () => {
+  return (
+    <div>
+      <h1>Formulir Pesanan</h1>
+      <OrderForm /> {/* Komponen yang dibungkus dalam Provider */}
+    </div>
+  );
+};
+
+export default Home;

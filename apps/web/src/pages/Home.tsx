@@ -1,15 +1,15 @@
-'use client'; // Menandai komponen ini sebagai Client Component
+// Home.tsx
+'use client';
 
 import Image from 'next/image';
 import { useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Link from 'next/link'; // Import Link dari Next.js untuk navigasi
+import Link from 'next/link';
 
-// Komponen Home yang menampilkan Navbar, Carousel, dan halaman Home
 export default function Home() {
-  const [showLogin, setShowLogin] = useState(false); // State untuk menampilkan LoginPage jika diperlukan
+  const [showLogin, setShowLogin] = useState(false);
 
   const carouselItems = [
     { id: 1, src: '/image1.jpg', alt: 'Image 1' },
@@ -27,7 +27,6 @@ export default function Home() {
     autoplaySpeed: 3000,
   };
 
-  // Fungsi untuk menampilkan LoginPage saat tombol login diklik
   const handleLoginClick = () => {
     setShowLogin(true);
   };
@@ -36,7 +35,6 @@ export default function Home() {
     <main className="bg-gray-100 min-h-screen">
       {showLogin ? (
         <div className="text-center py-20">
-          {/* Menampilkan LoginPage jika showLogin true */}
           <h2 className="text-2xl font-semibold">Welcome to Login Page</h2>
           <p className="mt-4 text-gray-600">
             Please log in to access your account.
@@ -45,7 +43,7 @@ export default function Home() {
       ) : (
         <div>
           {/* Carousel Section */}
-          <div className="relative mt-8">
+          <div className="relative mt-8 shadow-lg">
             <Slider {...settings}>
               {carouselItems.map((item) => (
                 <div key={item.id}>
@@ -54,7 +52,7 @@ export default function Home() {
                     alt={item.alt}
                     width={1000}
                     height={600}
-                    className="object-cover w-full"
+                    className="object-cover w-full h-96"
                   />
                 </div>
               ))}
@@ -62,8 +60,8 @@ export default function Home() {
           </div>
 
           {/* HomePage Section */}
-          <section className="text-center py-20">
-            <h2 className="text-4xl font-semibold mb-4">
+          <section className="text-center py-20 bg-white">
+            <h2 className="text-4xl font-semibold mb-4 text-blue-600">
               Welcome to Our Laundry Service
             </h2>
             <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
@@ -71,9 +69,8 @@ export default function Home() {
               care of your laundry while you focus on what matters.
             </p>
 
-            {/* Tombol untuk pindah ke halaman login */}
-            <Link href="../pages/LoginPage.tsx">
-              <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">
+            <Link href="/login">
+              <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
                 Get Started
               </button>
             </Link>

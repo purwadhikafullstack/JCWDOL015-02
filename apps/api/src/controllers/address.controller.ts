@@ -14,6 +14,7 @@ export const createAddress = async (req: Request, res: Response) => {
     country,
     isPrimary,
     latitude,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     longitude,
   } = req.body;
 
@@ -27,7 +28,6 @@ export const createAddress = async (req: Request, res: Response) => {
         state,
         postalCode,
         country,
-        isPrimary,
         latitude,
         longitude,
       },

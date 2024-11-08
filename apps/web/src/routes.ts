@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import OrdersPage from './pages/orders';
+import OrdersPage from './pages/Orders';
 import ReportsPage from './pages/reports'; // Impor halaman laporan
 
 const AppRoutes: React.FC = () => {

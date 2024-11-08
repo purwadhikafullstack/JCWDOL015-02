@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import styles from '../app/page.module.css';
+import styles from '../app/page.module.css'; // Sesuaikan dengan lokasi file styles
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
       const response = await axios.post('/api/login', { username, password });
       const { token } = response.data;
       localStorage.setItem('token', token);
-      window.location.href = '/admin';
+      window.location.href = '/admin'; // Atur sesuai halaman yang diinginkan setelah login
     } catch (err) {
       setError('Invalid credentials. Please try again.');
       console.error('Login error:', err);

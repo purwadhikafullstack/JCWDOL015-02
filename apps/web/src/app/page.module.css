@@ -1,12 +1,16 @@
+/* Container utama yang menyelimuti seluruh halaman */
 .container {
   background-color: #f9fafb;
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: center; /* Menempatkan item di tengah secara horizontal */
+  align-items: center; /* Menempatkan item di tengah secara vertikal */
   padding: 1rem;
+  box-sizing: border-box;
+  padding-bottom: 60px; /* Memberikan ruang agar footer tidak menutupi konten */
 }
 
+/* Desain untuk card login */
 .card {
   width: 100%;
   max-width: 400px;
@@ -17,10 +21,12 @@
   transition: transform 0.2s;
 }
 
+/* Efek hover pada card */
 .card:hover {
   transform: translateY(-5px);
 }
 
+/* Styling untuk judul */
 .title {
   margin-bottom: 1.5rem;
   font-size: 1.875rem;
@@ -28,12 +34,14 @@
   text-align: center;
 }
 
+/* Styling untuk pesan error */
 .error {
   margin-bottom: 1rem;
   color: #f87171;
   text-align: center;
 }
 
+/* Styling untuk input field */
 .input {
   background-color: #f3f4f6;
   border: 1px solid #d1d5db;
@@ -45,12 +53,14 @@
   transition: border-color 0.2s;
 }
 
+/* Fokus pada input field */
 .input:focus {
   border-color: #3b82f6;
   outline: none;
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
 }
 
+/* Styling untuk tombol login */
 .button {
   width: 100%;
   background-color: #3b82f6;
@@ -62,34 +72,18 @@
   cursor: pointer;
 }
 
+/* Efek hover pada tombol */
 .button:hover {
   background-color: #2563eb;
 }
 
-.carouselContainer {
-  text-align: center;
-}
+/* Untuk memastikan tampilan responsif pada ukuran layar kecil */
+@media (max-width: 700px) {
+  .container {
+    padding: 2rem; /* Memberikan ruang di sisi layar */
+  }
 
-.slide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-}
-
-.imageWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60px;
-  background-color: #f1f1f1;
-  padding: 10px;
-  text-align: center;
+  .card {
+    padding: 1.5rem;
+  }
 }

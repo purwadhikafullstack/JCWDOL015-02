@@ -1,3 +1,5 @@
+'use client'; // Add this at the top of your file
+
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addOrder } from '../redux/orderSlice';
