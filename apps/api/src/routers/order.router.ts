@@ -15,7 +15,8 @@ export class OrderRouter {
     this.router.get('/', this.orderController.getAllOrder);
     this.router.get('/:orderId', this.orderController.getOrderById);
     this.router.post('/create', this.orderController.createOrder);
-    this.router.patch('/:orderId', this.orderController.updateOrder);
+    this.router.put('/:orderId', this.orderController.updateOrder);
+    this.router.patch('/:orderId', this.orderController.updateOrderStatus);
     this.router.delete('/:orderId',  this.orderController.deleteOrder);
   }
 

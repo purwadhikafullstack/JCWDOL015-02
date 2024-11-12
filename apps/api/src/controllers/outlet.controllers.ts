@@ -39,15 +39,15 @@ export class OutletController {
     }
   }
 
-  async createOutlet(req: Request, res: Response): Promise<Response> {
+  async createOutlet(req: Request, res: Response) {
     const { name, password, email } = req.body;
     const SALT_ROUNDS = 10;
 
-    if (req.user?.role !== 'super_admin') {
-      return res.status(403).send(
-        { error: 'Forbidden: You do not have permission to perform this action',}
-    );
-    }
+    // if (req.user?.role !== 'super_admin') {
+    //   return res.status(403).send(
+    //     { error: 'Forbidden: You do not have permission to perform this action',}
+    // );
+    // }
 
     try {
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -150,6 +150,7 @@ export class OutletController {
 
       return res.status(200).send({
         token: token,
+        outletId:outlet.id,
         outletName: outlet.name,
         outletEmail: outlet.email,
       });

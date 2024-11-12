@@ -29,6 +29,30 @@ export class AttendanceController {
     }
   }
 
+  async getAttendanceByDate(req: Request, res: Response) {
+    const { workerId, date } = req.query;
+
+    try {
+      const parsedWorkerId = parseInt(workerId as string, 10);
+      const parsedDate = new Date(date as string);
+
+      const attendanceRecord = await prisma.attendance.findFirst({
+        where: {
+          workerId: parsedWorkerId,
+          date: parsedDate,
+        },
+      });
+
+      if (!attendanceRecord) {
+        return res.status(404).send({ error: 'Attendance record not found for the specified worker and date' });
+      }
+
+      return res.status(200).send(attendanceRecord);
+    } catch (error) {
+      console.error('Error fetching attendance by worker and date:', error);
+      return res.status(500).send({ error: 'Error fetching attendance record' });
+    }
+  }
 
   async createAttendance(req: Request, res: Response) {
     const { workerId, date, checkIn } = req.body;
@@ -51,7 +75,7 @@ export class AttendanceController {
     }
   }
 
-  async updateAttendance(req: Request, res: Response) {
+  async updateAttendance(req: Request, res: Response) { //checkout
     const { id } = req.params;
     const { checkOut } = req.body;
 
@@ -71,7 +95,7 @@ export class AttendanceController {
   }
 
   async getAttendanceLogByWorker(req: Request, res: Response) {
-    const { workerId } = req.params;
+    const  workerId  = +req.params.id;
 
     try {
       const attendanceLog = await prisma.attendance.findMany({

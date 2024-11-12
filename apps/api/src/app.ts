@@ -25,6 +25,9 @@ import { GoogleRouter } from './routers/google.router';
 import { UserRouter } from './routers/user.router';
 import { MailRouter } from './routers/mail.router';
 dotenv.config();
+import { OutletWorkerRouter } from './routers/outletWorker.router';
+import { PickupDeliveryRequestRouter } from './routers/pdrd.router';
+import { OrderItemRouter } from './routers/orderItem.router';
 
 export default class App {
   private app: Express;
@@ -79,6 +82,9 @@ export default class App {
     const orderRouter = new OrderRouter()
     const superAdminRouter = new SuperAdminRouter()
     const notificationRouter = new NotificationRouter()
+    const outletWorkerRouter = new OutletWorkerRouter()
+    const pickupDeliveryRequestRouter = new PickupDeliveryRequestRouter()
+    const orderItemRouter = new OrderItemRouter()
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
@@ -95,6 +101,9 @@ export default class App {
     this.app.use('/api/outlet', outletRouter.getRouter());
     this.app.use('/api/super-admin', superAdminRouter.getRouter())
     this.app.use('/api/notification', notificationRouter.getRouter())
+    this.app.use('/api/worker', outletWorkerRouter.getRouter())
+    this.app.use('/api/pdr', pickupDeliveryRequestRouter.getRouter())
+    this.app.use('/api/order-item', orderItemRouter.getRouter())
   }
 
   public start(): void {

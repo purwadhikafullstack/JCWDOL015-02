@@ -14,7 +14,7 @@ export class OutletRouter  {
 
   private initializeRoutes(): void {
     this.router.get('/', this.outletController.getAllOutlet);
-    this.router.get('/login', this.outletController.loginOutlet)
+    this.router.post('/login', this.outletController.loginOutlet)
     this.router.get('/id/:id', this.outletController.getOutletById);
     this.router.post('/', this.outletController.createOutlet);
     this.router.put('/id/:id',verifyToken, this.outletController.updateOutlet);
