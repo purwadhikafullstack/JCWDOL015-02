@@ -13,6 +13,16 @@ const OutletList = () => {
   const [totalPage, setTotalPage] = useState(1)
 
   useEffect(() => {
+    const getAllOutlets = async () => {
+      try {
+        const { result,ok } = await getAllOutletAddressFetchDb(currentPage);
+        if(!ok) throw result.message
+        setAllAddress(result.data)
+        setTotalPage(result.totalPages)
+      } catch (error) {
+        console.log(error)
+      }
+    }
     getAllOutlets()
   },[currentPage])
 
@@ -20,22 +30,9 @@ const OutletList = () => {
     scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const getAllOutlets = async () => {
-    try {
-      const { result,ok } = await getAllOutletAddressFetchDb(currentPage);
-      if(!ok) throw result.message
-      setAllAddress(result.data)
-      setTotalPage(result.totalPages)
-    } catch (error) {
-      console.log(error)
-    }
-  }
   const handlePageChange = (page: number) => {
     router.push(`${process.env.NEXT_PUBLIC_BASE_WEB_URL}/outlets?page=${page}`)
     scrollTop()
-  }
-  const getOutletByState = async () => {
-    
   }
   return (
     <div className="w-full flex flex-col justify-center items-center mt-5">
@@ -52,7 +49,7 @@ const OutletList = () => {
       </div>
       ))}
       <div className='my-5'></div>
-      <BtnPagination props={{currentPage, totalPage, handlePageChange}} />
+      <BtnPagination currentPage={currentPage} totalPage={totalPage} handlePageChange={handlePageChange} />
       </div>
   );
 };

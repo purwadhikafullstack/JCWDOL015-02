@@ -5,7 +5,15 @@ import BtnOrderDate from "./BtnOrderDate";
 import { useState } from "react";
 import { searchOrderFetchDb } from "@/lib/orderLib";
 
-const SearchOrder = (props: any) => {
+type Props = {
+  handleSubmitSearch: (values: any, resetForm: any) => void;
+  isLoading: boolean;
+  selectSearchModal: HTMLDialogElement;
+  byIdModal: HTMLDialogElement;
+  byDateModal: HTMLDialogElement;
+}
+
+const SearchOrder = (props: Props) => {
   const { handleSubmitSearch, isLoading, selectSearchModal, byIdModal, byDateModal } = {...props};
   return (
     <div className="my-4">

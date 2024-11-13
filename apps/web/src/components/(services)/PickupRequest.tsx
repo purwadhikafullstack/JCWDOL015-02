@@ -3,12 +3,13 @@ import serviceImg from "@/data/dummy.json";
 import InputRequestPickup from "./InputRequestPickup";
 import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const PickupRequest = () => {
   const user = useAppSelector((state) => state.auth);
   const router = useRouter();
   const handleOrder = () => {
-    if(user.isLogin == false) return router.push('/auth/login')
+    if(user.isLogin == false) return router.push('/auth/login?redirect=/services');
     const modal = document.getElementById("modal_pickup_request") as HTMLDialogElement;
     return modal?.showModal();
   }
@@ -16,10 +17,12 @@ const PickupRequest = () => {
     <div className="w-full min-h-screen flex flex-col justify-start items-center my-5">
       <div className="card w-11/12 md:w-4/5 lg:w-3/4 shadow-xl bg-lightCustom">
         <div className="flex justify-center items-center rounded-t-2xl overflow-hidden shadow-md">
-          <img
+          <Image
+            width={500}
+            height={500}
             className="w-full h-auto max-h-48 md:max-h-60 lg:max-h-96 object-cover object-center"
             src={serviceImg.services.image}
-            alt={serviceImg.services.alt} 
+            alt={serviceImg.services.alt}
           />
         </div>
         <div className="card-body text-center">

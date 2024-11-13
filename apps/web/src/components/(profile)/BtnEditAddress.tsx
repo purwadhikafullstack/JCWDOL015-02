@@ -2,7 +2,11 @@
 import { useState } from "react";
 import { FiEdit } from "react-icons/fi";
 
-const BtnEditAddress = (props: any) => {
+type Props = {
+  addressId: number
+}
+
+const BtnEditAddress = (props: Props) => {
     const {addressId} = {...props}
     const [isLoading, setIsLoading] = useState(false);
     const handleEditAddress = async (addressId: number) => {

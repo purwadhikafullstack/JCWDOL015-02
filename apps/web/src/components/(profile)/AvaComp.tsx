@@ -12,6 +12,7 @@ import { getProfileState } from "@/redux/slices/authSlice";
 import BtnVerify from "./BtnVerify";
 import UpdateEmail from "./UpdateEmail";
 import { useEffect } from "react";
+import Image from "next/image";
 
 const AvaComp: React.FC = () => {
   const user = useAppSelector((state) => state.auth)
@@ -19,7 +20,7 @@ const AvaComp: React.FC = () => {
 
   useEffect(() => {
     dispatch(getProfileState())
-  },[])
+  },[dispatch])
 
   const openModal = (type: string) => {
       const modal = document.getElementById(type) as HTMLDialogElement;
@@ -45,7 +46,9 @@ const AvaComp: React.FC = () => {
     <div className="w-full flex flex-col  justify-start items-center py-5 bg-beigeCustom">
       <div className="avatar cursor-pointer mb-5" onClick={() => openModal("my_modal_avatar")}>
         <div className="w-36 md:w-48 rounded-full shadow-2xl">
-          <img
+          <Image
+            width={500}
+            height={500}
             src={user.avatar || "https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png"}
             alt={user.username || "avatar"}
           />

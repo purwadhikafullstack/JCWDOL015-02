@@ -1,6 +1,12 @@
 "use client";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-const BtnOrderId = (props: any) => {
+
+type Props = {
+    isLoading: boolean,
+    handleSubmit: (values: any, resetForm: any) => void,
+    byIdModal: HTMLDialogElement
+}
+const BtnOrderId = (props: Props) => {
     const {isLoading, handleSubmit, byIdModal} = {...props}
   return (
     <>

@@ -1,5 +1,11 @@
 
-const BtnPagination = ({props}: any) => {
+type Props = {
+  currentPage: number;
+  totalPage: number;
+  handlePageChange: (page: number) => void
+}
+
+const BtnPagination = (props : Props) => {
     const {currentPage, totalPage, handlePageChange} = {...props}
   return (
     <div className="join sticky bottom-5">

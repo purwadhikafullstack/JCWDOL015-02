@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { getProfileState, logoutAction } from '@/redux/slices/authSlice';
 import { logoutFetchDb } from '@/lib/authLib';
 import { toast } from 'react-toastify';
+import Image from 'next/image';
 const Header = () => {
   const user = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
@@ -15,7 +16,7 @@ const Header = () => {
 
   useEffect(() => {
     dispatch(getProfileState())
-  },[])
+  },[dispatch])
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -98,7 +99,7 @@ const Header = () => {
             <p className='hidden md:block w-[118px] text-right truncate font-semibold'>{user.username}</p>
             <div className={`avatar border-2 p-[1px] rounded-full duration-300 ${userMenuIsOpen ? 'border-grayCustom' : 'border-transparent'}`}>
               <div className="w-11 rounded-full">
-                <img src={`${user.avatar}` || 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png'} alt={user.username || "avatar"}/>
+                <Image width={40} height={40} src={`${user.avatar}` || 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png'} alt={user.username || "avatar"}/>
               </div>
             </div>
           </div>

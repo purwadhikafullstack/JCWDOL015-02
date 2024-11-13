@@ -20,17 +20,17 @@ const AllOrderPage = () => {
   ) as HTMLDialogElement;
 
   useEffect(() => {
+    const getOrders = async () => {
+      try {
+        const { result, ok } = await getOrdersByUserFetchDb(user.id);
+        if (!ok) throw result.message;
+        setOrders([...result.data]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     getOrders();
-  }, []);
-  const getOrders = async () => {
-    try {
-      const { result, ok } = await getOrdersByUserFetchDb(user.id);
-      if (!ok) throw result.message;
-      setOrders([...result.data]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  }, [user.id]);
   const handleSearchOrder = async (
     values: { orderId?: string; date?: string },
     resetForm: () => void,

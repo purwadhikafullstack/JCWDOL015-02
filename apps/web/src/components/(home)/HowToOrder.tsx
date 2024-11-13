@@ -23,7 +23,7 @@ const HowToOrder = () => {
           Create an Account or Login
         </h1>
         <p className="text-lg font-medium">
-        Jika Anda pelanggan baru, daftarkan akun Anda dengan mengisi data diri pada halaman "Daftar". Jika Anda sudah memiliki akun, masuk ke aplikasi dengan menggunakan kredensial yang telah Anda buat sebelumnya.
+        Jika Anda pelanggan baru, daftarkan akun Anda dengan mengisi data diri pada halaman &quot;Daftar&quot;. Jika Anda sudah memiliki akun, masuk ke aplikasi dengan menggunakan kredensial yang telah Anda buat sebelumnya.
         </p>
       </div>
 
@@ -33,7 +33,7 @@ const HowToOrder = () => {
           Request a Laundry Pickup
         </h1>
         <p className="text-lg font-medium">
-        Pilih opsi "Permintaan Penjemputan" dan isi informasi yang diperlukan seperti tanggal, waktu penjemputan, dan alamat. Lokasi Anda akan otomatis terdeteksi, tetapi Anda juga dapat menyesuaikannya jika diperlukan. Setelah semua data diisi, kirim permintaan penjemputan Anda.
+        Pilih opsi &quot;Permintaan Penjemputan&quot; dan isi informasi yang diperlukan seperti tanggal, waktu penjemputan, dan alamat. Lokasi Anda akan otomatis terdeteksi, tetapi Anda juga dapat menyesuaikannya jika diperlukan. Setelah semua data diisi, kirim permintaan penjemputan Anda.
         </p>
       </div>
 
@@ -73,7 +73,7 @@ const HowToOrder = () => {
         Order Completion and Feedback
         </h1>
         <p className="text-lg font-medium">
-        Setelah laundry Anda diterima, status pesanan akan diperbarui menjadi "Laundry Telah Diterima Customer". Jika ada masalah seperti kerusakan atau kehilangan barang, Anda dapat mengajukan keluhan melalui aplikasi. Tim LaunON akan segera menindaklanjuti keluhan Anda.
+        Setelah laundry Anda diterima, status pesanan akan diperbarui menjadi &quot;Laundry Telah Diterima Customer&quot;. Jika ada masalah seperti kerusakan atau kehilangan barang, Anda dapat mengajukan keluhan melalui aplikasi. Tim LaunON akan segera menindaklanjuti keluhan Anda.
         </p>
       </div>
     </section>
