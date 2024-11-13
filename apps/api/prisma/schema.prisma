@@ -114,6 +114,7 @@ model Order {
   totalItems    Int         @default(0)
   totalPrice    Float?
   paymentStatus String      @default("unpaid")
+  paymentLink   String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 

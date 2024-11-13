@@ -14,38 +14,22 @@ CREATE TABLE `samples` (
 CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
-    `role` VARCHAR(191) NOT NULL DEFAULT 'customer',
+    `username` VARCHAR(191) NOT NULL,
+    `avatar` VARCHAR(191) NOT NULL DEFAULT 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png',
+    `password` VARCHAR(191) NULL,
+    `role` ENUM('customer', 'admin', 'superAdmin', 'worker') NOT NULL DEFAULT 'customer',
     `verified` BOOLEAN NOT NULL DEFAULT false,
-    `mainAddress` INTEGER NULL,
+    `loginToken` VARCHAR(255) NULL,
+    `verifyToken` VARCHAR(191) NULL,
+    `verifyTokenExp` DATETIME(3) NULL,
+    `userToken` VARCHAR(191) NULL,
+    `userTokenExp` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `User_email_key`(`email`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `UserProfile` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` INTEGER NOT NULL,
-    `firstName` VARCHAR(191) NULL,
-    `lastName` VARCHAR(191) NULL,
-    `profilePicture` VARCHAR(191) NULL,
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    UNIQUE INDEX `UserProfile_userId_key`(`userId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `UserVerification` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` INTEGER NOT NULL,
-    `verificationCode` VARCHAR(191) NOT NULL,
-    `used` BOOLEAN NOT NULL DEFAULT false,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
+    UNIQUE INDEX `User_verifyToken_key`(`verifyToken`),
+    UNIQUE INDEX `User_userToken_key`(`userToken`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -72,6 +56,8 @@ CREATE TABLE `Address` (
     `state` VARCHAR(191) NOT NULL,
     `postalCode` VARCHAR(191) NOT NULL,
     `country` VARCHAR(191) NOT NULL,
+    `isMain` BOOLEAN NOT NULL DEFAULT false,
+    `phone` VARCHAR(191) NULL,
     `latitude` DOUBLE NULL,
     `longitude` DOUBLE NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -87,12 +73,13 @@ CREATE TABLE `Order` (
     `addressId` INTEGER NOT NULL,
     `outletId` INTEGER NOT NULL,
     `package` VARCHAR(191) NULL,
-    `status` ENUM('waiting_for_pickup', 'on_the_way_to_outlet', 'arrived_at_outlet', 'weighed', 'washed', 'ironed', 'packed', 'waiting_for_payment', 'ready_for_delivery', 'on_the_way_to_customer', 'delivered_to_customer') NOT NULL,
+    `status` ENUM('waiting_for_pickup', 'on_the_way_to_outlet', 'arrived_at_outlet', 'weighed', 'washed', 'ironed', 'packed', 'waiting_for_payment', 'ready_for_delivery', 'on_the_way_to_customer', 'delivered_to_customer') NOT NULL DEFAULT 'waiting_for_pickup',
     `pickupSchedule` DATETIME(3) NOT NULL,
     `totalWeight` DOUBLE NULL,
     `totalItems` INTEGER NOT NULL DEFAULT 0,
     `totalPrice` DOUBLE NULL,
     `paymentStatus` VARCHAR(191) NOT NULL DEFAULT 'unpaid',
+    `paymentLink` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -225,12 +212,6 @@ CREATE TABLE `OrderHistory` (
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- AddForeignKey
-ALTER TABLE `UserProfile` ADD CONSTRAINT `UserProfile_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `UserVerification` ADD CONSTRAINT `UserVerification_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Notification` ADD CONSTRAINT `Notification_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
