@@ -17,7 +17,7 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <MdManageAccounts className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
           Create an Account or Login
@@ -27,7 +27,7 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <MdOutlineScheduleSend className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
           Request a Laundry Pickup
@@ -37,7 +37,7 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <HiOutlineRefresh className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
         Wait for Driver Assignment
@@ -47,7 +47,7 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <TbWashEco className="w-12 h-12 md:w-16 md:h-16" style={{color: 'black'}} />
         <h1 className="text-lg md:text-xl font-bold">
         Laundry Processing at the Outlet
@@ -57,7 +57,7 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <RiSecurePaymentLine className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
         Payment and Delivery
@@ -67,7 +67,7 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <IoCheckmarkDoneSharp className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
         Order Completion and Feedback

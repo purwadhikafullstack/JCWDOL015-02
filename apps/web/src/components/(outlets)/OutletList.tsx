@@ -8,8 +8,8 @@ import BtnPagination from './BtnPagination';
 const OutletList = () => {
   const searchParams = useSearchParams();
   const router = useRouter()
-  const [allAddress, setAllAddress] = useState<any[]>([]);
   const currentPage = Number(searchParams.get('page')) || 1
+  const [allAddress, setAllAddress] = useState<any[]>([]);
   const [totalPage, setTotalPage] = useState(1)
 
   useEffect(() => {

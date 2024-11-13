@@ -98,7 +98,7 @@ const Header = () => {
             <p className='hidden md:block w-[118px] text-right truncate font-semibold'>{user.username}</p>
             <div className={`avatar border-2 p-[1px] rounded-full duration-300 ${userMenuIsOpen ? 'border-grayCustom' : 'border-transparent'}`}>
               <div className="w-11 rounded-full">
-                <img src={user.avatar || "https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png"} alt={user.username || "avatar"}/>
+                <img src={`${user.avatar}` || 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png'} alt={user.username || "avatar"}/>
               </div>
             </div>
           </div>

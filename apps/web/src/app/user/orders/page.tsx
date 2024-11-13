@@ -1,11 +1,11 @@
-import AllOrderPage from "@/components/(orders)/(all-orders)/AllOrderPage"
+import AllOrderPage from '@/components/(orders)/(all-orders)/AllOrderPage';
 
 const page = () => {
   return (
-    <section>
-      <AllOrderPage/>
+    <section className='bg-lightCustom'>
+      <AllOrderPage />
     </section>
-  )
-}
+  );
+};
 
-export default page
+export default page;

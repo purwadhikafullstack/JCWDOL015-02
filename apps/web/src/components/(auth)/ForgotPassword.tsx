@@ -41,7 +41,7 @@ const ForgotPassword = () => {
   return (
     <div className="text-sm text-white md:text-lg font-medium flex justify-center items-center gap-1">
       Forgot Your Password?{" "}
-      <label htmlFor="modal_forgot_password" className="text-beigeCustom font-semibold border-b border-b-transparent hover:border-b-beigeCustom">
+      <label htmlFor="modal_forgot_password" className="text-beigeCustom font-semibold border-b border-b-transparent hover:border-b-beigeCustom cursor-pointer">
         Reset Password
       </label>
 
