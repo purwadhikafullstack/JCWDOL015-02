@@ -6,10 +6,11 @@ export default function DriverServices({ workerDetail }: DriverServicesProps) {
     const [pickupRequests, setPickupRequests] = useState<PickupDeliveryRequest[]>([]);
     const [selectedRequest, setSelectedRequest] = useState<PickupDeliveryRequest | null>(null);
     const [busy, setBusy] = useState(false);
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
 
     useEffect(() => {
         if (workerDetail) {
-            fetch(`http://localhost:8000/api/pdr/driver/${workerDetail.id}`)
+            fetch(`${backendUrl}/api/pdr/driver/${workerDetail.id}`)
                 .then((response) => response.json())
                 .then((data) => setPickupRequests(data))
                 .catch((error) => console.error('Error fetching pickup requests:', error));
@@ -62,6 +63,10 @@ export default function DriverServices({ workerDetail }: DriverServicesProps) {
     const handlePDR = async () => {
       if (!selectedRequest) {
         return; 
+      }
+
+      if (busy) {
+        return;
       }
     
       try {
@@ -145,7 +150,7 @@ export default function DriverServices({ workerDetail }: DriverServicesProps) {
                             >
                                 Close
                             </button>
-                            {selectedRequest.status === "Wait to pick up" && 
+                            {selectedRequest.status === "Wait to pick up" && !busy && 
                                 <button 
                                 onClick={handlePDR}
                                 className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

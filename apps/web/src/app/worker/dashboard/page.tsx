@@ -1,7 +1,7 @@
 "use client"; 
-
 import AttendanceToday from '@/components/(worker)/attendenceToday';
 import DriverServices from '@/components/(worker)/driverServices';
+import WasherDashboard from '@/components/(worker)/washerDashboard';
 import React, { useEffect, useState } from 'react';
 
 interface WorkerDetail {
@@ -26,11 +26,12 @@ export default function Attendance() {
     return (
         <div>
             <AttendanceToday />
-            {role === 'driver' && workerDetail ? (
+            {role === 'driver' && workerDetail && 
                 <DriverServices workerDetail={workerDetail} />
-            ) : (
-                <div>Halo, worker</div>
-            )}
+            }
+            {role === 'washer' && workerDetail && 
+                <WasherDashboard/>
+            }
         </div>
     );
 }

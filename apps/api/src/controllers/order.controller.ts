@@ -7,17 +7,23 @@ import axios from 'axios';
 export class OrderController {
   async getAllOrder(req: Request, res: Response) {
     try {
-      const orders: Order[] = await prisma.order.findMany();
+        const orders = await prisma.order.findMany({
+            include: {
+                pickupDeliveryRequests: true, 
+            },
+        });
 
-      if (!orders.length) {
-        return res.status(404).send({ error: 'No orders found' });
-      }
+        if (!orders.length) {
+            return res.status(404).send({ error: 'No orders found' });
+        }
 
-      return res.status(200).send(orders);
+        return res.status(200).send(orders);
     } catch (error) {
-      return res.status(500).send({ error: 'Error fetching orders' });
+        console.error('Error fetching orders:', error);
+        return res.status(500).send({ error: 'Error fetching orders' });
     }
-  }
+}
+
 
   async getOrderById(req: Request, res: Response) {
     const { id } = req.params;
@@ -88,8 +94,6 @@ export class OrderController {
     }
   }
   
-  
-
   async updateOrder(req: Request, res: Response) {
     const { orderId } = req.params;
     const {
@@ -141,7 +145,7 @@ export class OrderController {
 
   async updateOrderStatus(req: Request, res: Response) {
     const { orderId } = req.params;
-    const { status, userId} = req.body;
+    const { status, userId } = req.body;
   
     if (!orderId) {
       return res.status(400).send({ error: 'Order ID is required' });
@@ -158,10 +162,16 @@ export class OrderController {
           status: status as OrderStatus,
         },
       });
-
+  
+      const userIdInt = Number(userId);
+  
+      if (isNaN(userIdInt)) {
+        return res.status(400).send({ error: 'Invalid user ID' });
+      }
+  
       await prisma.notification.create({
         data: {
-          userId,
+          userId: userIdInt, 
           title: `Order ${orderId} Status Updated`,
           message: `The status of your order has been updated to ${status}.`,
         },
@@ -183,6 +193,53 @@ export class OrderController {
     }
   }
   
+  
+  async updateOrderPriceAndWeight(req: Request, res: Response) {
+    const { orderId } = req.params;
+    const { weight, distance, totalItem } = req.body;
+
+    if (!orderId) {
+        return res.status(400).send({ error: 'Order ID is required' });
+    }
+
+    if (typeof weight !== 'number' || typeof distance !== 'number') {
+        return res.status(400).send({ error: 'Weight and distance must be numbers' });
+    }
+
+    // Constants for pricing
+    const pricePerKg = 30000; // 1 kg = 30.000 Rupiah
+    const pricePerKm = 10000; // 1 km = 10.000 Rupiah
+
+    // Calculate total price based on weight and distance
+    const calculatedPrice = (weight * pricePerKg) + (distance * pricePerKm);
+
+    try {
+        const updatedOrder = await prisma.order.update({
+            where: { id: Number(orderId) },
+            data: {
+                totalWeight: weight,
+                totalPrice: calculatedPrice,
+                totalItems: totalItem,
+            },
+            include: {
+                user: true,
+                address: true,
+                outlet: true,
+            },
+        });
+
+        return res.status(200).send(updatedOrder);
+    } catch (error: any) {
+        console.error('Error updating order price and weight:', error);
+
+        if (error.code === 'P2025') {
+            return res.status(404).send({ error: 'Order not found' });
+        }
+
+        return res.status(500).send({ error: 'Error updating order price and weight' });
+    }
+}
+
 
   async deleteOrder(req: Request, res: Response) {
     const { orderId } = req.params;

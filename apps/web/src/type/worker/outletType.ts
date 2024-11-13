@@ -1,5 +1,4 @@
 
-
 export type OutletData = {
     token: string;
     outletId:number;
@@ -13,13 +12,26 @@ export type OrderData = {
     addressId: number;
     outletId: number;
     package: string | null;
-    status: string;
-    pickupSchedule: string;
+    status: string; // contoh: "weighed", "picked_up", dll.
+    pickupSchedule: string; 
     totalWeight: number | null;
     totalItems: number;
     totalPrice: number | null;
-    paymentStatus: string;
-    createdAt: string;
+    paymentStatus: string; 
+    createdAt: string; 
+    updatedAt: string;
+    pickupDeliveryRequests: PickupDeliveryRequest[]; 
+};
+export type PickupDeliveryRequest = {
+    id: number;
+    orderId: number;
+    distance: number;
+    driverId: number;
+    fromAddressId: number;
+    toAddressId: number;
+    requestType: string; // contoh: "pickup" atau "delivery"
+    status: string; // contoh: "done", "pending", dll.
+    createdAt: string; // Tanggal dalam format ISO
     updatedAt: string;
 };
 

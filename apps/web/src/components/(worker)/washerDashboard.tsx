@@ -6,46 +6,46 @@ import { OrderData, OutletData } from "@/type/worker/outletType";
 import { useRouter } from 'next/navigation';
 
 
-export default function OutletDashboard() {
-    const [outlet, setOutlet] = useState<OutletData | null>(null);
+export default function WasherDashboard() {
+    const [outletWorker, setoutletWorker] = useState<any | null>(null);
     const [orders, setOrders] = useState<OrderData[]>([]);
     const router = useRouter();
 
     useEffect(() => {
-        const data = localStorage.getItem('outletAdmin');
+        const data = localStorage.getItem('outletWorker');
         if (data) {
             const outletData: OutletData = JSON.parse(data);
-            setOutlet(outletData);
+            setoutletWorker(outletData);
         }
     }, []);
 
     useEffect(() => {
-        if (outlet) {
+        if (outletWorker) {
             axios.get("http://localhost:8000/api/order")
                 .then((response) => {
-                    const filteredOrders = response.data.filter((order: OrderData) => order.outletId === outlet.outletId);
+                    const filteredOrders = response.data.filter((order: OrderData) => order.outletId === outletWorker.outletId && order.status == "washed");
                     setOrders(filteredOrders);
                 })
                 .catch((error) => {
                     console.error("Error fetching orders:", error);
                 });
         }
-    }, [outlet]);
+    }, [outletWorker]);
 
-    const handleProcessOrder = (orderId: number, userId: number, distance: number) => {
-        router.push(`/orders/${orderId}/process?userId=${userId}&distance=${distance}`);
+    const handleProcessOrder = (orderId: number, userId: number, outletWorkerId:number) => {
+        router.push(`/orders/${orderId}/wash?userId=${userId}&outletWorkerId=${outletWorkerId}`);
     };
     
     
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="p-6 bg-white rounded-lg shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Outlet Dashboard</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">Washer Dashboard</h2>
                 
-                {outlet ? (
+                {outletWorker ? (
                     <div>
-                        <p><strong>Outlet Name:</strong> {outlet.outletName}</p>
-                        <p><strong>Outlet Email:</strong> {outlet.outletEmail}</p>
+                        <p><strong>Name:</strong> {outletWorker.name}</p>
+                        <p><strong>Email:</strong> {outletWorker.email}</p>
 
                         <h3 className="mt-6 mb-2 text-lg font-semibold">Orders</h3>
                         {orders.length > 0 ? (
@@ -59,11 +59,11 @@ export default function OutletDashboard() {
                                         <p><strong>Total Price:</strong> {order.totalPrice}</p>
                                         <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
                                         <p><strong>Distance:</strong> {order.pickupDeliveryRequests[0]?.distance || 0}</p>
-                                        {order.status === "weighed" && (
+                                        {order.status === "washed" && (
                                             <div className="bg-yellow-100 text-yellow-800 p-2 mb-2 rounded">
-                                                <p>⚠️ This order needs to be processed</p>
+                                                <p>⚠️ This order needs to be washed</p>
                                                 <button
-                                                    onClick={() => handleProcessOrder(order.id, order.userId, order.pickupDeliveryRequests[0]?.distance || 0)}
+                                                    onClick={() => handleProcessOrder(order.id, order.userId, outletWorker.id)}
                                                     className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                                 >
                                                     Process Order
