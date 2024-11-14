@@ -18,9 +18,9 @@ model Sample {
 }
 
 enum WorkerRoles {
-  iron
+  ironer
   washer
-  dryer
+  packer
   driver
 }
 
@@ -36,6 +36,7 @@ enum OrderStatus {
   ready_for_delivery
   on_the_way_to_customer
   delivered_to_customer
+  recalculate
 }
 
 enum RoleUser {

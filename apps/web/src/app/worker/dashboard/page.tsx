@@ -1,6 +1,7 @@
 "use client"; 
 import AttendanceToday from '@/components/(worker)/attendenceToday';
 import DriverServices from '@/components/(worker)/driverServices';
+import IronerDashboard from '@/components/(worker)/ironerDashboard';
 import WasherDashboard from '@/components/(worker)/washerDashboard';
 import React, { useEffect, useState } from 'react';
 
@@ -31,6 +32,9 @@ export default function Attendance() {
             }
             {role === 'washer' && workerDetail && 
                 <WasherDashboard/>
+            }
+            {role === 'ironer' && workerDetail && 
+                <IronerDashboard/>
             }
         </div>
     );

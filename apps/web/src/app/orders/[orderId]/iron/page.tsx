@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { OrderItemData } from "@/type/worker/outletType";
 
-export default function WasherStation() {
+export default function IronStation() {
     const router = useRouter();
     const { orderId } = useParams();
     const searchParams = useSearchParams();
@@ -125,7 +125,7 @@ export default function WasherStation() {
     return (
         <div className="p-6 bg-white rounded-lg shadow-md w-full max-w-md mx-auto mt-10">
             <h2 className="text-2xl font-bold mb-4">
-                WASHING STATION <br /> Order {orderId}, userID: {userId}
+                IRON STATION <br /> Order {orderId}, userID: {userId}
             </h2>
             <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
                 {Object.keys(orderItems).map((item) => (
