@@ -18,6 +18,7 @@ export class OutletWorkerRouter {
         this.router.post('/', this.outletWorkerController.createOutletWorker);
         this.router.put('/id/:id', this.outletWorkerController.updateOutletWorker);
         this.router.delete('/id/:id', this.outletWorkerController.deleteOutletWorker);
+        this.router.post('/login', this.outletWorkerController.loginWorker);
     }
 
     getRouter(): Router {

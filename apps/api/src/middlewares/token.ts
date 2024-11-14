@@ -14,6 +14,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
         const verifiedToken = verify(token, process.env.JWT_SECRET || "sangat rahasia");
         req.user = verifiedToken as IUserData; 
+        console.log(req.user)
 
         next();
     } catch (err) {
