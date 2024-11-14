@@ -44,7 +44,7 @@ const Header = () => {
       dispatch(logoutAction()); // Pastikan action Redux dipanggil untuk logout
       toast.success(result.message);
       setUserMenuIsOpen(false);
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error('Logout error:', error);
       toast.error(error instanceof Error ? error.message : 'Error logging out');

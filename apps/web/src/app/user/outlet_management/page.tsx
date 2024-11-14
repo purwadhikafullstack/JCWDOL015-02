@@ -49,7 +49,7 @@ const OutletManagement: React.FC = () => {
   }, [apiUrl]);
 
   useEffect(() => {
-    fetchOutlets();
+    // fetchOutlets();
   }, [fetchOutlets]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
