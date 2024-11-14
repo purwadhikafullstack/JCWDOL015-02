@@ -143,54 +143,6 @@ export class AddressController {
       res.status(400).send({ status: "error",message: error,});
     }
   }
-  async createAddressReverse(req: Request, res: Response) {
-    const { userId, outletId, latitude, longitude } = req.body;
-    try {
-      if (!userId && !outletId) {
-        return res.status(400).send({ error: 'Either userId or outletId must be provided' });
-      }
-      const apiKey = '671dfa638d605573966053jft24917e';
-  
-      const reverseGeoResponse = await axios.get(
-        `https://geocode.maps.co/reverse`,
-        {
-          params: { lat: latitude, lon: longitude, api_key: apiKey },
-        },
-      );
-  
-      const data = reverseGeoResponse.data;
-  
-      if (!data) {
-        return res.status(404).send({ error: 'Location not found' });
-      }
-  
-      const {
-        display_name,
-        address: { city_district, city, state, postcode, country },
-        lat,
-        lon,
-      } = data;
-  
-      const newAddress = await prisma.address.create({
-        data: {
-          userId: userId || null,  
-          outletId: outletId || null, 
-          address: display_name,
-          city: city || city_district,
-          state: state || '',
-          postalCode: postcode || '',
-          country: country || '',
-          latitude: parseFloat(lat),
-          longitude: parseFloat(lon),
-        },
-      });
-  
-      return res.status(201).send(newAddress);
-    } catch (error) {
-      console.error('Error creating address:', error);
-      return res.status(500).send({ error: 'Error creating address' });
-    }
-  }
   
   async updateAddress(req: Request, res: Response) {
     const { id, address, city, state, postalCode, country, phone } = req.body;
