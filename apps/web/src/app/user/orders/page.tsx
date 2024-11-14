@@ -1,8 +1,8 @@
-import AllOrderPage from '@/components/(orders)/(all-orders)/AllOrderPage';
+import AllOrderPage from '@/components/(orders)/AllOrderPage';
 
 const page = () => {
   return (
-    <section className='bg-lightCustom'>
+    <section className="bg-lightCustom">
       <AllOrderPage />
     </section>
   );
