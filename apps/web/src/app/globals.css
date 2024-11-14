@@ -2,15 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global styles */
-body {
-  font-family: 'Arial', sans-serif;
-}
-
-a {
-  text-decoration: none;
-}
-
-button {
-  cursor: pointer;
+:root {
+  --custom-gray: #7d7c7c;
+  --custom-beige: #ccc8aa;
+  --custom-light: #f1efef;
 }

@@ -1,91 +1,163 @@
 import { Request, Response } from 'express';
-import User, { IUser } from '../models/user.model'; // Mengimpor IUser untuk tipe yang lebih tepat
-import jwt from 'jsonwebtoken';
-import { sendMail } from '../helpers/nodemailer';
-import bcrypt from 'bcryptjs'; // Menambahkan bcrypt untuk enkripsi password
+import prisma from '@/prisma';
+import { compare, hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
+import { transporter } from '@/helpers/nodemailer';
+import path from 'path';
+import fs from 'fs';
+import handlebars from 'handlebars';
+import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
+const verifyToken = uuidv4();
+const verifyTokenExp = dayjs().add(1, 'hour').toDate();
 
 export class AuthController {
-  // Fungsi untuk login
-  async login(req: Request, res: Response): Promise<Response> {
-    const { username, password } = req.body;
-
+  async registerUserWithMail(req: Request, res: Response) {
     try {
-      // Mencari pengguna berdasarkan username
-      const user = await User.findOne({ username });
-      if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
+      const { email, password } = req.body; // Assuming email and password are sent in the request body
+      const user = await prisma.user.findUnique({
+        // Gunakan Prisma untuk mengambil user
+        where: { email },
+      });
 
-      // Mengecek password menggunakan bcrypt
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
+      if (!user || !user.password)
+        throw new Error('User not found or password not set!');
 
-      // Jika pengguna ditemukan dan password valid, buat token JWT
-      const secret = process.env.JWT_SECRET;
-      if (!secret) {
-        return res.status(500).json({
-          message: 'Internal server error: JWT_SECRET is not defined.',
+      const isValidPass = await compare(password, user.password); // Compare the provided password with the stored hash
+
+      //If password doesn't match
+      if (!isValidPass) throw new Error('Incorrect password!');
+
+      const payload = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      };
+
+      const loginToken = sign(payload, process.env.JWT_SECRET!, {
+        expiresIn: '30d',
+      });
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { loginToken },
+      });
+
+      res
+        .status(200)
+        .send({ status: 'ok', message: 'Login success!', data: user });
+    } catch (error) {
+      res
+        .status(400)
+        .send({ message: error instanceof Error ? error.message : error });
+    }
+  }
+
+  async setPassword(req: Request, res: Response) {
+    const { verifyToken, password } = req.body;
+    try {
+      const registerUser = await prisma.user.findFirst({
+        where: { verifyToken: verifyToken },
+      });
+      const resetPassUser = await prisma.user.findFirst({
+        where: { userToken: verifyToken },
+      });
+      if (!registerUser && !resetPassUser) throw 'user not found !';
+
+      const hashedPassword = await hash(password, 10);
+      if (resetPassUser) {
+        await prisma.user.update({
+          where: { userToken: verifyToken },
+          data: {
+            password: hashedPassword,
+            userToken: null,
+            userTokenExp: null,
+          },
+        });
+      }
+      if (registerUser) {
+        await prisma.user.update({
+          where: { verifyToken },
+          data: {
+            password: hashedPassword,
+            verified: true,
+            verifyToken: null,
+            verifyTokenExp: null,
+          },
         });
       }
 
-      const token = this.generateToken(user);
-
-      // Kirim email verifikasi setelah login sukses
-      const subject = 'Login Successful';
-      const text = `Hi ${user.username},\n\nYou have successfully logged in! Here's your token: ${token}`;
-
-      await sendMail({ to: user.email, subject, text }); // Mengirim email kepada user dengan token
-
-      return res.json({ token }); // Kembalikan token ke frontend
+      return res.status(200).send({
+        status: 'ok',
+        message: 'Password set successfully, you can now login',
+      });
     } catch (error) {
-      console.error(error); // Menambahkan logging error untuk memudahkan debugging
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-  }
-
-  // Fungsi untuk membuat token JWT
-  generateToken(user: IUser): string {
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      throw new Error('JWT_SECRET is not defined.');
-    }
-    return jwt.sign({ id: user._id, role: user.role }, secret, {
-      expiresIn: '1h',
-    });
-  }
-
-  // Fungsi untuk registrasi user baru
-  async register(req: Request, res: Response): Promise<Response> {
-    const { username, password, email } = req.body;
-
-    try {
-      // Periksa apakah username sudah ada
-      const existingUser = await User.findOne({ username });
-      if (existingUser) {
-        return res.status(400).json({ message: 'Username already exists' });
+      if (error instanceof Error) {
+        res.status(400).send({
+          status: 'error',
+          message: error.message,
+        });
       }
+      res.status(400).send({
+        status: 'error',
+        message: error,
+      });
+    }
+  }
 
-      // Mengenkripsi password sebelum disimpan
-      const hashedPassword = await bcrypt.hash(password, 10);
+  async loginWithMail(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const existingUser = await prisma.user.findUnique({
+        where: { email: email },
+      });
+      if (!existingUser) throw 'user not found !';
+      if (existingUser.password === null)
+        throw 'Please login with google if you dont have a password';
+      const isValidPass = await compare(password, existingUser.password);
+      if (!isValidPass) throw 'incorrect password !';
+      const payload = {
+        id: existingUser.id,
+        username: existingUser.username,
+        email: existingUser.email,
+        role: existingUser.role,
+      };
+      const loginToken = sign(payload, process.env.JWT_SECRET!, {
+        expiresIn: '30d',
+      });
+      res.cookie('loginToken', loginToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
 
-      // Membuat user baru
-      const newUser = new User({ username, password: hashedPassword, email });
-      await newUser.save();
-
-      // Kirim email verifikasi setelah registrasi
-      const subject = 'Welcome to Our Service';
-      const text = `Hello ${newUser.username},\n\nThank you for registering!`;
-
-      await sendMail({ to: newUser.email, subject, text }); // Mengirim email verifikasi ke pengguna baru
-
-      return res.status(201).json({ message: 'User created successfully' });
+      res
+        .status(200)
+        .send({ status: 'ok', message: 'login success !', data: existingUser });
     } catch (error) {
-      console.error(error); // Menambahkan logging error
-      return res.status(500).json({ message: 'Internal server error' });
+      if (error instanceof Error) {
+        res.status(400).send({ status: 'error', message: error.message });
+      }
+      res.status(400).send({ status: 'error', message: error });
+    }
+  }
+
+  async logoutUser(req: Request, res: Response) {
+    try {
+      const loginToken = req.cookies.loginToken;
+      if (!loginToken)
+        return res.status(400).send({ message: 'No user is logged in!' });
+
+      const user = await prisma.user.findFirst({ where: { loginToken } });
+      if (!user) return res.status(400).send({ message: 'User not found!' });
+
+      // Pastikan cookie dihapus dari root path
+      res.clearCookie('loginToken', { path: '/', domain: 'localhost' });
+      res.status(200).send({ message: 'Logout successful!' });
+    } catch (error) {
+      res
+        .status(400)
+        .send({ message: error instanceof Error ? error.message : error });
     }
   }
 }
-
-export const authController = new AuthController();

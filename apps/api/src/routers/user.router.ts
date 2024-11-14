@@ -1,99 +1,43 @@
-import express from 'express';
-import {
-  createUser,
-  getAllUsers,
-  updateUser,
-  deleteUser,
-} from '../controllers/user.controller';
-import { body, param, validationResult } from 'express-validator';
-import {
-  authMiddleware,
-  adminMiddleware,
-} from '../middlewares/auth.middleware';
+import { UserController } from '@/controllers/user.controller';
+import { uploaderImg } from '@/middlewares/uploader';
+import { Router } from 'express';
 
-const router = express.Router();
+export class UserRouter {
+  private router: Router;
+  private userController: UserController;
 
-const validateCreateUser = [
-  body('username').isString().notEmpty().withMessage('Username is required'),
-  body('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long'),
-  body('role')
-    .isIn(['admin', 'outlet', 'worker', 'driver'])
-    .withMessage('Role must be one of admin, outlet, worker, or driver'),
-];
+  constructor() {
+    this.userController = new UserController();
+    this.router = Router();
+    this.initializeRoutes();
+  }
 
-const validateGetUser = [
-  param('id').isMongoId().withMessage('User ID must be a valid MongoDB ID'),
-];
+  // Inisialisasi rute-rute yang diperlukan
+  private initializeRoutes(): void {
+    this.router.get('/', this.userController.getUsers); // Menampilkan semua user
+    this.router.post('/register', this.userController.createUser); // Membuat user baru
+    this.router.put('/:id', this.userController.updateUser); // Memperbarui data user
+    this.router.delete('/:id', this.userController.deleteUser); // Menghapus user berdasarkan ID
 
-router.post(
-  '/users',
-  authMiddleware,
-  adminMiddleware,
-  validateCreateUser,
-  (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    createUser(req, res);
-  },
-);
+    // Rute tambahan untuk manajemen profil user dan lainnya
+    this.router.get('/profile', this.userController.getUserProfile);
+    this.router.patch('/update-mail', this.userController.updateMailUser);
+    this.router.patch('/only-verify', this.userController.onlyVerifyAccount);
+    this.router.patch('/delete-avatar', this.userController.deleteAvatar);
+    this.router.patch('/update-username', this.userController.updateUsername);
+    this.router.patch(
+      '/update-password',
+      this.userController.updatePasswordUser,
+    );
+    this.router.patch(
+      '/update-avatar',
+      uploaderImg('avatar-', '/avatar').single('avatar'),
+      this.userController.updateAvatar,
+    );
+  }
 
-router.get(
-  '/users',
-  authMiddleware,
-  adminMiddleware,
-  (req: express.Request, res: express.Response) => {
-    getAllUsers(req, res);
-  },
-);
-
-router.get(
-  '/users/:id',
-  authMiddleware,
-  adminMiddleware,
-  validateGetUser,
-  (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    getUser(req, res);
-  },
-);
-
-router.put(
-  '/users/:id',
-  authMiddleware,
-  adminMiddleware,
-  validateGetUser,
-  (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    updateUser(req, res);
-  },
-);
-
-router.delete(
-  '/users/:id',
-  authMiddleware,
-  adminMiddleware,
-  validateGetUser,
-  (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    deleteUser(req, res);
-  },
-);
-
-export default router;
-
-function getUser(req: express.Request, res: express.Response) {
-  throw new Error('Function not implemented.');
+  // Mengembalikan objek router
+  getRouter(): Router {
+    return this.router;
+  }
 }

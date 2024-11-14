@@ -1,8 +1,24 @@
+import { AuthController } from '@/controllers/auth.controller'; // Pastikan ini benar
 import { Router } from 'express';
-import { login } from '../controllers/auth.controller';
 
-const router = Router();
+export class AuthRouter {
+  private router: Router;
+  private authController: AuthController;
 
-router.post('/login', login);
+  constructor() {
+    this.authController = new AuthController();
+    this.router = Router();
+    this.initializeRoutes();
+  }
 
-export default router;
+  private initializeRoutes(): void {
+    this.router.post('/register', this.authController.registerUserWithMail);
+    this.router.post('/set-password', this.authController.setPassword);
+    this.router.post('/login', this.authController.loginWithMail);
+    this.router.delete('/logout', this.authController.logoutUser);
+  }
+
+  getRouter(): Router {
+    return this.router;
+  }
+}

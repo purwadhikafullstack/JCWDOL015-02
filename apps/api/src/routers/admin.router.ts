@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/auth.middleware';
-import { roleMiddleware } from '../middlewares/role.middleware'; // Memastikan ini sesuai
+import { roleMiddleware } from '../middlewares/role.middleware';
 import { adminController } from '../controllers/admin.controller';
 
 const router = Router();
 
 router.use(authMiddleware);
-router.use(roleMiddleware(['admin'])); // Memanggil dengan array untuk peran yang diizinkan
+router.use(roleMiddleware(['admin']));
 
 router.get('/users', adminController.getAllUsers.bind(adminController));
 router.get('/users/:id', adminController.getUserById.bind(adminController));

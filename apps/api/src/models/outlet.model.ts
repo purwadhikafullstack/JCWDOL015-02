@@ -1,3 +1,4 @@
+// outlet.model.ts
 import mongoose, { Document, Schema, Types, SchemaTypes } from 'mongoose';
 
 export interface OutletDocument extends Document {

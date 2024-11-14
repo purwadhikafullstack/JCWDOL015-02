@@ -1,16 +1,15 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 
-// Antarmuka IUser yang mencakup properti email
 export interface IUser extends Document {
   username: string;
   password: string;
   role: 'admin' | 'outlet' | 'worker' | 'driver';
-  email: string; // Menambahkan properti email
+  email: string;
 }
 
-const UserSchema: Schema = new Schema(
+const UserSchema = new Schema(
   {
-    username: { type: String, required: true, unique: true }, // Menambahkan validasi unique
+    username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: {
       type: String,
@@ -20,14 +19,13 @@ const UserSchema: Schema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true, // Menambahkan validasi unique pada email
-      match: [/\S+@\S+\.\S+/, 'Please use a valid email address'], // Validasi format email
+      unique: true,
+      match: [/\S+@\S+\.\S+/, 'Please use a valid email address'],
     },
   },
   { timestamps: true },
-); // Menambahkan timestamps untuk createdAt dan updatedAt
+);
 
-// Membuat model User berdasarkan schema yang ada
-const User = mongoose.model<IUser>('User', UserSchema);
+const User = model<IUser>('User', UserSchema);
 
 export default User;

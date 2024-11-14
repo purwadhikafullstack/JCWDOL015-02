@@ -1,24 +1,42 @@
-import Footer from '@/components/Footer';
-import type { ReactNode } from 'react';
-import Navbar from '@/pages/Navbar';
-import LoginPage from '@/pages/LoginPage';
-import OrderForm from '@/components/OrderForm';
-import RegisterPage from '@/pages/Register';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Footer } from '@/components/Footer';
+import Header from '@/components/Header';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import StoreProvider from '@/redux/storeProvider';
+const inter = Inter({ subsets: ['latin'] });
+import dotenv from 'dotenv';
+dotenv.config();
+export const metadata: Metadata = {
+  title: 'LaunON.',
+  description: 'Owned and operated by LaunON Style',
+  icons: {
+    icon: '/favicon.ico',
+  },
+};
 
-interface LayoutProps {
-  children: ReactNode;
-}
-
-const Layout = ({ children }: LayoutProps) => {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className="container">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+      <body className={`${inter.className}`}>
+        <StoreProvider>
+          <Header />
+          {children}
+          <Footer />
+          <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            closeOnClick
+            draggable
+          />
+        </StoreProvider>
       </body>
     </html>
   );
-};
-
-export default Layout;
+}

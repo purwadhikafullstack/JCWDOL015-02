@@ -1,11 +1,25 @@
+import { OrderController } from '@/controllers/order.controller';
 import { Router } from 'express';
-import { OrderController } from '../controllers/order.controller';
-import { authMiddleware } from '../middlewares/auth.middleware';
 
-const router = Router();
+export class OrderRouter {
+  private router: Router;
+  private orderController: OrderController;
 
-router.get('/orders', authMiddleware, OrderController.getAllOrders);
-router.post('/orders/create', authMiddleware, OrderController.createOrder);
-router.put('/orders/confirm', authMiddleware, OrderController.confirmOrder);
+  constructor() {
+    this.orderController = new OrderController();
+    this.router = Router();
+    this.initializeRoutes();
+  }
 
-export default router;
+  private initializeRoutes(): void {
+    this.router.get('/', this.orderController.getAllOrder);
+    this.router.get('/:orderId', this.orderController.getOrderById);
+    this.router.post('/create', this.orderController.createOrder);
+    this.router.patch('/:orderId', this.orderController.updateOrder);
+    this.router.delete('/:orderId', this.orderController.deleteOrder);
+  }
+
+  getRouter(): Router {
+    return this.router;
+  }
+}

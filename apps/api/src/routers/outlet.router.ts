@@ -1,16 +1,32 @@
+import { OutletController } from '@/controllers/outlet.controllers';
+import { verifyToken } from '@/middlewares/token';
+import { authMiddleware } from '@/middlewares/auth.middleware'; // pastikan ini diimport dengan benar
 import { Router } from 'express';
-import {
-  createOutlet,
-  getOutlets,
-  updateOutlet,
-  deleteOutlet,
-} from '../controllers/outlet.controller';
 
-const router = Router();
+export class OutletRouter {
+  private router: Router;
+  private outletController: OutletController;
 
-router.post('/', createOutlet);
-router.get('/', getOutlets);
-router.put('/:id', updateOutlet);
-router.delete('/:id', deleteOutlet);
+  constructor() {
+    this.outletController = new OutletController();
+    this.router = Router();
+    this.initializeRoutes();
+  }
 
-export default router;
+  private initializeRoutes(): void {
+    this.router.get('/', this.outletController.getAllOutlet);
+    this.router.get('/login', this.outletController.loginOutlet);
+    this.router.get('/id/:id', this.outletController.getOutletById);
+    this.router.post(
+      '/register',
+      authMiddleware,
+      this.outletController.createOutlet,
+    );
+    this.router.put('/id/:id', verifyToken, this.outletController.updateOutlet);
+    this.router.delete('/id/:id', this.outletController.deleteOutlet);
+  }
+
+  getRouter(): Router {
+    return this.router;
+  }
+}

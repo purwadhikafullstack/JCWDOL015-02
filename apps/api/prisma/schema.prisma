@@ -14,7 +14,7 @@ model Sample {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("samples")
+  @@map("samples") // if you want to use snake_case format
 }
 
 enum WorkerRoles {
@@ -38,42 +38,32 @@ enum OrderStatus {
   delivered_to_customer
 }
 
+enum RoleUser {
+  customer
+  admin
+  superAdmin
+  worker
+}
+
 model User {
   id             Int              @id @default(autoincrement())
   email          String           @unique
-  password       String
-  role           String           @default("customer")
+  username       String
+  avatar         String           @default("https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png")
+  password       String?
+  role           RoleUser         @default(customer)
   verified       Boolean          @default(false)
-  mainAddress    String?             
+  loginToken     String?          @db.VarChar(255)
+  verifyToken    String?          @unique
+  verifyTokenExp DateTime?        
+  userToken      String?          @unique
+  userTokenExp   DateTime?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
-  profile        UserProfile?
-  verifications   UserVerification[]
   notifications   Notification[]
   addresses      Address[]        @relation("UserAddresses")
   orders         Order[]
-}
-
-model UserProfile {
-  id             Int       @id @default(autoincrement())
-  userId         Int       @unique
-  firstName      String?
-  lastName       String?
-  profilePicture String?
-  updatedAt      DateTime  @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-model UserVerification {
-  id               Int       @id @default(autoincrement())
-  userId           Int
-  verificationCode String
-  used             Boolean   @default(false)
-  createdAt        DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id])
 }
 
 model Notification {
@@ -98,6 +88,8 @@ model Address {
   state        String
   postalCode   String
   country      String
+  isMain       Boolean @default(false)
+  phone        String?
   latitude     Float?
   longitude    Float?
   createdAt    DateTime @default(now())
@@ -115,21 +107,21 @@ model Order {
   userId        Int
   addressId     Int         
   outletId      Int
-  workerId      Int
   package       String?
-  status        OrderStatus
+  status        OrderStatus @default(waiting_for_pickup)
   pickupSchedule DateTime
   totalWeight   Float?
   totalItems    Int         @default(0)
   totalPrice    Float?
   paymentStatus String      @default("unpaid")
+  paymentLink   String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   user    User    @relation(fields: [userId], references: [id])
   address Address @relation(fields: [addressId], references: [id])
   outlet  Outlet @relation(fields: [outletId], references: [id])
-  items OrderItem[]
+  orderItems OrderItem[]
   pickupDeliveryRequests PickupDeliveryRequest[]
   payments Payment[]
   orderHistory OrderHistory[]
@@ -139,9 +131,6 @@ model Order {
 model OrderItem {
   id          Int         @id @default(autoincrement())
   orderId     Int
-  quantity    Int
-  laundry_type String
-  price       Float
   iron        Int
   washer      Int
   dryer       Int
@@ -168,7 +157,7 @@ model PickupDeliveryRequest {
   distance        Int      // in kilometer
   driverId        Int
   fromAddressId   Int
-  toAddressId     Int 
+  toAddressId     Int
   requestType     String   @default("")
   status          String   @default("Wait to pick up")
   createdAt       DateTime @default(now())
@@ -181,6 +170,7 @@ model PickupDeliveryRequest {
   toAddress       Address      @relation("ToAddress", fields: [toAddressId], references: [id])
 }
 
+
 model Outlet {
   id         Int      @id @default(autoincrement())
   name       String
@@ -188,6 +178,7 @@ model Outlet {
   email      String   @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
   workers OutletWorker[]
   addresses Address[]
   orders Order[]
@@ -221,6 +212,7 @@ model Attendance {
   createdAt  DateTime @default(now())
 
   worker OutletWorker @relation(fields: [workerId], references: [id])
+
   @@unique([workerId, date])  
 }
 
@@ -242,8 +234,8 @@ model DriverStatus {
   id            Int     @id @default(autoincrement())
   driverId      Int     @unique
   status        String     @default("available")
-  PdrId           Int?
-
+  PdrId           Int?   
+    
   outletWorker  OutletWorker @relation(fields: [driverId], references: [id], onDelete: Cascade)
 }
 
@@ -263,6 +255,6 @@ model OrderHistory {
   orderId     Int
   status      String
   changeDate  DateTime @default(now())
-  
+
   order Order @relation(fields: [orderId], references: [id])
 }
