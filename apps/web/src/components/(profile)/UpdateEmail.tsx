@@ -8,9 +8,6 @@ const UpdateEmail = () => {
   const [isLoading, setIsloading] = useState(false)
     const user = useAppSelector((state) => state.auth)
     const modal = document.getElementById("modal_update_email") as HTMLDialogElement;
-    const handleCancelBtn = () => {
-      modal.close();
-    };
     const sendMailUpdate = async () => {
         setIsloading(true)
         const email = user.email
@@ -31,7 +28,7 @@ const UpdateEmail = () => {
             <p className="text-beigeCustom">If yes, you will re-verify your email</p>
           <div className="flex justify-center items-center gap-2 w-full mt-3">
           <button disabled={isLoading} onClick={sendMailUpdate} className="text-sm font-semibold bg-beigeCustom hover:bg-black hover:text-beigeCustom duration-300 px-3 py-2 rounded-full uppercase tracking-wide shadow-xl">{isLoading ? 'Proccessing..':'Update Email'}</button>
-          <button onClick={() => handleCancelBtn()} className="text-sm font-semibold bg-black text-beigeCustom duration-300 px-3 py-2 rounded-full uppercase tracking-wide shadow-xl">Cancel</button>
+          <button onClick={() => modal.close()} className="text-sm font-semibold bg-black text-beigeCustom duration-300 px-3 py-2 rounded-full uppercase tracking-wide shadow-xl">Cancel</button>
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">

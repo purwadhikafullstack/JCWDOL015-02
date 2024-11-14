@@ -89,15 +89,3 @@ export const getAllOutletAddressFetchDb = async (page:number) => {
   const result = await res.json();
   return { result, ok: res.ok };
 }
-
-export const getOutletAddressesByStateFetchDb = async (state: string) => {
-  const res = await fetch(`${BASE_URL}/address/outlet/by/${state}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  })
-  const result = await res.json();
-  return { result, ok: res.ok };
-}

@@ -25,8 +25,8 @@ export const getOrderByIdFetchDb = async (id: number) => {
   const result = await res.json();
   return { result, ok: res.ok };
 }
-export const getOrdersByUserFetchDb = async (id: number) => {
-  const res = await fetch(`${BASE_URL}/order/user/${id}`, {
+export const getOrdersByUserFetchDb = async (data: any) => {
+  const res = await fetch(`${BASE_URL}/order/user/${data.id}?page=${data.currentPage}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -36,6 +36,7 @@ export const getOrdersByUserFetchDb = async (id: number) => {
   const result = await res.json();
   return { result, ok: res.ok };
 }
+
 export const searchOrderFetchDb = async (data: any) => {
   const res = await fetch(`${BASE_URL}/order/search`, {
     method: "POST",

@@ -16,7 +16,6 @@ export class AddressRouter {
     this.router.get('/', this.addressController.getAllAddresses)
     this.router.get('/id/:id', this.addressController.getAddressById);
     this.router.get('/outlets/:role', this.addressController.getAllAddressByRole);
-    this.router.get('/outlet/by/:state', this.addressController.getOutlesAddressByState);
     this.router.get('/user/:id', this.addressController.getAddresByUserId);
     this.router.patch('/set-main', this.addressController.setMainAddress);
     this.router.post('/create', this.addressController.createAddress);

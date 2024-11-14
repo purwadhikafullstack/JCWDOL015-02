@@ -1,16 +1,22 @@
 'use client';
+import { FaBoxOpen } from "react-icons/fa";
 import { getOrdersByUserFetchDb, searchOrderFetchDb } from '@/lib/orderLib';
 import { useAppSelector } from '@/redux/hooks';
 import { IOrder } from '@/type/orderType';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SearchOrder from '../(search-order)/SearchOrder';
+import BtnPagination from '@/components/BtnPagination';
+import Link from "next/link";
 
 const AllOrderPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const user = useAppSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const [orders, setOrders] = useState<IOrder[]>([]);
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const [totalPage, setTotalPage] = useState(1);
   const selectSearchModal = document.getElementById(
     'modal_search_order',
   ) as HTMLDialogElement;
@@ -22,15 +28,19 @@ const AllOrderPage = () => {
   useEffect(() => {
     const getOrders = async () => {
       try {
-        const { result, ok } = await getOrdersByUserFetchDb(user.id);
+        const { result, ok } = await getOrdersByUserFetchDb({
+          id: user.id,
+          currentPage,
+        });
         if (!ok) throw result.message;
         setOrders([...result.data]);
+        setTotalPage(result.totalPages);
       } catch (error) {
         console.log(error);
       }
     };
     getOrders();
-  }, [user.id]);
+  }, [user.id, currentPage]);
   const handleSearchOrder = async (
     values: { orderId?: string; date?: string },
     resetForm: () => void,
@@ -55,18 +65,19 @@ const AllOrderPage = () => {
     }
   };
   return (
-    <div className="w-full min-h-[100vh] py-6 flex flex-col justify-center items-center">
+    <div className="w-full min-h-[100vh] py-6 flex flex-col justify-start items-center">
       <div className="text-center my-3 md:my-11 px-5 md:px-0">
         <h1 className="text-2xl md:text-5xl font-semibold uppercase tracking-wide text-black mb-0 mt-12 md:mb-3 md:mt-0">
           Your Order History
         </h1>
-        <p>
+        <p className="text-black text-sm md:text-base mb-2 md:mb-4">
           Lihat perjalanan pesanan Anda dari awal hingga selesai. Tetap
           terhubung dengan setiap langkah dan temukan kemudahan dalam melacak
           riwayat transaksi Anda.
         </p>
       </div>
-      <SearchOrder
+      {orders.length > 0 ? (<>
+        <SearchOrder
         handleSubmitSearch={handleSearchOrder}
         isLoading={isLoading}
         selectSearchModal={selectSearchModal}
@@ -103,30 +114,35 @@ const AllOrderPage = () => {
                   timeStyle: 'short',
                 })}
               </p>
-              <button
-                className="btn btn-primary mt-2"
-                onClick={() => router.push(`/user/orders/${order.id}`)}
-              >
-                View Details
-              </button>
+              {order?.status == 'waiting_for_payment' && (
+                <button
+                  className="cursor-pointer hover:bg-black hover:text-beigeCustom bg-grayCustom text-black py-2 px-4 rounded-full transition duration-200 shadow-xl shadow-[#00000048] text-sm uppercase tracking-wide my-1"
+                  onClick={() => router.push(`${order.paymentLink}`)}
+                >
+                  Pay For the Order
+                </button>
+              )}
             </div>
           </div>
         </div>
       ))}
+      <BtnPagination
+        currentPage={currentPage}
+        totalPage={totalPage}
+        handlePageChange={(page) => {
+          router.push(`${process.env.NEXT_PUBLIC_BASE_WEB_URL}/user/orders?page=${page}`)
+          scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+      </>) : (<div className='my-10 w-full flex flex-col justify-center items-center'>
+          <FaBoxOpen className='text-6xl text-grayCustom' />
+          <h1 className='text-center text-md md:text-xl font-semibold text-grayCustom'>Belum Ada pesanan? Segera coba layanan kami dan rasakan kemudahan laundry tanpa repot!</h1>
+          <button className="mt-2 hover:bg-black hover:text-beigeCustom bg-grayCustom text-black py-2 px-4 rounded-full transition duration-200">
+          <Link href={'/services'}>Order Now</Link>
+        </button>
+      </div>)}
     </div>
   );
 };
 
 export default AllOrderPage;
-
-{
-  /* <p className="text-black">{order?.id}</p>
-<p>Order Status: {order?.status}</p>
-<p>Order Date: {order?.createdAt}</p>
-<p>From Outlet: {order?.outletId}</p>
-<p>To Address: {order?.addressId}</p>
-<p>Pickup Schedule: {order?.pickupSchedule}</p>
-<p>Total Price: {order?.totalPrice}</p>
-<p>Total Weight: {order?.totalWeight}</p>
-<p>Total Items: {order?.totalItems}</p> */
-}

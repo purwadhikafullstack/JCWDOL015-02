@@ -64,10 +64,6 @@ export class GoogleController {
         const loginToken = sign(payloadJwt, process.env.JWT_SECRET!, {
             expiresIn: "30d",
           });
-        await prisma.user.update({
-            where: { id: user.id },
-            data: { loginToken: loginToken },
-        })
         res.cookie("loginToken", loginToken, {
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,

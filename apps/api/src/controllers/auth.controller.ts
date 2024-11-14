@@ -137,10 +137,6 @@ export class AuthController {
         const loginToken = sign(payload, process.env.JWT_SECRET!, {
           expiresIn: "30d",
         });
-        await prisma.user.update({
-          where: { id: existingUser.id },
-          data: { loginToken: loginToken },
-        });
         res.cookie("loginToken", loginToken, {
           httpOnly: true,
           maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -158,15 +154,6 @@ export class AuthController {
     try {
       const loginToken = req.cookies.loginToken;
       if (!loginToken) throw "no user is logged in !";
-      const user = await prisma.user.findFirst({
-        where:{loginToken}
-      })
-      if (!user) throw "user not found !"
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { loginToken: null },
-      })
-
       res.clearCookie("loginToken");
       res.status(201).send({status: "ok",message: "logout success !"});
     } catch (error) {

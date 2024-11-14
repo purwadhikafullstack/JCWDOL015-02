@@ -11,24 +11,19 @@ export const middleware = (req: NextRequest) => {
   if(isUserLoggedIn) {
       const userLogin: IDecodedLoginToken  = jwtDecode(isUserLoggedIn.value);
       const role = userLogin.role;
-      if(
-        url.pathname.startsWith('/auth/register') ||
-        url.pathname.startsWith('/auth/login')
-        ) { return NextResponse.redirect(new URL('/', req.url)) }
+      if(['/auth/register', '/auth/login'].some(path => url.pathname.startsWith(path))) { 
+        return NextResponse.redirect(new URL('/', req.url)) 
+      }
       if(role == "customer"){
-          if(url.pathname.startsWith('/dashboard')){
+          if(url.pathname.startsWith('/user/dashboard')){
             return NextResponse.redirect(new URL('/', req.url));
           }
       }
   }
   if (!isUserLoggedIn) {
-    if (
-      url.pathname.startsWith('/user/profile') ||
-      url.pathname.match(/^\/services\/([^\/]+)/)
-    ) {
+    if (['/user/profile', '/user/dashboard', '/user/orders'].some(path => url.pathname.startsWith(path))) {
       return NextResponse.redirect(new URL('/auth/login', req.url));
     }
   }
-
   return res;
 };

@@ -55,21 +55,6 @@ export class AddressController {
     }
   }
 
-  async getOutlesAddressByState(req: Request, res: Response) {
-    const { state } = req.params;
-    try {
-      if (!state) throw "City is required";
-      const addresses = await prisma.address.findMany({
-        where:{state, outletId: {not: 0}},
-      })
-      if(!addresses) throw "Address not found";
-      return res.status(200).send({status:"ok", message: "Get Address By State Successfully", data: addresses});
-    } catch (error) {
-      if (error instanceof Error) {res.status(400).send({status: "error",message: error.message,});}
-      res.status(400).send({ status: "error",message: error,});
-    }
-  }
-
   async getAddressById(req: Request, res: Response) {
     const { id } = req.params;
     try {

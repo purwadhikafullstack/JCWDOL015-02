@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { requestOrderFetchDb } from '@/lib/orderLib';
 import { toast } from 'react-toastify';
 import { AiOutlineWarning } from 'react-icons/ai';
+import Link from 'next/link';
 
 const InputRequestPickup = () => {
   const user = useAppSelector((state) => state.auth);
@@ -123,6 +124,7 @@ const InputRequestPickup = () => {
           <div className='w-full text-center flex flex-col justify-center items-center'>
             <AiOutlineWarning className="text-beigeCustom w-10 h-10"/>
             <h1 className='text-2xl font-semibold text-white'>Please Create Your Address First On The Profile Page...</h1>
+            <Link href={`/user/profile/${user.id}`} className="text-beigeCustom font-semibold hover:text-white duration-300 my-2">Go To Profile</Link>
           </div>
         )}
         {/*Another Address*/}

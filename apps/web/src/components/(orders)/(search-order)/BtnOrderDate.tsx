@@ -11,7 +11,7 @@ const BtnOrderDate = (props:Props) => {
     const {isLoading, handleSubmit, byDateModal} = {...props}
   return (
     <>
-        <button onClick={() => byDateModal?.showModal()} className="text-sm font-semibold bg-black text-white duration-300 px-3 py-2 rounded-full uppercase tracking-wide shadow-xl hover:text-beigeCustom">by order date</button>
+        <button onClick={() => byDateModal?.showModal()} className="text-sm font-semibold bg-black text-white duration-300 px-3 py-2 rounded-full uppercase tracking-wide shadow-xl hover:text-beigeCustom">order date</button>
         <dialog id="order_by_date" className="modal">
             <div className="modal-box w-11/12 max-w-3xl bg-[#0000006b]">
                 <form method="dialog">
@@ -20,7 +20,7 @@ const BtnOrderDate = (props:Props) => {
                 </button>
                 </form>
                 <Formik
-                    initialValues={{date: new Date().toISOString().slice(0, 16),}}
+                    initialValues={{date: new Date().toISOString().slice(0, 10),}}
                     onSubmit={(values, {resetForm}) => handleSubmit(values, resetForm)}>
                     <Form>
                     <div className="flex justify-center items-center flex-col">

@@ -35,6 +35,7 @@ const Header = () => {
       dispatch(logoutAction());
       toast.success(result.message);
       setUserMenuIsOpen(false);
+      window.location.reload();
     } catch (error) {
       toast.error(error as string)
     }

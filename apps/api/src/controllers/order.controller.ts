@@ -76,16 +76,20 @@ export class OrderController {
   async getAllOrderByUserId(req: Request, res: Response) {
     try {
       const { Id } = req.params;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 2;
+      const startIndex = (page - 1) * limit;
       const orders = await prisma.order.findMany({
         where: { userId: Number(Id) },
         orderBy: {createdAt: 'desc'},
       });
+      const paginatedOrders = orders.slice(startIndex, startIndex + limit);
       res
         .status(200)
         .send({
           status: 'ok',
           message: 'Get All Orders By User Id Successfully',
-          data: orders,
+          data: paginatedOrders, currentPage: page, totalPages: Math.ceil(orders.length / limit)
         });
     } catch (error) {
       if (error instanceof Error)

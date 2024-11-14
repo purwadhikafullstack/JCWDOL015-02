@@ -1,4 +1,5 @@
 "use client";
+import { searchOrderByIdSchema } from "@/yup/orderSchema";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 
 type Props = {
@@ -10,7 +11,7 @@ const BtnOrderId = (props: Props) => {
     const {isLoading, handleSubmit, byIdModal} = {...props}
   return (
     <>
-        <button onClick={() => byIdModal?.showModal()} className="text-sm font-semibold bg-black text-white duration-300 px-3 py-2 rounded-full uppercase tracking-wide shadow-xl hover:text-beigeCustom">by order id</button>
+        <button onClick={() => byIdModal?.showModal()} className="text-sm font-semibold bg-black text-white duration-300 px-3 py-2 rounded-full uppercase tracking-wide shadow-xl hover:text-beigeCustom">Order Id</button>
         <dialog id="order_by_id" className="modal">
             <div className="modal-box w-11/12 max-w-3xl bg-[#0000006b]">
                 <form method="dialog">
@@ -20,6 +21,7 @@ const BtnOrderId = (props: Props) => {
                 </form>
                 
                 <Formik
+                    validationSchema={searchOrderByIdSchema}
                     initialValues={{orderId: ""}}
                     onSubmit={(values, {resetForm}) => handleSubmit(values, resetForm)}>
                     <Form>

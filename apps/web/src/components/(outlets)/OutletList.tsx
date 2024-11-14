@@ -3,7 +3,7 @@ import { getAllOutletAddressFetchDb } from '@/lib/addressLib';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaPhoneAlt } from 'react-icons/fa';
-import BtnPagination from './BtnPagination';
+import BtnPagination from '../BtnPagination';
 
 const OutletList = () => {
   const searchParams = useSearchParams();
@@ -35,7 +35,7 @@ const OutletList = () => {
     scrollTop()
   }
   return (
-    <div className="w-full flex flex-col justify-center items-center mt-5">
+    <div className="w-full flex flex-col justify-start items-center mt-5">
       {allAddress.map((address) => (
         <div key={address.id} className="text-center my-2">
         <h1 className="font-semibold text-lg md:text-xl">{address.city}</h1>
