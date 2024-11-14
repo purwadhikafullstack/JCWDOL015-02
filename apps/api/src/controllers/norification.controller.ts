@@ -60,7 +60,6 @@ export class NotificationController {
     }
   }
 
- 
   async deleteNotification(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
 
@@ -68,7 +67,9 @@ export class NotificationController {
       await prisma.notification.delete({
         where: { id: Number(id) },
       });
-      return res.status(200).send({ message: 'Notification deleted successfully' });
+      return res
+        .status(200)
+        .send({ message: 'Notification deleted successfully' });
     } catch (error) {
       console.error('Error deleting notification:', error);
       return res.status(500).send({ error: 'Error deleting notification' });

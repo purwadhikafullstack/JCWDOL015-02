@@ -5,8 +5,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 export class OutletController {
-
-
   async getAllOutlet(req: Request, res: Response): Promise<Response> {
     try {
       const outlets: Outlet[] = await prisma.outlet.findMany();
@@ -43,11 +41,11 @@ export class OutletController {
     const { name, password, email } = req.body;
     const SALT_ROUNDS = 10;
 
-    if (req.user?.role !== 'super_admin') {
-      return res.status(403).send(
-        { error: 'Forbidden: You do not have permission to perform this action',}
-    );
-    }
+    // if (req.user?.role !== 'super_admin') {
+    //   return res.status(403).send({
+    //     error: 'Forbidden: You do not have permission to perform this action',
+    //   });
+    // }
 
     try {
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -158,5 +156,4 @@ export class OutletController {
       return res.status(500).send({ error: 'Error during login' });
     }
   }
-
 }
