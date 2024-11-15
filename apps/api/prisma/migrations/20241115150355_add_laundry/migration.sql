@@ -17,8 +17,9 @@ CREATE TABLE `User` (
     `username` VARCHAR(191) NOT NULL,
     `avatar` VARCHAR(191) NOT NULL DEFAULT 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png',
     `password` VARCHAR(191) NULL,
-    `role` ENUM('customer', 'admin', 'superAdmin', 'worker') NOT NULL DEFAULT 'customer',
+    `role` ENUM('customer', 'admin', 'superAdmin', 'worker', 'driver') NOT NULL DEFAULT 'customer',
     `verified` BOOLEAN NOT NULL DEFAULT false,
+    `LoginToken` VARCHAR(191) NULL,
     `verifyToken` VARCHAR(191) NULL,
     `verifyTokenExp` DATETIME(3) NULL,
     `userToken` VARCHAR(191) NULL,
@@ -131,6 +132,10 @@ CREATE TABLE `Outlet` (
     `name` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
+    `avatar` VARCHAR(191) NULL,
+    `lat` VARCHAR(191) NOT NULL,
+    `lon` VARCHAR(191) NOT NULL,
+    `address` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -145,7 +150,7 @@ CREATE TABLE `OutletWorker` (
     `name` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `role` ENUM('iron', 'washer', 'dryer', 'driver') NOT NULL,
+    `role` ENUM('iron', 'washer', 'dryer') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -171,7 +176,7 @@ CREATE TABLE `WorkerJobHistory` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `workerId` INTEGER NOT NULL,
     `orderId` INTEGER NOT NULL,
-    `station` ENUM('iron', 'washer', 'dryer', 'driver') NOT NULL,
+    `station` ENUM('iron', 'washer', 'dryer') NOT NULL,
     `pickupDelivery` INTEGER NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -220,9 +225,6 @@ ALTER TABLE `Notification` ADD CONSTRAINT `Notification_workerId_fkey` FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE `Address` ADD CONSTRAINT `Address_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Address` ADD CONSTRAINT `Address_outletId_fkey` FOREIGN KEY (`outletId`) REFERENCES `Outlet`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Order` ADD CONSTRAINT `Order_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

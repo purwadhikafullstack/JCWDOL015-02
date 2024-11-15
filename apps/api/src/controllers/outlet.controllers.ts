@@ -75,7 +75,7 @@ export class OutletController {
   // Create new outlet
   // outlet.controller.ts
   async createOutlet(req: Request, res: Response): Promise<Response> {
-    const { name, password, email } = req.body;
+    const { name, password, email, lon, lat, address } = req.body;
 
     if (!name || !password || !email) {
       return res
@@ -100,7 +100,14 @@ export class OutletController {
 
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
       const newOutlet = await prisma.outlet.create({
-        data: { name, password: hashedPassword, email },
+        data: {
+          name,
+          password: hashedPassword,
+          email,
+          lon: String(lon),
+          lat: String(lat),
+          address,
+        },
       });
 
       return res.status(201).json(newOutlet);
@@ -116,7 +123,7 @@ export class OutletController {
   // Update outlet by ID
   async updateOutlet(req: Request, res: Response): Promise<Response> {
     const id = parseInt(req.params.id, 10);
-    const { name, password, email } = req.body;
+    const { name, password, email, lon, lat, address } = req.body;
 
     if (isNaN(id)) {
       return res.status(400).json({ error: 'Invalid ID format' });
@@ -128,7 +135,14 @@ export class OutletController {
         return res.status(404).json({ error: 'Outlet not found' });
       }
 
-      const updatedData: any = { name, email };
+      const updatedData: any = {
+        name,
+        email,
+        lon: String(lon),
+        lat: String(lat),
+        address,
+      };
+
       if (password) {
         updatedData.password = await bcrypt.hash(password, 10);
       }

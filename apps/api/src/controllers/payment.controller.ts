@@ -7,6 +7,7 @@ export const createOrder = async (req: Request, res: Response) => {
   const {
     userId,
     outletId,
+    outlet,
     user,
     addressId,
     orderPackage,
@@ -20,6 +21,7 @@ export const createOrder = async (req: Request, res: Response) => {
       data: {
         userId,
         outletId,
+        outlet: { connect: { id: outletId } },
         user: { connect: { id: user } },
         address: { connect: { id: addressId } },
         addressId,

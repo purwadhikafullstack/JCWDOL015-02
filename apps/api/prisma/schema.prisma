@@ -96,7 +96,6 @@ model Address {
   updatedAt    DateTime @updatedAt
 
   user         User?    @relation("UserAddresses", fields: [userId], references: [id])
-  outlet       Outlet?   @relation(fields: [outletId], references: [id], onDelete: Cascade) // tambah onDelete: Cascade
   orders       Order[]
   fromAddress  PickupDeliveryRequest[] @relation("FromAddress")
   toAddress    PickupDeliveryRequest[] @relation("ToAddress")
@@ -177,11 +176,14 @@ model Outlet {
   password   String
   email      String   @unique
   avatar     String?
+  lat        String
+  lon        String
+  address    String
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   workers OutletWorker[]
-  addresses Address[]
   orders Order[]
 }
 
