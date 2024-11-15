@@ -1,4 +1,5 @@
 import OutletLocation from '@/components/(outlets)/OutletList';
+import { PropsWithChildren } from 'react';
 
 const page = () => {
   return (
@@ -7,11 +8,13 @@ const page = () => {
         Outlets Locations
       </h1>
       <OutletLocation
-        outlets={[]}
-        currentPage={0}
-        totalPage={0}
-        handlePageChange={function (page: number): void {
-          throw new Error('Function not implemented.');
+        {...{
+          outlets: [],
+          currentPage: 0,
+          totalPage: 0,
+          handlePageChange: (page: number): void => {
+            throw new Error('Function not implemented.');
+          },
         }}
       />
     </section>

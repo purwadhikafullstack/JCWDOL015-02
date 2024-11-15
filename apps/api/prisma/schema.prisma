@@ -150,6 +150,15 @@ model OrderItem {
   order Order @relation(fields: [orderId], references: [id])
 }
 
+model LaundryItem {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  price       Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
 model PickupDeliveryRequest {
   id              Int      @id @default(autoincrement())
   orderId         Int

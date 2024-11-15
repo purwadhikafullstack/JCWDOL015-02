@@ -189,10 +189,8 @@ const OutletManagement: React.FC = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-white text-gray-700 p-4">
-        <h2 className="flex bg-blue-500 text-white text-2xl font-bold mb-3">
-          Menu
-        </h2>
+      {/* <div className="w-64 bg-white text-gray-700 p-4">
+        <h2 className="flex text-gray-700 text-2xl font-bold mb-3">Menu</h2>
         <ul className="space-y-4">
           <li
             className={`cursor-pointer ${selectedMenu === 'Outlet Management' ? 'font-semibold' : ''}`}
@@ -215,7 +213,7 @@ const OutletManagement: React.FC = () => {
             Assign Management
           </li>
         </ul>
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="flex-1 p-6">
@@ -225,7 +223,7 @@ const OutletManagement: React.FC = () => {
 
         {selectedMenu === 'Outlet Management' && (
           <div>
-            <div className="flex bg-whitejustify-between items-center mb-4">
+            <div className="flex bg-white justify-between items-center mb-4 p-2">
               <input
                 type="text"
                 placeholder="Search by name or email"

@@ -25,10 +25,12 @@ const Sidebar: React.FC = () => {
         </li>
         <li
           className={
-            router.pathname === '/laundry_item_management' ? 'bg-gray-700' : ''
+            router.pathname === 'user/laundry_item_management'
+              ? 'bg-gray-700'
+              : ''
           }
         >
-          <Link href="/laundry_item_management">
+          <Link href={'/user/laundryitemManagement'}>
             <a className="block px-4 py-2 hover:bg-gray-700">
               Laundry Item Management
             </a>

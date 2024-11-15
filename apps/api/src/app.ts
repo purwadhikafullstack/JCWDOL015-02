@@ -24,6 +24,7 @@ import { AuthRouter } from './routers/auth.router';
 import { GoogleRouter } from './routers/google.router';
 import { UserRouter } from './routers/user.router';
 import { MailRouter } from './routers/mail.router';
+import laundryItemRouter from './routers/laundryItem.router';
 dotenv.config();
 
 export default class App {
@@ -120,6 +121,7 @@ export default class App {
     this.app.use('/api/order', orderRouter.getRouter());
     this.app.use('/api/outlet', outletRouter.getRouter());
     this.app.use('/api/outlet-workers', outletWorkerRouter.getRouter()); // Add Outlet Worker routes
+    this.app.use('/api/laundryitems', laundryItemRouter);
     this.app.use('/api/super-admin', superAdminRouter.getRouter());
     this.app.use('/api/notification', notificationRouter.getRouter());
   }
