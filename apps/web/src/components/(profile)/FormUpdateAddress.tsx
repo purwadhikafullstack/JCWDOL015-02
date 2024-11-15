@@ -4,7 +4,12 @@ import { IUpdateAddress } from '@/type/customerType';
 import { updateAddressFetchDb } from '@/lib/addressLib';
 import { toast } from 'react-toastify';
 
-const FormUpdateAddress = (props: any) => {
+type Props = {
+  initialValues: IUpdateAddress;
+  addressId: number;
+}
+
+const FormUpdateAddress = (props: Props) => {
   const { initialValues, addressId } = { ...props };
 
   const handleUpdateAddress = async (

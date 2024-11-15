@@ -19,7 +19,6 @@ CREATE TABLE `User` (
     `password` VARCHAR(191) NULL,
     `role` ENUM('customer', 'admin', 'superAdmin', 'worker') NOT NULL DEFAULT 'customer',
     `verified` BOOLEAN NOT NULL DEFAULT false,
-    `loginToken` VARCHAR(255) NULL,
     `verifyToken` VARCHAR(191) NULL,
     `verifyTokenExp` DATETIME(3) NULL,
     `userToken` VARCHAR(191) NULL,

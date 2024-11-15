@@ -1,4 +1,9 @@
-import { AuthController } from '@/controllers/auth.controller'; // Pastikan ini benar
+import { AuthController } from '@/controllers/auth.controller';
+import {
+  validateLogin,
+  validateRegister,
+  validateSetPass,
+} from '@/middlewares/validator/authValidator';
 import { Router } from 'express';
 
 export class AuthRouter {
@@ -12,9 +17,21 @@ export class AuthRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.post('/register', this.authController.registerUserWithMail);
-    this.router.post('/set-password', this.authController.setPassword);
-    this.router.post('/login', this.authController.loginWithMail);
+    this.router.post(
+      '/register',
+      validateRegister,
+      this.authController.registerUserWithMail,
+    );
+    this.router.post(
+      '/set-password',
+      validateSetPass,
+      this.authController.setPassword,
+    );
+    this.router.post(
+      '/login',
+      validateLogin,
+      this.authController.loginWithMail,
+    );
     this.router.delete('/logout', this.authController.logoutUser);
   }
 

@@ -1,4 +1,5 @@
 import { AddressController } from '@/controllers/address.controllers';
+import { validateCreateAddress } from '@/middlewares/validator/addressValidator';
 
 import { Router } from 'express';
 
@@ -21,8 +22,11 @@ export class AddressRouter {
     );
     this.router.get('/user/:id', this.addressController.getAddresByUserId);
     this.router.patch('/set-main', this.addressController.setMainAddress);
-    this.router.post('/create', this.addressController.createAddress);
-    this.router.post('/reverse', this.addressController.createAddressReverse);
+    this.router.post(
+      '/create',
+      validateCreateAddress,
+      this.addressController.createAddress,
+    );
     this.router.put('/update', this.addressController.updateAddress);
     this.router.delete('/delete/:id', this.addressController.deleteAddress);
   }

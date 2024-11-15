@@ -21,7 +21,6 @@ enum WorkerRoles {
   iron
   washer
   dryer
-  driver
 }
 
 enum OrderStatus {
@@ -43,6 +42,7 @@ enum RoleUser {
   admin
   superAdmin
   worker
+  driver
 }
 
 model User {
@@ -53,7 +53,7 @@ model User {
   password       String?
   role           RoleUser         @default(customer)
   verified       Boolean          @default(false)
-  loginToken     String?          @db.VarChar(255)
+  LoginToken     String?
   verifyToken    String?          @unique
   verifyTokenExp DateTime?        
   userToken      String?          @unique
@@ -96,7 +96,7 @@ model Address {
   updatedAt    DateTime @updatedAt
 
   user         User?    @relation("UserAddresses", fields: [userId], references: [id])
-  outlet       Outlet?   @relation(fields: [outletId], references: [id])
+  outlet       Outlet?   @relation(fields: [outletId], references: [id], onDelete: Cascade) // tambah onDelete: Cascade
   orders       Order[]
   fromAddress  PickupDeliveryRequest[] @relation("FromAddress")
   toAddress    PickupDeliveryRequest[] @relation("ToAddress")
@@ -176,6 +176,7 @@ model Outlet {
   name       String
   password   String
   email      String   @unique
+  avatar     String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

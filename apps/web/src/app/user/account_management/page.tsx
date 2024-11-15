@@ -170,7 +170,7 @@ const AccountManagement = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-700">
+      <h1 className="text-3xl font-bold text-center mb-8 text-white">
         User Management
       </h1>
       <div className="flex justify-between items-center mb-4">
@@ -185,7 +185,7 @@ const AccountManagement = () => {
           <select
             value={selectedFilter}
             onChange={handleFilterChange}
-            className="px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+            className="px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 text-white"
           >
             <option value="All">All</option>
             <option value="admin">admin</option>
@@ -195,7 +195,7 @@ const AccountManagement = () => {
           </select>
           <button
             onClick={() => openModal()}
-            className="inline-flex items-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition"
+            className="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition"
           >
             <FaPlus className="mr-2" />
             Add User
@@ -267,7 +267,7 @@ const AccountManagement = () => {
 
       {/* Modal for adding/editing user */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 z-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex justify-center items-center">
           <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">
             <h2 className="text-2xl font-semibold mb-6">
               {editingUser.id ? 'Edit User' : 'Add User'}
@@ -283,7 +283,7 @@ const AccountManagement = () => {
                   type="text"
                   value={editingUser.username}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white text-black"
                   required
                 />
               </div>
@@ -297,7 +297,7 @@ const AccountManagement = () => {
                   type="email"
                   value={editingUser.email}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white text-black"
                   required
                 />
               </div>
@@ -312,7 +312,7 @@ const AccountManagement = () => {
                     type={passwordVisible ? 'text' : 'password'}
                     value={editingUser.password || ''}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white text-black"
                     required
                   />
                   <button
@@ -333,7 +333,7 @@ const AccountManagement = () => {
                   name="role"
                   value={editingUser.role}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white text-black"
                 >
                   <option value="" disabled>
                     Select Role
@@ -348,7 +348,7 @@ const AccountManagement = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-6 py-2 bg-gray-400 text-white rounded-lg"
+                  className="px-6 py-2 bg-red-500 text-white rounded-lg"
                 >
                   Cancel
                 </button>

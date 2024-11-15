@@ -36,6 +36,7 @@
     "@reduxjs/toolkit": "^2.3.0",
     "@types/axios": "^0.14.0",
     "axios": "^1.7.2",
+    "cookies-next": "^5.0.2",
     "mysql2": "^3.11.3",
     "react-redux": "^9.1.2",
     "redux-persist": "^6.0.0"

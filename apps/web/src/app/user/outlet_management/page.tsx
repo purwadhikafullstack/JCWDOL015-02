@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { toast } from 'react-toastify';
-import { FaTrashAlt, FaEdit, FaPlus } from 'react-icons/fa';
+import { FaTrashAlt, FaEdit, FaPlus, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { getToken } from '@/lib/server';
 
 interface Outlet {
   id: number;
@@ -22,6 +23,7 @@ const OutletManagement: React.FC = () => {
     password: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_BASE_API_URL;
 
@@ -37,8 +39,8 @@ const OutletManagement: React.FC = () => {
       }
 
       const data = await response.json();
-      if (Array.isArray(data)) {
-        setOutlets(data);
+      if (Array.isArray(data.data)) {
+        setOutlets(data.data);
       } else {
         throw new Error('Invalid data format');
       }
@@ -49,7 +51,7 @@ const OutletManagement: React.FC = () => {
   }, [apiUrl]);
 
   useEffect(() => {
-    // fetchOutlets();
+    fetchOutlets();
   }, [fetchOutlets]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,24 +79,30 @@ const OutletManagement: React.FC = () => {
     });
   };
 
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
   const saveOutlet = async () => {
     try {
       const method = editingOutlet.id ? 'PUT' : 'POST';
       const url = editingOutlet.id
         ? `${apiUrl}/outlet/${editingOutlet.id}`
         : `${apiUrl}/outlet/register`;
+      const token = await getToken();
 
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token?.toString()}`,
+        },
         body: JSON.stringify(editingOutlet),
       });
 
       const updatedOutlet = await response.json();
 
       if (editingOutlet.id) {
-        setOutlets((prevOutlet) =>
-          prevOutlet.map((o) =>
+        setOutlets((prevOutlets) =>
+          prevOutlets.map((o) =>
             o.id === editingOutlet.id ? updatedOutlet : o,
           ),
         );
@@ -131,26 +139,28 @@ const OutletManagement: React.FC = () => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredOutlets = outlets.filter((outlet) =>
-    outlet?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+  const filteredOutlets = outlets.filter(
+    (outlet) =>
+      outlet.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      outlet.email?.toLocaleLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-700">
+      <h1 className="text-3xl font-bold text-center mb-8 text-white">
         Outlet Management
       </h1>
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
-          placeholder="Search by name"
+          placeholder="Search by name or email"
           value={searchQuery}
           onChange={handleSearch}
-          className="w-1/2 px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+          className="w-1/2 px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 text-white"
         />
         <button
           onClick={() => openModal()}
-          className="inline-flex items-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition"
+          className="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition"
         >
           <FaPlus className="mr-2" />
           Add Outlet
@@ -215,9 +225,8 @@ const OutletManagement: React.FC = () => {
         </table>
       </div>
 
-      {/* Modal for adding/editing outlet */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-lg max-w-sm w-full">
             <h2 className="text-xl font-semibold mb-4">
               {editingOutlet.id ? 'Edit Outlet' : 'Add New Outlet'}
@@ -229,7 +238,7 @@ const OutletManagement: React.FC = () => {
                 name="name"
                 value={editingOutlet.name || ''}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white text-black"
                 required
               />
             </div>
@@ -240,30 +249,42 @@ const OutletManagement: React.FC = () => {
                 name="email"
                 value={editingOutlet.email || ''}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white text-black"
                 required
               />
             </div>
-            <div className="mt-4">
+            <div className="mt-4 relative">
               <label className="block mb-2 text-gray-600">Password</label>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={editingOutlet.password || ''}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white text-black pr-10"
+                required
               />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-2"
+              >
+                {showPassword ? (
+                  <FaEyeSlash className="text-gray-600" />
+                ) : (
+                  <FaEye className="text-gray-600" />
+                )}
+              </button>
             </div>
-            <div className="mt-6 flex justify-end space-x-4">
+            <div className="mt-6 flex justify-between">
               <button
                 onClick={closeModal}
-                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
+                className="py-2 px-4 bg-red-500 text-white rounded-lg"
               >
                 Cancel
               </button>
               <button
                 onClick={saveOutlet}
-                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
+                className="py-2 px-4 bg-blue-500 text-white rounded-lg"
               >
                 Save
               </button>

@@ -36,15 +36,13 @@ export class AddressController {
           startIndex,
           startIndex + limit,
         );
-        return res
-          .status(200)
-          .send({
-            status: 'ok',
-            message: 'Get all outlet addresses successfully',
-            data: paginatedAddress,
-            currentPage: page,
-            totalPages: Math.ceil(addresses.length / limit),
-          });
+        return res.status(200).send({
+          status: 'ok',
+          message: 'Get all outlet addresses successfully',
+          data: paginatedAddress,
+          currentPage: page,
+          totalPages: Math.ceil(addresses.length / limit),
+        });
       } catch (error) {
         return res
           .status(500)
@@ -79,13 +77,11 @@ export class AddressController {
       if (!address) {
         return res.status(404).send({ error: 'Address not found' });
       }
-      return res
-        .status(200)
-        .send({
-          status: 'ok',
-          message: 'Get Address By Id Successfully',
-          data: address,
-        });
+      return res.status(200).send({
+        status: 'ok',
+        message: 'Get Address By Id Successfully',
+        data: address,
+      });
     } catch (error) {
       return res
         .status(500)
@@ -106,12 +102,10 @@ export class AddressController {
 
     try {
       if (!userId && !outletId) {
-        return res
-          .status(400)
-          .send({
-            status: 'error',
-            message: 'Either userId or outletId must be provided',
-          });
+        return res.status(400).send({
+          status: 'error',
+          message: 'Either userId or outletId must be provided',
+        });
       }
       const geocodeResponse = await axios.get(geocodeApiUrl, {
         params: {
@@ -121,12 +115,10 @@ export class AddressController {
         },
       });
       if (geocodeResponse.data.length == 0) {
-        return res
-          .status(400)
-          .json({
-            error: 'Address not found.',
-            geocodeResponse: geocodeResponse.data,
-          });
+        return res.status(400).json({
+          error: 'Address not found.',
+          geocodeResponse: geocodeResponse.data,
+        });
       }
       const { lat, lng } = geocodeResponse.data.results[0].geometry;
       const latitude = parseFloat(lat);
@@ -173,12 +165,10 @@ export class AddressController {
         where: { userId: Number(id) },
       });
       if (!addresses) {
-        return res
-          .status(404)
-          .send({
-            status: 'error',
-            message: 'The user has not created an address',
-          });
+        return res.status(404).send({
+          status: 'error',
+          message: 'The user has not created an address',
+        });
       }
       return res.status(200).send({
         status: 'ok',
@@ -319,13 +309,11 @@ export class AddressController {
         where: { id: Number(id) },
       });
       if (!deletedAddress) throw new Error('Address not found');
-      return res
-        .status(200)
-        .send({
-          status: 'ok',
-          message: 'Delete Address Successfully',
-          data: deletedAddress,
-        });
+      return res.status(200).send({
+        status: 'ok',
+        message: 'Delete Address Successfully',
+        data: deletedAddress,
+      });
     } catch (error: any) {
       if (error instanceof Error) {
         return res

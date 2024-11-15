@@ -5,11 +5,14 @@ import { useState } from 'react';
 import { TiPinOutline } from "react-icons/ti";
 import { toast } from 'react-toastify';
 
-const BtnPinAddress = (props: any) => {
+type Props = {
+  addressId: number
+}
+const BtnPinAddress = (props: Props) => {
+  const { addressId } = { ...props };
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams().id;
   const userId = Number(params);
-  const { addressId } = { ...props };
 
   const handleSetPrimaryAddress = async (data: IPrimaryAddress) => {
     setIsLoading(true);

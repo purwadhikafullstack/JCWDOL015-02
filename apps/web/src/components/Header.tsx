@@ -22,29 +22,28 @@ const Header = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        navMenuRef.current &&
+        !navMenuRef.current.contains(event.target as Node)
+      ) {
+        setUserMenuIsOpen(false);
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      navMenuRef.current &&
-      !navMenuRef.current.contains(event.target as Node)
-    ) {
-      setUserMenuIsOpen(false);
-    }
-  };
-
   const handleLogout = async () => {
     try {
       const { result, ok } = await logoutFetchDb();
       if (!ok || !result) throw new Error(result?.message || 'Logout failed');
-      dispatch(logoutAction()); // Pastikan action Redux dipanggil untuk logout
+      dispatch(logoutAction());
       toast.success(result.message);
       setUserMenuIsOpen(false);
-      // window.location.reload();
+      window.location.reload();
     } catch (error) {
       console.error('Logout error:', error);
       toast.error(error instanceof Error ? error.message : 'Error logging out');
@@ -142,7 +141,6 @@ const Header = () => {
         </ul>
       </div>
 
-      {/* Cek status login */}
       {user.isLogin ? (
         <div
           className="flex justify-center items-center gap-1 sm:gap-2 md:gap-3 cursor-pointer"
@@ -156,8 +154,8 @@ const Header = () => {
           >
             <div className="w-11 rounded-full">
               <Image
-                width={50}
-                height={50}
+                width={40}
+                height={40}
                 src={
                   user.avatar ||
                   'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png'
@@ -214,6 +212,3 @@ const Header = () => {
 };
 
 export default Header;
-function onLogout() {
-  throw new Error('Function not implemented.');
-}

@@ -7,3 +7,7 @@
   --custom-beige: #ccc8aa;
   --custom-light: #f1efef;
 }
+
+body {
+  color: black;
+}

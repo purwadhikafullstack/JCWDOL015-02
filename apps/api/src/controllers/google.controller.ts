@@ -66,15 +66,14 @@ export class GoogleController {
       const loginToken = sign(payloadJwt, process.env.JWT_SECRET!, {
         expiresIn: '30d',
       });
-      console.log(loginToken.length, 'loginToken length');
       res.cookie('loginToken', loginToken, {
         httpOnly: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
-      return res.redirect('http://localhost:3000/'); // Return after redirect to prevent multiple responses
+      res.redirect('http://localhost:3000/');
     } catch (error) {
-      console.error(error);
-      return res.status(500).send('Terjadi kesalahan pada proses autentikasi');
+      console.error('Error during Google authentication:', error);
+      res.status(500).send('Gagal melakukan autentikasi Google');
     }
   }
 }

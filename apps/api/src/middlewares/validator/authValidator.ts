@@ -50,3 +50,25 @@ export const validateLogin = [
     next();
   },
 ];
+
+export const validateSetPass = [
+  body("verifyToken")
+    .notEmpty()
+    .withMessage("verifyToken is required"),
+  body("password")
+    .notEmpty()
+    .withMessage("password is required")
+    .isString()
+    .withMessage("password must be strings"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).send({
+        status: "error",
+        message: errors.array(),
+      });
+    }
+    next();
+  },
+];

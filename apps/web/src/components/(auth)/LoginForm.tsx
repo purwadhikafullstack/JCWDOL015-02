@@ -13,9 +13,12 @@ import ForgotPassword from './ForgotPassword';
 import { useState } from 'react';
 import { useAppDispatch } from '@/redux/hooks';
 import { loginAction } from '@/redux/slices/authSlice';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const LoginForm = () => {
   const dispatch = useAppDispatch()
+  const redirectRoute = useSearchParams()?.get('redirect') as string;
+  const router = useRouter();
   const [isLoading, setIsloading] = useState(false);
   const handleLogin = async (values: ILoginUser, resetForm: any) => {
     setIsloading(true);
@@ -25,7 +28,7 @@ const LoginForm = () => {
       dispatch(loginAction(result.data))
       toast.success(result.message);
       resetForm();
-      window.location.href = '/';
+      redirectRoute ? router.push(redirectRoute) : router.push('/');
     } catch (error) {
       toast.error(error as string);
     }

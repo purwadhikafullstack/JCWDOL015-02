@@ -2,7 +2,11 @@ import { deleteAddressFetchDb } from "@/lib/addressLib";
 import { useState } from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import { toast } from "react-toastify";
-const BtnDeleteAddress = (props: any) => {
+
+type Props = {
+  addressId: number
+}
+const BtnDeleteAddress = (props: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const {addressId} = {...props}
     const handleDeleteAddress = async (id: number) => {

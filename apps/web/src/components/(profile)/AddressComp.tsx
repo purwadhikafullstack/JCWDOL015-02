@@ -5,7 +5,7 @@ import { useShallow } from "zustand/shallow";
 import CardUserAddress from "./CardUserAddress";
 import CreateAddress from "./CreateAddress";
 import { getAddresByUserIdFetchDb, getAddressByIdFetchDb } from "@/lib/addressLib";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ICustomerAddress } from "@/type/customerType";
 import FormUpdateAddress from "./FormUpdateAddress";
 import { useAppSelector } from "@/redux/hooks";
@@ -13,10 +13,7 @@ import { useAppSelector } from "@/redux/hooks";
 const AddressComp = () => {
   const user = useAppSelector((state) => state.auth)
   const [addresses, setAddresses] = useState<ICustomerAddress[]>([])
-  useEffect(() => {
-    allUserAddress();
-  },[user])
-  const allUserAddress = async () => {
+  const allUserAddress = useCallback(async () => {
     const { result, ok } = await getAddresByUserIdFetchDb(user.id)
     try {
       if(!ok) throw result.message
@@ -24,7 +21,10 @@ const AddressComp = () => {
     } catch (error) {
       console.log(error)
     }
-  }
+  },[user]);
+  useEffect(() => {
+    allUserAddress();
+  },[user, allUserAddress])
 
   return (
     <div className="w-full flex justify-center items-start">

@@ -8,8 +8,6 @@ import fs from 'fs';
 import handlebars from 'handlebars';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
-const verifyToken = uuidv4();
-const verifyTokenExp = dayjs().add(1, 'hour').toDate();
 
 export class AuthController {
   async registerUserWithMail(req: Request, res: Response) {
@@ -39,9 +37,13 @@ export class AuthController {
         expiresIn: '30d',
       });
 
+      const updateData = {
+        loginToken,
+      };
+
       await prisma.user.update({
         where: { id: user.id },
-        data: { loginToken },
+        data: updateData,
       });
 
       res
@@ -145,15 +147,9 @@ export class AuthController {
   async logoutUser(req: Request, res: Response) {
     try {
       const loginToken = req.cookies.loginToken;
-      if (!loginToken)
-        return res.status(400).send({ message: 'No user is logged in!' });
-
-      const user = await prisma.user.findFirst({ where: { loginToken } });
-      if (!user) return res.status(400).send({ message: 'User not found!' });
-
-      // Pastikan cookie dihapus dari root path
-      res.clearCookie('loginToken', { path: '/', domain: 'localhost' });
-      res.status(200).send({ message: 'Logout successful!' });
+      if (!loginToken) throw 'no user is logged in !';
+      res.clearCookie('loginToken');
+      res.status(201).send({ status: 'ok', message: 'logout success !' });
     } catch (error) {
       res
         .status(400)

@@ -4,10 +4,11 @@ import { useAppSelector } from '@/redux/hooks';
 import { IAddressState } from '@/type/state/addressState';
 import { inputRequestPickupSchema } from '@/yup/servicesSchema';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { requestOrderFetchDb } from '@/lib/orderLib';
 import { toast } from 'react-toastify';
 import { AiOutlineWarning } from 'react-icons/ai';
+import Link from 'next/link';
 
 const InputRequestPickup = () => {
   const user = useAppSelector((state) => state.auth);
@@ -15,22 +16,17 @@ const InputRequestPickup = () => {
   const [selectedAddress, setSelectedAddress] = useState<IAddressState[]>([]);
   const [allAddress, setAllAddress] = useState<IAddressState[]>([]);
   const AllAddressModal = document.getElementById('modal_another_address') as HTMLDialogElement;
-  useEffect(() => {
-    getUserAddress();
-  }, [])
-  const getUserAddress = async () => {
+  const getUserAddress = useCallback(async () => {
     try {
       const { result, ok } = await getAddresByUserIdFetchDb(user.id);
       if (!ok) throw new Error(result.message);
       setAllAddress(result.data);
-      const isMain = result.data.filter(
-        (address: any) => address.isMain == true,
-      );
+      const isMain = result.data.filter((address: any) => address.isMain == true);
       setSelectedAddress(isMain);
     } catch (error) {
       console.log(error);
     }
-  };
+  },[user.id]);
   const handleRequestPickup = async (values: any, resetForm: any) => {
     setIsLoading(true);
     try {
@@ -49,6 +45,9 @@ const InputRequestPickup = () => {
     setSelectedAddress([address]) 
     AllAddressModal?.close()
   }
+  useEffect(() => {
+    getUserAddress();
+  }, [getUserAddress]);
   const initialValues = {
     pickupSchedule: '',
   }
@@ -125,6 +124,7 @@ const InputRequestPickup = () => {
           <div className='w-full text-center flex flex-col justify-center items-center'>
             <AiOutlineWarning className="text-beigeCustom w-10 h-10"/>
             <h1 className='text-2xl font-semibold text-white'>Please Create Your Address First On The Profile Page...</h1>
+            <Link href={`/user/profile/${user.id}`} className="text-beigeCustom font-semibold hover:text-white duration-300 my-2">Go To Profile</Link>
           </div>
         )}
         {/*Another Address*/}

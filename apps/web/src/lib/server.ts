@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 // Konfigurasi CORS di server
-export function corsMiddleware(req: Request) {
+export async function corsMiddleware(req: Request) {
   const response = NextResponse.next();
   response.headers.set(
     'Access-Control-Allow-Origin',
@@ -22,7 +22,7 @@ export function corsMiddleware(req: Request) {
   return response;
 }
 
-const TOKEN_KEY = 'token';
+const TOKEN_KEY = 'loginToken';
 const USER_ID_KEY = 'userId';
 const ROLE_KEY = 'role';
 

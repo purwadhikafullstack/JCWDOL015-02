@@ -1,5 +1,5 @@
 import { UserController } from '@/controllers/user.controller';
-import { uploaderImg } from '@/middlewares/uploader';
+import { uploaderImg } from '@/helpers/uploader';
 import { Router } from 'express';
 
 export class UserRouter {

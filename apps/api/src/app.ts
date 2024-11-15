@@ -24,7 +24,6 @@ import { AuthRouter } from './routers/auth.router';
 import { GoogleRouter } from './routers/google.router';
 import { UserRouter } from './routers/user.router';
 import { MailRouter } from './routers/mail.router';
-// import adminRouter from './routers/admin.router';
 dotenv.config();
 
 export default class App {
@@ -123,7 +122,6 @@ export default class App {
     this.app.use('/api/outlet-workers', outletWorkerRouter.getRouter()); // Add Outlet Worker routes
     this.app.use('/api/super-admin', superAdminRouter.getRouter());
     this.app.use('/api/notification', notificationRouter.getRouter());
-    // this.app.use('/api/admin', adminRouter);
   }
 
   public start(): void {
