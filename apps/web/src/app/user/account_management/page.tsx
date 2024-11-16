@@ -22,6 +22,7 @@ const AccountManagement = () => {
     email: string;
     password?: string;
     role: string;
+    workerRole?: string;
     avatar?: string;
   }>({ username: '', email: '', password: '', role: 'admin' });
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -37,13 +38,11 @@ const AccountManagement = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
       });
-      console.log(response.status);
       if (!response.ok) {
         throw new Error('Failed to fetch users');
       }
 
       const data = await response.json();
-      console.log(data);
       // Pastikan data yang diterima adalah array
       if (Array.isArray(data)) {
         setUsers(data);
@@ -169,8 +168,8 @@ const AccountManagement = () => {
     });
 
   return (
-    <div className="container mx-auto p-6 ">
-      <h1 className="text-3xl font-bold text-center mb-8 text-white">
+    <div className="min-h-screen bg-gray-100 p-8">
+      <h1 className="text-3xl font-bold text-center mb-8  text-gray-800">
         User Management
       </h1>
       <div className="flex justify-between items-center mb-4">
@@ -179,13 +178,13 @@ const AccountManagement = () => {
           placeholder="Search by username, email or role"
           value={searchQuery}
           onChange={handleSearch}
-          className="w-1/2 px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+          className="w-1/2 px-3 py-2 border rounded-lg focus:outline-none bg-white text-gray-700 focus:border-blue-500"
         />
         <div className="flex items-center space-x-4">
           <select
             value={selectedFilter}
             onChange={handleFilterChange}
-            className="px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 text-white"
+            className="px-3 py-2 border rounded-lg focus:outline-none bg-white text-gray-700 focus:border-blue-500"
           >
             <option value="All">All</option>
             <option value="admin">admin</option>
@@ -341,9 +340,30 @@ const AccountManagement = () => {
                   <option value="admin">admin</option>
                   <option value="worker">worker</option>
                   <option value="driver">driver</option>
-                  <option value="customer">customer</option>
                 </select>
               </div>
+              {editingUser.role === 'worker' ? (
+                <div className="mb-4">
+                  <label htmlFor="role" className="block text-sm font-medium">
+                    Worker Role
+                  </label>
+                  <select
+                    id="workerRole"
+                    name="workerRole"
+                    value={editingUser.workerRole}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-white text-black"
+                    required
+                  >
+                    <option value="" disabled>
+                      Select Worker Role
+                    </option>
+                    <option value="washer">washer</option>
+                    <option value="iron">iron</option>
+                    <option value="dryer">dryer</option>
+                  </select>
+                </div>
+              ) : null}
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"

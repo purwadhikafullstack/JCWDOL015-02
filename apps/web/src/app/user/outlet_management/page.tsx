@@ -188,36 +188,9 @@ const OutletManagement: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      {/* <div className="w-64 bg-white text-gray-700 p-4">
-        <h2 className="flex text-gray-700 text-2xl font-bold mb-3">Menu</h2>
-        <ul className="space-y-4">
-          <li
-            className={`cursor-pointer ${selectedMenu === 'Outlet Management' ? 'font-semibold' : ''}`}
-            onClick={() => setSelectedMenu('Outlet Management')}
-          >
-            Outlet Management
-          </li>
-          <li
-            className={`cursor-pointer ${selectedMenu === 'Laundry Item Management' ? 'font-semibold' : ''}`}
-            onClick={() => setSelectedMenu('Laundry Item Management')}
-          >
-            Laundry Item Management
-          </li>
-          <li
-            className={`cursor-pointer ${selectedMenu === 'Assign Outlet Admin, Worker and Driver' ? 'font-semibold' : ''}`}
-            onClick={() =>
-              setSelectedMenu('Assign  Admin, OutletWorker and Driver')
-            }
-          >
-            Assign Management
-          </li>
-        </ul>
-      </div> */}
-
       {/* Main Content */}
       <div className="flex-1 p-6">
-        <h1 className="text-3xl font-bold text-center mb-8 text-blue-900">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           {selectedMenu}
         </h1>
 

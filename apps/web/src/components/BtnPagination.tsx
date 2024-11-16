@@ -3,21 +3,15 @@
 interface Props {
   currentPage: number;
   totalPage: number;
-  onPrevious: () => void;
-  onNext: () => void;
+  onPageChange: (page: number) => void;
 }
 
-const BtnPagination = ({
-  currentPage,
-  totalPage,
-  onPrevious,
-  onNext,
-}: Props) => {
+const BtnPagination = ({ currentPage, totalPage, onPageChange }: Props) => {
   return (
     <div className="join my-2">
       <button
         disabled={currentPage === 1}
-        onClick={onPrevious}
+        onClick={() => onPageChange(currentPage - 1)} // Trigger onPageChange for previous page
         className="join-item btn disabled:bg-gray-300"
       >
         «
@@ -27,7 +21,7 @@ const BtnPagination = ({
       </button>
       <button
         disabled={currentPage === totalPage}
-        onClick={onNext}
+        onClick={() => onPageChange(currentPage + 1)} // Trigger onPageChange for next page
         className="join-item btn disabled:bg-gray-300"
       >
         »

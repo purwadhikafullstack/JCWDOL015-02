@@ -6,7 +6,7 @@ import { IOrder } from '@/type/orderType';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SearchOrder from '@/components/(orders)/(detail-order)/SearchOrder';
-import BtnPagination from '@/components/(outlets)/BtnPagination';
+import BtnPagination from '@/components/BtnPagination';
 import Link from 'next/link';
 
 const AllOrderPage = () => {

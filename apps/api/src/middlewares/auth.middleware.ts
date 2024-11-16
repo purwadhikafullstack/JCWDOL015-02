@@ -54,3 +54,23 @@ export const authMiddleware = (
     }
   });
 };
+
+// Middleware untuk memverifikasi role superAdmin
+export const verifySuperAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  console.log(req.user, 'REQQQQ');
+
+  // Pastikan user ada dan memiliki role 'superAdmin'
+  if (req.user && req.user.role === 'superAdmin') {
+    return next(); // Lanjutkan ke middleware berikutnya atau handler route
+  } else {
+    return res.status(403).json({
+      success: false,
+      message:
+        'Access denied: You must be a superAdmin to access this resource.',
+    });
+  }
+};

@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
-
 // Fetch profile
 export const getProfileFetchDb = async () => {
   try {

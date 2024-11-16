@@ -15,6 +15,9 @@ export class UserRouter {
   // Inisialisasi rute-rute yang diperlukan
   private initializeRoutes(): void {
     this.router.get('/', this.userController.getUsers); // Menampilkan semua user
+    this.router.get('/workers', this.userController.getUserWorkers); // Menampilkan semua workers
+    this.router.get('/drivers', this.userController.getUserDrivers); // Menampilkan semua user
+
     this.router.post('/register', this.userController.createUser); // Membuat user baru
     this.router.put('/:id', this.userController.updateUser); // Memperbarui data user
     this.router.delete('/:id', this.userController.deleteUser); // Menghapus user berdasarkan ID

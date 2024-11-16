@@ -37,14 +37,14 @@ export class AuthController {
         expiresIn: '30d',
       });
 
-      const updateData = {
-        loginToken,
-      };
+      // const updateData = {
+      //   loginToken,
+      // };
 
-      await prisma.user.update({
-        where: { id: user.id },
-        data: updateData,
-      });
+      // await prisma.user.update({
+      //   where: { id: user.id },
+      //   data: updateData,
+      // });
 
       res
         .status(200)

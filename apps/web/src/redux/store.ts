@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore, Persistor } from 'redux-persist';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 import authReducer from './slices/authSlice';
+import orderReducer from './slices/orderSlice'; // Import orderSlice
 import { REHYDRATE, PERSIST, REGISTER } from 'redux-persist';
 
 const createNoopStorage = () => {
@@ -31,7 +32,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  // add other reducers
+  order: orderReducer, // Make sure orderReducer is included
+  // add other reducers as needed
 });
 
 const makeConfiguredStore = () =>

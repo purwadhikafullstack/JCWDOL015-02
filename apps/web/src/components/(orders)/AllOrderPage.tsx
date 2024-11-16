@@ -53,17 +53,18 @@ const AllOrderPage = () => {
           : { date: values.date },
       );
       if (!ok) throw new Error(result.message);
-      setOrders([...result.data]);
+      setOrders(result.data);
       resetForm();
-      selectSearchModal.close();
-      byIdModal.close();
-      byDateModal.close();
+      selectSearchModal?.close();
+      byIdModal?.close();
+      byDateModal?.close();
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="w-full min-h-[100vh] py-6 flex flex-col justify-start items-center">
       <div className="text-center my-3 md:my-11 px-5 md:px-0">

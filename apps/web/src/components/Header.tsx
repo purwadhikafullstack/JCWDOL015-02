@@ -81,6 +81,13 @@ const Header = () => {
         Laundry Item Management
       </Link>
       <Link
+        href={'/user/assign_management'}
+        className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
+        onClick={() => setUserMenuIsOpen(false)}
+      >
+        Assign Management
+      </Link>
+      <Link
         href={'/user/order_management'}
         className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
         onClick={() => setUserMenuIsOpen(false)}

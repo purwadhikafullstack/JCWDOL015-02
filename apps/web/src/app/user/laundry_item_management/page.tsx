@@ -23,7 +23,7 @@ const LaundryItemManagement = () => {
     };
 
     fetchLaundryItemManagement();
-  }, []);
+  }, [apiUrl]);
 
   const handleAddItem = async (newItem: {
     name: string;
@@ -41,7 +41,7 @@ const LaundryItemManagement = () => {
         body: JSON.stringify(newItem),
       });
       const data = await response.json();
-      if (data) {
+      if (Object.keys(data).length > 0) {
         set((prevItems) => [...prevItems, data]);
         setIsModalOpen(false);
       }
@@ -97,7 +97,9 @@ const LaundryItemManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <h2 className="text-2xl font-bold text-gray-800">Laundry Items</h2>
+      <h1 className="text-3xl font-bold text-center mb-8  text-gray-800">
+        Laundry Item Management
+      </h1>
 
       {/* Tombol untuk membuka modal form */}
       <button
@@ -146,7 +148,7 @@ const LaundryItemManagement = () => {
               <p>Description: {item.description}</p>
               <button
                 onClick={() => handleEditItem(item)}
-                className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 "
+                className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 mr-2"
               >
                 Edit
               </button>

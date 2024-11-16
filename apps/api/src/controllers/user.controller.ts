@@ -246,6 +246,45 @@ export class UserController {
       });
     }
   }
+
+  async getUserWorkers(req: Request, res: Response) {
+    try {
+      // Pastikan hanya superAdmin yang dapat melihat semua user
+      const user = await prisma.user.findMany({
+        where: {
+          // Ambil semua user yang sudah terdaftar, kecuali yang memiliki role admin
+          role: 'worker',
+          outletId: null,
+        },
+      });
+      return res.status(200).json(user);
+    } catch (error) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Failed to fetch users',
+      });
+    }
+  }
+
+  async getUserDrivers(req: Request, res: Response) {
+    try {
+      // Ambil semua driver yang memiliki outletId yang valid (tidak null atau kosong)
+      const drivers = await prisma.user.findMany({
+        where: {
+          role: 'driver',
+          outletId: null,
+        },
+      });
+
+      return res.status(200).json(drivers);
+    } catch (error) {
+      console.error('Error fetching drivers:', error);
+      return res.status(400).json({
+        status: 'error',
+        message: 'Failed to fetch drivers',
+      });
+    }
+  }
   async updateUser(req: Request, res: Response) {
     const { id, username, email, role } = req.body;
 

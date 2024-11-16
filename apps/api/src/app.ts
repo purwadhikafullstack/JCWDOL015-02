@@ -14,7 +14,7 @@ import { SampleRouter } from './routers/sample.router';
 import { AttendanceRouter } from './routers/attendence.router';
 import { AddressRouter } from './routers/address.router ';
 import { OutletRouter } from './routers/outlet.router';
-import { OutletWorkerRouter } from './routers/outletWorker.router'; // Import the OutletWorkerRouter
+import { OutletWorkerRouter } from './routers/outletWorker.router';
 import { OrderRouter } from './routers/order.router';
 import { SuperAdminRouter } from './routers/superAdmin.router';
 import { NotificationRouter } from './routers/notification.router';
@@ -25,6 +25,7 @@ import { GoogleRouter } from './routers/google.router';
 import { UserRouter } from './routers/user.router';
 import { MailRouter } from './routers/mail.router';
 import laundryItemRouter from './routers/laundryItem.router';
+import { OutletAssignmentRouter } from './routers/outletAssignment.router';
 dotenv.config();
 
 export default class App {
@@ -55,9 +56,9 @@ export default class App {
           callback: (err: Error | null, allow: boolean) => void,
         ) => {
           if (allowedOrigins.includes(origin as string) || !origin) {
-            callback(null, true); // Allow the origin
+            callback(null, true);
           } else {
-            callback(new Error('Not allowed by CORS'), false); // Block the origin
+            callback(new Error('Not allowed by CORS'), false);
           }
         },
       }),
@@ -71,7 +72,6 @@ export default class App {
   }
 
   private handleError(): void {
-    // not found
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.path.includes('/api/')) {
         res.status(404).send('Not found !');
@@ -80,7 +80,6 @@ export default class App {
       }
     });
 
-    // error
     this.app.use(
       (err: Error, req: Request, res: Response, next: NextFunction) => {
         if (req.path.includes('/api/')) {
@@ -102,7 +101,8 @@ export default class App {
     const attendanceRouter = new AttendanceRouter();
     const addressRouter = new AddressRouter();
     const outletRouter = new OutletRouter();
-    const outletWorkerRouter = new OutletWorkerRouter(); // Instantiate the OutletWorkerRouter
+    const outletAssignmentRouter = new OutletAssignmentRouter();
+    const outletWorkerRouter = new OutletWorkerRouter();
     const orderRouter = new OrderRouter();
     const superAdminRouter = new SuperAdminRouter();
     const notificationRouter = new NotificationRouter();
@@ -120,8 +120,9 @@ export default class App {
     this.app.use('/api/attendence', attendanceRouter.getRouter());
     this.app.use('/api/order', orderRouter.getRouter());
     this.app.use('/api/outlet', outletRouter.getRouter());
-    this.app.use('/api/outlet-workers', outletWorkerRouter.getRouter()); // Add Outlet Worker routes
+    this.app.use('/api/outlet-workers', outletWorkerRouter.getRouter());
     this.app.use('/api/laundryitems', laundryItemRouter);
+    this.app.use('/api/outlet-assignment', outletAssignmentRouter.getRouter());
     this.app.use('/api/super-admin', superAdminRouter.getRouter());
     this.app.use('/api/notification', notificationRouter.getRouter());
   }

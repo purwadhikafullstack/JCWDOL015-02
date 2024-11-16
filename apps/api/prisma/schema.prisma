@@ -52,6 +52,8 @@ model User {
   avatar         String           @default("https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png")
   password       String?
   role           RoleUser         @default(customer)
+  workerRole     WorkerRoles?     
+  outletId       Int?
   verified       Boolean          @default(false)
   LoginToken     String?
   verifyToken    String?          @unique
@@ -64,6 +66,7 @@ model User {
   notifications   Notification[]
   addresses      Address[]        @relation("UserAddresses")
   orders         Order[]
+  outlet         Outlet?           @relation(fields: [outletId], references: [id])
 }
 
 model Notification {
@@ -117,10 +120,11 @@ model Order {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
+  laundryItemId    Int          @default(0)
+  laundryItem      LaundryItem        @relation(fields: [laundryItemId], references: [id])
   user    User    @relation(fields: [userId], references: [id])
   address Address @relation(fields: [addressId], references: [id])
   outlet  Outlet @relation(fields: [outletId], references: [id])
-  orderItems OrderItem[]
   pickupDeliveryRequests PickupDeliveryRequest[]
   payments Payment[]
   orderHistory OrderHistory[]
@@ -147,7 +151,6 @@ model OrderItem {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
-  order Order @relation(fields: [orderId], references: [id])
 }
 
 model LaundryItem {
@@ -155,6 +158,8 @@ model LaundryItem {
   name        String
   description String
   price       Int
+  order Order[]
+
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -188,12 +193,14 @@ model Outlet {
   lat        String
   lon        String
   address    String
+  isAssign   String?
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   workers OutletWorker[]
   orders Order[]
+  users      User[]
 }
 
 model OutletWorker {

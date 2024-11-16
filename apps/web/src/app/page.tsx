@@ -7,8 +7,12 @@ import ChooseUs from '@/components/(home)/ChooseUs';
 import Contact from '@/components/(home)/Contact';
 import HowToOrder from '@/components/(home)/HowToOrder';
 import Testimonial from '@/components/(home)/Testimonial';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getToken } from '@/lib/server';
+import { useRouter } from 'next/navigation';
+
 export default function Home() {
+  const router = useRouter();
   const [showLogin, setShowLogin] = useState(false); // State untuk menampilkan LoginPage jika diperlukan
 
   const carouselItems = [
@@ -31,7 +35,6 @@ export default function Home() {
   const handleLoginClick = () => {
     setShowLogin(true);
   };
-
   return (
     <main className="w-full min-h-screen flex flex-col justify-center items-center">
       <Carousel />

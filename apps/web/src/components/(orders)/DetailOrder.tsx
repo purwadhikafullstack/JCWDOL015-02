@@ -4,12 +4,12 @@ import { useEffect } from 'react';
 import { getOrderByIdFetchDb } from '../../lib/orderLib';
 
 const DetailOrder = () => {
-  const orderId = useParams();
-
+  const { id } = useParams(); // Mengambil ID dari parameter URL
+  const orderId = id;
   useEffect(() => {
     const getOrderDetail = async () => {
       try {
-        const { result, ok } = await getOrderByIdFetchDb(Number(orderId));
+        const { result, ok } = await getOrderByIdFetchDb(Number(id));
         if (!ok) throw result.message;
         console.log(result);
       } catch (error) {
