@@ -169,22 +169,22 @@ const AccountManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-3xl font-bold text-center mb-8  text-gray-800">
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
         User Management
       </h1>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0">
         <input
           type="text"
           placeholder="Search by username, email or role"
           value={searchQuery}
           onChange={handleSearch}
-          className="w-1/2 px-3 py-2 border rounded-lg focus:outline-none bg-white text-gray-700 focus:border-blue-500"
+          className="w-full md:w-1/2 px-3 py-2 border rounded-lg focus:outline-none bg-white text-gray-700 focus:border-blue-500"
         />
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-x-4 md:space-y-0 w-full md:w-auto">
           <select
             value={selectedFilter}
             onChange={handleFilterChange}
-            className="px-3 py-2 border rounded-lg focus:outline-none bg-white text-gray-700 focus:border-blue-500"
+            className="w-full md:w-auto px-3 py-2 border rounded-lg focus:outline-none bg-white text-gray-700 focus:border-blue-500"
           >
             <option value="All">All</option>
             <option value="admin">admin</option>
@@ -267,7 +267,7 @@ const AccountManagement = () => {
       {/* Modal for adding/editing user */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-semibold mb-6">
               {editingUser.id ? 'Edit User' : 'Add User'}
             </h2>
@@ -344,7 +344,10 @@ const AccountManagement = () => {
               </div>
               {editingUser.role === 'worker' ? (
                 <div className="mb-4">
-                  <label htmlFor="role" className="block text-sm font-medium">
+                  <label
+                    htmlFor="workerRole"
+                    className="block text-sm font-medium"
+                  >
                     Worker Role
                   </label>
                   <select
@@ -364,18 +367,16 @@ const AccountManagement = () => {
                   </select>
                 </div>
               ) : null}
-              <div className="flex justify-end space-x-4">
+              <div className="flex justify-end space-x-4 mt-6">
                 <button
-                  type="button"
                   onClick={closeModal}
-                  className="px-6 py-2 bg-red-500 text-white rounded-lg"
+                  className="inline-flex items-center bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition"
                 >
                   Cancel
                 </button>
                 <button
-                  type="button"
                   onClick={saveUser}
-                  className="px-6 py-2 bg-blue-500 text-white rounded-lg"
+                  className="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition"
                 >
                   {editingUser.id ? 'Save Changes' : 'Add User'}
                 </button>

@@ -34,7 +34,7 @@ const AssignManagement = () => {
         const response = await fetch(`${apiUrl}/outlet`);
         const data = await response.json();
         const filtereOutlets = data.data.filter(
-          (item: { isAssign: string }) => item.isAssign == null,
+          (item: { isAssign: string }) => item.isAssign != null,
         );
         setOutlets(filtereOutlets);
       } catch (error) {
@@ -110,6 +110,10 @@ const AssignManagement = () => {
       }
     }
   };
+
+  function handleEdit(id: any): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -206,11 +210,22 @@ const AssignManagement = () => {
         <div className="mt-4">
           <ul className="space-y-4">
             {assignedUsers.map((user) => (
-              <li key={user.id} className="p-4 border rounded-lg bg-gray-50">
-                <p>
-                  <strong>{user.name}</strong> ({user.role})
-                </p>
-                <p>Assigned to: {user.outletName}</p>
+              <li
+                key={user.id}
+                className="p-4 border rounded-lg bg-gray-50 flex justify-between items-center"
+              >
+                <div>
+                  <p>
+                    <strong>{user.name}</strong> ({user.role})
+                  </p>
+                  <p>Assigned to: {user.outletName}</p>
+                </div>
+                <button
+                  className="ml-4 px-4 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600"
+                  onClick={() => handleEdit(user.id)} // Ganti dengan handler edit yang sesuai
+                >
+                  Edit
+                </button>
               </li>
             ))}
           </ul>
