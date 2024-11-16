@@ -8,14 +8,11 @@ import { getProfileState, logoutAction } from '@/redux/slices/authSlice';
 import { logoutFetchDb } from '@/lib/authLib';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
-import { WorkerDetail } from '@/type/worker/workerType';
 const Header = () => {
   const user = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const [userMenuIsOpen, setUserMenuIsOpen] = useState(false);
   const navMenuRef = useRef<HTMLDivElement>(null);
-  const [outletWorker, setOutletWorker] = useState<WorkerDetail | null>(null);
-  const [outletAdmin, setOutletAdmin] = useState();
 
   useEffect(() => {
     dispatch(getProfileState())
@@ -26,14 +23,6 @@ const Header = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  useEffect(()=>{ //worker login data check
-    const admin = localStorage.getItem('outletAdmin');
-    const worker = localStorage.getItem('outletAdmin');
-    if (admin && worker) handleLogout();
-    if (admin) {setOutletAdmin(JSON.parse(admin));}
-    if (worker) {setOutletWorker(JSON.parse(worker));}  
-  },[])
-
   const handleClickOutside = (event: MouseEvent) => {
     if (navMenuRef.current && !navMenuRef.current.contains(event.target as Node)) {
       setUserMenuIsOpen(false);
@@ -41,7 +30,6 @@ const Header = () => {
   };
   const handleLogout = async () => {
     try {
-      handleLogoutWorker()
       const {result, ok} = await logoutFetchDb()
       if(!ok) throw new Error(result.message)
       dispatch(logoutAction());
@@ -50,15 +38,6 @@ const Header = () => {
       window.location.reload();
     } catch (error) {
       toast.error(error as string)
-    }
-  }
-
-  const handleLogoutWorker = async () => {
-    try {
-      localStorage.removeItem('outletWorker')
-      localStorage.removeItem('outletAdmin')
-    } catch (err) {
-      toast.error(err as string)
     }
   }
 
@@ -135,18 +114,6 @@ const Header = () => {
             <IoMdLogIn className="w-[20px] h-[20px] lg:w-[30px] lg:h-[30px]" />
           </Link>
         )}
-
-        {outletWorker && 
-          <div className="flex justify-center items-center gap-1 sm:gap-2 md:gap-3 cursor-pointer"
-               onClick={() => setUserMenuIsOpen(true)}>
-            <p className='hidden md:block w-[118px] text-right truncate font-semibold'>{outletWorker.name}</p>
-            <div className={`avatar border-2 p-[1px] rounded-full duration-300 ${userMenuIsOpen ? 'border-grayCustom' : 'border-transparent'}`}>
-              <div className="w-11 rounded-full">
-                <Image width={40} height={40} src={'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png'} alt={"avatar"}/>
-              </div>
-            </div>
-          </div>
-        }
 
         <div
         ref={navMenuRef}
