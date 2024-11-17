@@ -4,6 +4,7 @@ import { verify } from "jsonwebtoken";
 import { compare } from "bcrypt";
 import dayjs from 'dayjs';
 export class UserController {
+  backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
 
   async getUserProfile(req: Request, res: Response) {
     try {
@@ -37,7 +38,7 @@ export class UserController {
     try {
       const ava = req.file?.filename
       if(!ava) throw "File not found" 
-      const linkAva = `http://localhost:8000/api/public/avatar/${ava}`
+      const linkAva = `${this.backendUrl}/api/public/avatar/${ava}`
       const cookies = req.cookies.loginToken
       if(!cookies) throw "no user is logged in !"
       const decoded = verify(cookies,process.env.JWT_SECRET!) as { id: number };

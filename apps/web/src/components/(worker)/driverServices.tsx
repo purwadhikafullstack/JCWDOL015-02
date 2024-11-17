@@ -98,14 +98,13 @@ export default function DriverServices({ workerDetail }: DriverServicesProps) {
     };
 
     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-semibold mb-2">Halo, {workerDetail?.name}</h1>
-
-            <h2 className="text-xl font-semibold mt-6 mb-4">Pickup Delivery Requests</h2>
+        <div className="p-4 bg-img bg-driver min-h-screen flex justify-center">
+          <div className='p-6 bg-slate-300 bg-opacity-65 min-h-[70vh] border border-black rounded-lg h-fit shadow-md w-full sm:max-w-md lg:max-w-7xl'>
+            <h2 className="text-3xl font-semibold mt-6 mb-4 text-center">Driver Dashboard</h2>
             {busy ? (
-                <p className="text-yellow-500 mb-4">You are currently busy with an ongoing request.</p>
+                <p className="text-yellow-400 mb-4 bg-slate-800 w-fit mx-auto px-2 text-center rounded">You are currently busy with an ongoing request.</p>
             ) : (
-                <p className="text-green-500 mb-4">You have no ongoing requests.</p>
+                <p className="text-green-500 mb-4 text-center">You have no ongoing requests.</p>
             )}
 
                 {pickupRequests.length > 0 ? (
@@ -114,15 +113,14 @@ export default function DriverServices({ workerDetail }: DriverServicesProps) {
                     <div
                         key={request.id}
                         onClick={() => handleCardClick(request)}
-                        className={`border border-gray-300 rounded-lg p-4 mb-4 cursor-pointer shadow-md hover:shadow-lg transition-shadow ${
+                        className={`border border-gray-300 bg-beigeCustom rounded-lg p-4 mb-4 cursor-pointer shadow-md hover:shadow-lg transition-shadow ${
                         request.status === "onGoing" ? "bg-yellow-500 text-black" : ""
                         }`}
                     >
-                        <p className="font-medium">Status: {request.status}</p>
+                        <h2 className="font-medium text-xl mb-2 p-2">Status: {request.status}</h2>
                         <p>From: {request.fromAddress.address}, {request.fromAddress.city}</p>
                         <p>To: {request.toAddress.address}, {request.toAddress.city}</p>
                         <p>Order ID: {request.orderId}</p>
-                        <p>Distance: {request.distance} km</p>
                         <p>Pickup Schedule: {new Date(request.order.pickupSchedule).toLocaleString()}</p>
                     </div>
                     )
@@ -144,7 +142,7 @@ export default function DriverServices({ workerDetail }: DriverServicesProps) {
                         <div className='flex justify-center gap-2'>
                             <button
                                 onClick={handleCloseModal}
-                                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                className="mt-4 bg-slate-500 text-white px-4 py-2 rounded hover:bg-slate-600"
                             >
                                 Close
                             </button>
@@ -153,7 +151,7 @@ export default function DriverServices({ workerDetail }: DriverServicesProps) {
                                 onClick={handlePDR}
                                 className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                 >
-                                    handle Request
+                                    Pickup Order
                                 </button>
                             } 
                            {selectedRequest.status === "onGoing" && (
@@ -168,6 +166,9 @@ export default function DriverServices({ workerDetail }: DriverServicesProps) {
                     </div>
                 </div>
             )}
+
+          </div>
+
         </div>
     );
 }

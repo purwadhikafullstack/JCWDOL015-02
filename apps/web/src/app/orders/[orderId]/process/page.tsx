@@ -11,6 +11,7 @@ export default function ProcessOrderPage() {
     const searchParams = useSearchParams();
     const userId = searchParams.get("userId");
     const distance = parseFloat(searchParams.get("distance") || "0");
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
 
     const [weight, setWeight] = useState(0);
     const [orderItems, setOrderItems] = useState<OrderItemData>({
@@ -58,7 +59,7 @@ export default function ProcessOrderPage() {
         }
 
         try {
-            const orderItemResponse = await axios.post(`http://localhost:8000/api/order-item`, {
+            const orderItemResponse = await axios.post(`${backendUrl}/api/order-item`, {
                 orderId: +orderId,
                 ...orderItems,
             });
@@ -68,20 +69,20 @@ export default function ProcessOrderPage() {
 
                 console.log(totalItems)
 
-                await axios.patch(`http://localhost:8000/api/order/price/${orderId}`, {
+                await axios.patch(`${backendUrl}/api/order/price/${orderId}`, {
                     weight: weight,
                     distance: distance,
                     userId: userId,
                     totalItems:+totalItems
                 });
 
-                await axios.patch(`http://localhost:8000/api/order/${orderId}`, {
+                await axios.patch(`${backendUrl}/api/order/${orderId}`, {
                     status: "weighed", // Mark as 'washed'
                     userId: userId,
                 });
 
                 alert("Order items updated and order status set to 'weighed' successfully!");
-                router.push("http://localhost:3000/outlets/dashboard");
+                router.push("/outlets/dashboard");
             } else {
                 console.error("Failed to create order-item. Status:", orderItemResponse.status);
                 alert("Failed to create order-item.");
