@@ -54,7 +54,7 @@ const AllOrderPage = () => {
       );
       if (!ok) throw new Error(result.message);
       setOrders([...result.data]);
-      resetForm();
+      resetForm(); // Ensure to call the resetForm function after the search
       selectSearchModal.close();
       byIdModal.close();
       byDateModal.close();
@@ -64,6 +64,7 @@ const AllOrderPage = () => {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="w-full min-h-[100vh] py-6 flex flex-col justify-start items-center">
       <div className="text-center my-3 md:my-11 px-5 md:px-0">
@@ -79,7 +80,9 @@ const AllOrderPage = () => {
       {orders.length > 0 ? (
         <>
           <SearchOrder
-            handleSubmitSearch={handleSearchOrder}
+            handleSubmitSearch={(values, resetForm) =>
+              handleSearchOrder(values, resetForm)
+            } // Pass both arguments
             isLoading={isLoading}
             selectSearchModal={selectSearchModal}
             byIdModal={byIdModal}

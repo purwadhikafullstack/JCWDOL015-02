@@ -3,10 +3,15 @@ import { IoIosSearch } from 'react-icons/io';
 import BtnOrderId from './BtnOrderId';
 import BtnOrderDate from './BtnOrderDate';
 import { useState } from 'react';
-import { OrderStatus } from '@/type/orderStatus'; // Pastikan tipe OrderStatus sudah sesuai
+import { OrderStatus } from '@/type/orderStatus';
 
 type Props = {
-  handleSubmitSearch: (values: any, resetForm: any) => void;
+  handleSubmitSearch: (
+    values:
+      | { orderId?: string; date?: string; status?: string }
+      | { orderDate: string },
+    resetForm: () => void,
+  ) => void;
   isLoading: boolean;
   selectSearchModal: HTMLDialogElement;
   byIdModal: HTMLDialogElement;
@@ -27,7 +32,7 @@ const SearchOrder = (props: Props) => {
   // Fungsi untuk mengubah status filter dan mengirimkan ke handleSubmitSearch
   const handleFilterChange = (selectedStatus: string) => {
     setSelectedStatus(selectedStatus); // Update status yang dipilih
-    handleSubmitSearch({ status: selectedStatus }, resetForm); // Kirimkan status ke fungsi pencarian
+    handleSubmitSearch({ status: selectedStatus }, () => {}); // Kirimkan status ke fungsi pencarian
   };
 
   return (

@@ -20,6 +20,18 @@ export class OutletAssignmentRouter {
       verifySuperAdmin,
       this.outletAssignmentController.assignUserToOutlet,
     );
+    this.router.get(
+      '/:id',
+      verifyToken,
+      verifySuperAdmin,
+      this.outletAssignmentController.getAssignById,
+    );
+    this.router.get(
+      '/',
+      verifyToken,
+      verifySuperAdmin,
+      this.outletAssignmentController.getAllOutletAssign,
+    );
   }
 
   getRouter(): Router {

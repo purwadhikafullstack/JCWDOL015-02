@@ -83,7 +83,6 @@ const OutletManagement: React.FC = () => {
   };
 
   const openModal = (outlet?: Outlet) => {
-    console.log(outlet, 'outlet');
     let newOutlets = { ...outlet };
     if (newOutlets.lat !== undefined) {
       newOutlets.lat = parseFloat(String(newOutlets.lat));
