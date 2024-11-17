@@ -17,7 +17,7 @@ const DetailOrder = () => {
       }
     };
     getOrderDetail();
-  }, [orderId]);
+  }, [id, orderId]);
   return (
     <div>
       <div className="drawer lg:drawer-open">

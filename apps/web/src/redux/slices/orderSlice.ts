@@ -1,8 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { OrderStatus } from '../../type/orderStatus'; // Adjust the import path
+import { ReactNode } from 'react';
+import { Draft } from 'immer';
 
 interface OrderState {
-  orders: { id: number; status: OrderStatus }[];
+  orders: {
+    createdAt: string | number | Date;
+    totalWeight: ReactNode;
+    outletId: ReactNode;
+    package: ReactNode;
+    id: number;
+    status: OrderStatus;
+  }[];
   loading: boolean;
   error: string | null;
 }
@@ -19,9 +28,23 @@ const orderSlice = createSlice({
   reducers: {
     setOrders: (
       state,
-      action: PayloadAction<{ id: number; status: OrderStatus }[]>,
+      action: PayloadAction<
+        {
+          createdAt: string | number | Date;
+          totalWeight: ReactNode;
+          outletId: ReactNode;
+          package: ReactNode;
+          id: number;
+          status: OrderStatus;
+        }[]
+      >,
     ) => {
-      state.orders = action.payload;
+      state.orders = action.payload.map((order) => ({
+        ...order,
+        createdAt: order.createdAt.toString(), // Convert createdAt to string
+      }));
+      //state.orders = action.payload as Draft<typeof state.orders>;
+      //console.log(state.orders)
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
