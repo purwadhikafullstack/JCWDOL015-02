@@ -15,7 +15,7 @@ const AllOrderPage = () => {
   const user = useAppSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const [orders, setOrders] = useState<IOrder[]>([]);
-  const currentPage = Number(searchParams?.get('page')) || 1;
+  const currentPage = Number(searchParams.get('page')) || 1;
   const [totalPage, setTotalPage] = useState(1);
   const selectSearchModal = document.getElementById(
     'modal_search_order',
@@ -53,18 +53,17 @@ const AllOrderPage = () => {
           : { date: values.date },
       );
       if (!ok) throw new Error(result.message);
-      setOrders(result.data);
+      setOrders([...result.data]);
       resetForm();
-      selectSearchModal?.close();
-      byIdModal?.close();
-      byDateModal?.close();
+      selectSearchModal.close();
+      byIdModal.close();
+      byDateModal.close();
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="w-full min-h-[100vh] py-6 flex flex-col justify-start items-center">
       <div className="text-center my-3 md:my-11 px-5 md:px-0">
@@ -138,16 +137,16 @@ const AllOrderPage = () => {
               </div>
             </div>
           ))}
-          {/* <BtnPagination
+          <BtnPagination
             currentPage={currentPage}
             totalPage={totalPage}
-            handlePageChange={(page) => {
+            onPageChange={(page) => {
               router.push(
                 `${process.env.NEXT_PUBLIC_BASE_WEB_URL}/user/orders?page=${page}`,
               );
               scrollTo({ top: 0, behavior: 'smooth' });
             }}
-          /> */}
+          />
         </>
       ) : (
         <div className="my-10 w-full flex flex-col justify-center items-center">

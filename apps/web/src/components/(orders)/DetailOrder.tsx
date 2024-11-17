@@ -4,12 +4,12 @@ import { useEffect } from 'react';
 import { getOrderByIdFetchDb } from '../../lib/orderLib';
 
 const DetailOrder = () => {
-  const { id } = useParams(); // Mengambil ID dari parameter URL
-  const orderId = id;
+  const orderId = useParams().id;
+
   useEffect(() => {
     const getOrderDetail = async () => {
       try {
-        const { result, ok } = await getOrderByIdFetchDb(Number(id));
+        const { result, ok } = await getOrderByIdFetchDb(Number(orderId));
         if (!ok) throw result.message;
         console.log(result);
       } catch (error) {
@@ -17,7 +17,7 @@ const DetailOrder = () => {
       }
     };
     getOrderDetail();
-  }, [id, orderId]);
+  }, [orderId]);
   return (
     <div>
       <div className="drawer lg:drawer-open">

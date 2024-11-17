@@ -41,24 +41,13 @@ export const setPassFetchDb = async (data: ISetPassUser) => {
 };
 
 export const logoutFetchDb = async () => {
-  try {
-    const res = await fetch(`${BASE_URL}/auth/logout`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
-
-    if (!res.ok) {
-      throw new Error(`Logout failed with status ${res.status}`);
-    }
-
-    const result = await res.json();
-    console.log('Logout response:', result);
-    return { result, ok: res.ok };
-  } catch (error) {
-    console.error('Logout error:', error);
-    return { result: null, ok: false };
-  }
+  const res = await fetch(`${BASE_URL}/auth/logout`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+  const result = await res.json();
+  return { result, ok: res.ok };
 };

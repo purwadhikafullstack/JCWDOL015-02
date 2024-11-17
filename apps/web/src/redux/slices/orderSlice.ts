@@ -1,17 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { OrderStatus } from '../../type/orderStatus'; // Adjust the import path
-import { ReactNode } from 'react';
-import { Draft } from 'immer';
+
+interface Order {
+  id: number;
+  totalWeight: number;
+  totalPrice: number;
+  status: string;
+}
 
 interface OrderState {
-  orders: {
-    createdAt: string | number | Date;
-    totalWeight: ReactNode;
-    outletId: ReactNode;
-    package: ReactNode;
-    id: number;
-    status: OrderStatus;
-  }[];
+  orders: Order[];
   loading: boolean;
   error: string | null;
 }
@@ -26,34 +23,25 @@ const orderSlice = createSlice({
   name: 'order',
   initialState,
   reducers: {
-    setOrders: (
-      state,
-      action: PayloadAction<
-        {
-          createdAt: string | number | Date;
-          totalWeight: ReactNode;
-          outletId: ReactNode;
-          package: ReactNode;
-          id: number;
-          status: OrderStatus;
-        }[]
-      >,
-    ) => {
-      state.orders = action.payload.map((order) => ({
-        ...order,
-        createdAt: order.createdAt.toString(), // Convert createdAt to string
-      }));
-      //state.orders = action.payload as Draft<typeof state.orders>;
-      //console.log(state.orders)
+    setOrders: (state, action: PayloadAction<Order[]>) => {
+      state.orders = action.payload;
     },
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
+    setLoading: (state) => {
+      state.loading = true;
     },
-    setError: (state, action: PayloadAction<string | null>) => {
+    clearLoading: (state) => {
+      state.loading = false;
+    },
+    setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
+    },
+    clearError: (state) => {
+      state.error = null;
     },
   },
 });
 
-export const { setOrders, setLoading, setError } = orderSlice.actions;
+export const { setOrders, setLoading, clearLoading, setError, clearError } =
+  orderSlice.actions;
+
 export default orderSlice.reducer;

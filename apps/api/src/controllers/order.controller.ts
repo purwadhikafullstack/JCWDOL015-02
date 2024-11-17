@@ -7,9 +7,11 @@ export class OrderController {
   async getAllOrder(req: Request, res: Response) {
     try {
       const orders: Order[] = await prisma.order.findMany();
+
       if (!orders.length) {
         return res.status(404).send({ error: 'No orders found' });
       }
+
       return res.status(200).send(orders);
     } catch (error) {
       return res.status(500).send({ error: 'Error fetching orders' });
@@ -22,32 +24,33 @@ export class OrderController {
       const order = await prisma.order.findUnique({
         where: { id: Number(orderId) },
       });
-      if (!order) {
-        return res.status(404).send({ error: 'Order not found' });
-      }
+      if (!order) throw 'Order not found';
       return res.status(200).send({
         status: 'ok',
         message: 'Get Order By Id Successfully',
         data: order,
       });
     } catch (error) {
-      return res.status(500).send({ error: 'Error retrieving order' });
+      if (error instanceof Error)
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
+      res.status(400).send({ status: 'error', message: error });
     }
   }
 
-  async searchOrder(req: Request, res: Response) {
-    const { date, orderId } = req.body;
+  async searcOrder(req: Request, res: Response) {
     try {
-      if (!date && !orderId) {
-        return res.status(400).send({ error: 'Date or orderId is required!' });
-      }
+      const { date, orderId } = req.body;
+      if (date == null && orderId == null)
+        throw 'date or orderId is required !';
       if (date) {
-        const startOfDay = new Date(date).setUTCHours(0, 0, 0, 0);
-        const endOfDay = new Date(date).setUTCHours(23, 59, 59, 999);
-        const orders = await prisma.order.findMany({
+        const targetDate = new Date(date).setUTCHours(0, 0, 0, 0);
+        const endOfDay = new Date(targetDate).setUTCHours(23, 59, 59, 999);
+        const orderByDate = await prisma.order.findMany({
           where: {
             createdAt: {
-              gte: new Date(startOfDay).toISOString(),
+              gte: new Date(targetDate).toISOString(),
               lte: new Date(endOfDay).toISOString(),
             },
           },
@@ -55,31 +58,34 @@ export class OrderController {
         return res.status(200).send({
           status: 'ok',
           message: 'Get Order By Date Successfully',
-          data: orders,
+          data: orderByDate,
         });
       }
       if (orderId) {
-        const order = await prisma.order.findUnique({
+        const orderById = await prisma.order.findMany({
           where: { id: Number(orderId) },
         });
         return res.status(200).send({
           status: 'ok',
           message: 'Get Order By Id Successfully',
-          data: order ? [order] : [],
+          data: orderById,
         });
       }
     } catch (error) {
-      return res.status(500).send({ error: 'Error searching orders' });
+      if (error instanceof Error)
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
+      res.status(400).send({ status: 'error', message: error });
     }
   }
 
   async getAllOrderByUserId(req: Request, res: Response) {
-    const { Id } = req.params;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const startIndex = (page - 1) * limit;
-
     try {
+      const { Id } = req.params;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 2;
+      const startIndex = (page - 1) * limit;
       const orders = await prisma.order.findMany({
         where: { userId: Number(Id) },
         orderBy: { createdAt: 'desc' },
@@ -93,31 +99,25 @@ export class OrderController {
         totalPages: Math.ceil(orders.length / limit),
       });
     } catch (error) {
-      return res.status(500).send({ error: 'Error fetching user orders' });
+      if (error instanceof Error)
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
+      res.status(400).send({ status: 'error', message: error });
     }
   }
 
   async createOrder(req: Request, res: Response) {
-    const { userId, addressId, pickupSchedule } = req.body;
-
     try {
+      const { userId, addressId, pickupSchedule } = req.body;
       const user = await prisma.user.findFirst({ where: { id: userId } });
-      if (!user) {
-        return res.status(404).send({ error: 'User not found!' });
-      }
-
+      if (!user) throw 'user not found !';
       const userAddress = await prisma.address.findFirst({
         where: { id: addressId },
       });
-      if (!userAddress) {
-        return res.status(404).send({ error: 'Address not found!' });
-      }
-
-      const { nearestOutlet } = await findNearestOutlet(addressId);
-      if (!nearestOutlet?.outletId) {
-        return res.status(404).send({ error: 'Outlet not found!' });
-      }
-
+      if (!userAddress) throw 'address not found !';
+      const { nearestOutlet, distance } = await findNearestOutlet(addressId);
+      if (!nearestOutlet?.outletId) throw 'outlet not found !';
       const newOrder = await prisma.order.create({
         data: {
           userId,
@@ -126,14 +126,17 @@ export class OrderController {
           pickupSchedule: new Date(pickupSchedule),
         },
       });
-
-      return res.status(201).send({
+      res.status(200).send({
         status: 'ok',
-        message: 'Order created successfully',
-        data: newOrder,
+        message: 'Successful Pickup Request',
+        data: new Date(pickupSchedule),
       });
     } catch (error) {
-      return res.status(500).send({ error: 'Error creating order' });
+      if (error instanceof Error)
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
+      res.status(400).send({ status: 'error', message: error });
     }
   }
 
@@ -149,6 +152,10 @@ export class OrderController {
       paymentStatus,
       status,
     } = req.body;
+
+    if (!orderId) {
+      return res.status(400).send({ error: 'Order ID is required' });
+    }
 
     try {
       const updatedOrder = await prisma.order.update({
@@ -169,31 +176,31 @@ export class OrderController {
           outlet: true,
         },
       });
-      return res.status(200).send({
-        status: 'ok',
-        message: 'Order updated successfully',
-        data: updatedOrder,
-      });
+      return res.status(200).send(updatedOrder);
     } catch (error: any) {
+      console.error('Error updating order:', error);
+
       if (error.code === 'P2025') {
         return res.status(404).send({ error: 'Order not found' });
       }
       return res.status(500).send({ error: 'Error updating order' });
     }
   }
-
   async deleteOrder(req: Request, res: Response) {
     const { orderId } = req.params;
 
+    if (!orderId) {
+      return res.status(400).send({ error: 'Order ID is required' });
+    }
     try {
       const deletedOrder = await prisma.order.delete({
         where: { id: Number(orderId) },
       });
-      return res.status(200).send({
-        message: 'Order deleted successfully',
-        data: deletedOrder,
-      });
+      return res
+        .status(200)
+        .send({ message: 'Order deleted successfully', deletedOrder });
     } catch (error: any) {
+      console.error('Error deleting order:', error);
       if (error.code === 'P2025') {
         return res.status(404).send({ error: 'Order not found' });
       }

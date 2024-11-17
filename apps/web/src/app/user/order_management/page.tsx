@@ -1,82 +1,69 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { setError, setLoading, setOrders } from '@/redux/slices/orderSlice';
-import { Order, OrderStatus as PrismaOrderStatus } from '@prisma/client';
-import { useRouter } from 'next/navigation'; // This hook must be used in a client component
-import BtnOrderDate from '@/components/(orders)/(detail-order)/BtnOrderDate';
-import BtnOrderId from '@/components/(orders)/(detail-order)/BtnOrderId';
-import SearchOrder from '@/components/(orders)/(detail-order)/SearchOrder';
-import { OrderStatus } from '@/type/orderStatus'; // Assuming this is your custom type
-import CreateOrderPage from '@/components/(orders)/(create)/Create'; // Import CreateOrderPage
+import { AppDispatch } from '@/redux/store';
+import {
+  setOrders,
+  setError,
+  setLoading,
+  clearLoading,
+} from '@/redux/slices/orderSlice';
+import { useRouter } from 'next/navigation';
+import { getToken } from '@/lib/server';
+import OrderList from '@/components/(order-management)/ordermanagement/OrderList';
+import OrderFilter from '@/components/(order-management)/ordermanagement/OrderFilter';
+import OrderCreateForm from '@/components/(order-management)/ordermanagement/OrderCreateForm';
+import BypassRequestApproval from '@/components/(order-management)/ordermanagement/BypassRequestApproval';
+import BypassRequestForm from '@/components/(order-management)/ordermanagement/BypassRequestForm';
+import LoadingSpinner from '@/components/(order-management)/ordermanagement/LoadingSpinner';
+import ErrorAlert from '@/components/(order-management)/ordermanagement/ErrorAlert';
 
 const OrderManagement = () => {
-  const dispatch = useDispatch();
-  const {
-    orders = [],
-    loading,
-    error,
-  } = useSelector((state: RootState) => state.order);
-  const [statusFilter, setStatusFilter] = useState<string>('');
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for opening the modal
-  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const orders = useSelector((state: any) => state.order.orders);
+  const loading = useSelector((state: any) => state.order.loading);
+  const error = useSelector((state: any) => state.order.error);
   const apiUrl = process.env.NEXT_PUBLIC_BASE_API_URL;
+  const token = getToken();
 
-  // Effect to fetch orders on page load or filter change
   useEffect(() => {
-    dispatch(setLoading(true));
+    const fetchOrders = async () => {
+      if (!apiUrl) {
+        dispatch(setError('API URL is not defined'));
+        return;
+      }
+
+      dispatch(setLoading());
+
+      try {
+        const response = await fetch(`${apiUrl}/order`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch orders');
+        }
+
+        const data = await response.json();
+        dispatch(setOrders(data));
+      } catch (error) {
+        dispatch(
+          setError(
+            error instanceof Error ? error.message : 'Failed to fetch orders',
+          ),
+        );
+      } finally {
+        dispatch(clearLoading());
+      }
+    };
+
     fetchOrders();
-  }, [dispatch, statusFilter]);
-
-  const fetchOrders = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/order?status=${statusFilter}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (!response.ok) throw new Error('Failed to fetch orders');
-      const data: {
-        id: number;
-        status: PrismaOrderStatus;
-        userId: number;
-        addressId: number;
-        outletId: number;
-        package: string | null;
-        pickupSchedule: Date;
-        totalWeight: number | null;
-        totalItems: number;
-        createdAt: Date;
-        updatedAt: Date;
-      }[] = await response.json();
-
-      const formattedData = data.map((item) => ({
-        ...item,
-        status: item.status as OrderStatus,
-      }));
-      dispatch(setOrders(formattedData));
-    } catch (error: any) {
-      dispatch(setError(error.message));
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
-  // Handle the filter status change from SearchOrder
-  const handleSubmitSearch = (values: any) => {
-    setStatusFilter(values.status); // Set filter status based on search input
-  };
-
-  // Modal content for creating a new order
-  const handleOpenModal = () => {
-    setIsModalOpen(true); // Open the modal
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false); // Close the modal
-  };
+  }, [apiUrl, token, dispatch]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -84,97 +71,57 @@ const OrderManagement = () => {
         Order Management
       </h1>
 
-      {/* Search Order */}
-      <div className="mb-4">
-        <SearchOrder
-          handleSubmitSearch={handleSubmitSearch}
-          isLoading={loading}
-          selectSearchModal={
-            document.getElementById('modal_search_order') as HTMLDialogElement
-          }
-          byIdModal={
-            document.getElementById('modal_by_id') as HTMLDialogElement
-          }
-          byDateModal={
-            document.getElementById('modal_by_date') as HTMLDialogElement
-          }
-        />
-        {/* Button to create a new order */}
-        <button
-          onClick={handleOpenModal} // Open modal when clicked
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Create New Order
-        </button>
+      {/* Error and Loading State */}
+      {loading && <LoadingSpinner message="Loading orders..." />}
+      {error && <ErrorAlert message={error} />}
+
+      {/* Create Form */}
+      <OrderCreateForm />
+
+      {/* Filter Section */}
+      <div className="mt-8">
+        <OrderFilter onFilterChange={(filters) => console.log(filters)} />
       </div>
 
-      {/* Display Orders */}
-      {!loading && !error && (
-        <div className="mt-6">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead>
-              <tr>
-                <th className="p-4 border-b">Order ID</th>
-                <th className="p-4 border-b">Package</th>
-                <th className="p-4 border-b">Status</th>
-                <th className="p-4 border-b">Outlet</th>
-                <th className="p-4 border-b">Total Weight</th>
-                <th className="p-4 border-b">Created At</th>
-                <th className="p-4 border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="p-4 text-center">
-                    No orders found
-                  </td>
-                </tr>
-              ) : (
-                orders.map((order) => (
-                  <tr key={order.id}>
-                    <td className="p-4 border-b">{order.id}</td>
-                    <td className="p-4 border-b">{order.package}</td>
-                    <td className="p-4 border-b">{order.status}</td>
-                    <td className="p-4 border-b">{order.outletId}</td>
-                    <td className="p-4 border-b">{order.totalWeight}</td>
-                    <td className="p-4 border-b">
-                      {new Date(order.createdAt).toLocaleString()}
-                    </td>
-                    <td className="p-4 border-b">
-                      <button
-                        onClick={() =>
-                          router.push(`/order-management/detail/${order.id}`)
-                        }
-                        className="bg-blue-500 text-white p-2 rounded"
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {/* Bypass Request Form */}
+      <div className="mt-8">
+        <BypassRequestForm orderId={1} workerId={101} />
+      </div>
 
-      {/* Loading and Error Messages */}
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {/* Bypass Request Approval */}
+      <div className="mt-8">
+        <BypassRequestApproval requestId={1} initialStatus="PENDING" />
+      </div>
 
-      {/* Modal to create new order */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
-          <div className="bg-white p-8 rounded-lg w-96">
-            <CreateOrderPage />
-            <button
-              onClick={handleCloseModal} // Close modal when clicked
-              className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            >
-              Close
-            </button>
-          </div>
+      {/* Order List */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">
+          Order List
+        </h2>
+        <OrderList orders={orders} />
+      </div>
+
+      {/* No Orders Message at the Bottom */}
+      {!loading && orders.length === 0 && (
+        <div className="flex flex-col items-center justify-center mt-16">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 text-gray-400 mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 14l2-2 4 4m0 0l4-4m-4 4V7"
+            />
+          </svg>
+          <p className="text-gray-600 text-lg font-medium">No orders found</p>
+          <p className="text-gray-500 text-sm mt-2">
+            Try adjusting the filter or creating a new order.
+          </p>
         </div>
       )}
     </div>

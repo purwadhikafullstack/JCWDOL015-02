@@ -1,5 +1,4 @@
 import OutletLocation from '@/components/(outlets)/OutletList';
-import { PropsWithChildren } from 'react';
 
 const page = () => {
   return (
@@ -8,13 +7,12 @@ const page = () => {
         Outlets Locations
       </h1>
       <OutletLocation
-        {...{
-          outlets: [],
-          currentPage: 0,
-          totalPage: 0,
-          handlePageChange: (page: number): void => {
-            throw new Error('Function not implemented.');
-          },
+        outlets={[]} // Assuming OutletList expects an array of outlets
+        currentPage={0}
+        totalPage={0}
+        handlePageChange={(page: number): void => {
+          // eslint-disable-next-line no-console
+          console.log('Page changed to:', page);
         }}
       />
     </section>
