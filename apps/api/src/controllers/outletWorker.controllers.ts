@@ -55,6 +55,7 @@ export class OutletWorkerController {
         }
     }
 
+
     async createOutletWorker(req: Request, res: Response): Promise<Response> {
       const { outletId, name, password, email, role } = req.body;
   

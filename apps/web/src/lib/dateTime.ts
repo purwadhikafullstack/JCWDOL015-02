@@ -5,7 +5,7 @@ export const formatDate = (dateString: string | null) => {
 };
 
 export const formatTime = (dateString: string | null) => {
-    if (!dateString) return 'Not yet';
+    if (!dateString) return ' - ';
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('id-ID', { hour: '2-digit', minute: '2-digit' }).format(date);
 };

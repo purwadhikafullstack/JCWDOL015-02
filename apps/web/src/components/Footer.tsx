@@ -5,15 +5,15 @@ import { RiTShirtAirLine } from "react-icons/ri";
 
 export const Footer = () => {
   return (
-    <footer className="w-full bg-grayCustom flex flex-col justify-center items-center">
+    <footer className="w-full bg-grayCustom flex flex-col justify-center items-center text-black">
       <div className="w-full flex flex-wrap justify-evenly items-start my-2 lg:my-4 py-8">
         <div className="flex flex-col justify-center items-center text-center">
-          <div className='flex justify-center items-center gap-2 mb-1'>
+          <div className='flex justify-center items-center gap-2 mb-1 text-black'>
             <RiTShirtAirLine className="text-base md:text-2xl font-bold"/>
             <h1 className="font-bold md:text-xl">LaunON.</h1>
           </div>
           <div className="w-fit bg-beigeCustom rounded-full px-2 py-2">
-            <p className="font-semibold tracking-wide md:text-lg lg:text-xl">
+            <p className="font-semibold tracking-wide md:text-lg lg:text-xl text-black">
               Clean Is ON, With LaunON.
             </p>
           </div>
@@ -35,15 +35,12 @@ export const Footer = () => {
           <h1 className="text-beigeCustom font-bold">Our Services</h1>
           <ol className="mt-2 flex flex-col text-sm tracking-wide">
             <li className="duration-150 border-b border-b-transparent hover:border-b-black">
-              <Link href={'/services/wash-only'}>Wash only package &bull;</Link>
-            </li>
-            <li className="duration-150 border-b border-b-transparent hover:border-b-black">
-              <Link href={'/services/iron-only'}>Ironi only package &bull;</Link>
-            </li>
-            <li className="duration-150 border-b border-b-transparent hover:border-b-black">
-              <Link href={'/services/complete-care'}>
-                Complete care package &bull;
+              <Link href={'/services'}>
+                Complete care wash &bull;
               </Link>
+            </li>
+            <li className="duration-150 border-b border-b-transparent hover:border-b-black">
+              <Link href={'/user/orders'}>Tracking order status &bull;</Link>
             </li>
           </ol>
         </div>

@@ -17,37 +17,27 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <MdManageAccounts className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
           Create an Account or Login
         </h1>
         <p className="text-lg font-medium">
-        Jika Anda pelanggan baru, daftarkan akun Anda dengan mengisi data diri pada halaman "Daftar". Jika Anda sudah memiliki akun, masuk ke aplikasi dengan menggunakan kredensial yang telah Anda buat sebelumnya.
+        Jika Anda pelanggan baru, daftarkan akun Anda dengan mengisi data diri pada halaman &quot;Daftar&quot;. Jika Anda sudah memiliki akun, masuk ke aplikasi dengan menggunakan kredensial yang telah Anda buat sebelumnya.
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
-        <TbHandClick className="w-12 h-12 md:w-16 md:h-16" />
-        <h1 className="text-lg md:text-xl font-bold">
-          Choose Laundry Service
-        </h1>
-        <p className="text-lg font-medium">
-        Setelah berhasil masuk, pilih layanan laundry yang Anda inginkan. Anda dapat memilih jenis layanan seperti pencucian biasa, penyetrikaan, atau layanan lengkap. Pastikan untuk memilih layanan yang sesuai dengan kebutuhan laundry Anda.
-        </p>
-      </div>
-
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <MdOutlineScheduleSend className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
           Request a Laundry Pickup
         </h1>
         <p className="text-lg font-medium">
-        Pilih opsi "Permintaan Penjemputan" dan isi informasi yang diperlukan seperti tanggal, waktu penjemputan, dan alamat. Lokasi Anda akan otomatis terdeteksi, tetapi Anda juga dapat menyesuaikannya jika diperlukan. Setelah semua data diisi, kirim permintaan penjemputan Anda.
+        Pilih opsi &quot;Permintaan Penjemputan&quot; dan isi informasi yang diperlukan seperti tanggal, waktu penjemputan, dan alamat. Lokasi Anda akan otomatis terdeteksi, tetapi Anda juga dapat menyesuaikannya jika diperlukan. Setelah semua data diisi, kirim permintaan penjemputan Anda.
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <HiOutlineRefresh className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
         Wait for Driver Assignment
@@ -57,7 +47,7 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <TbWashEco className="w-12 h-12 md:w-16 md:h-16" style={{color: 'black'}} />
         <h1 className="text-lg md:text-xl font-bold">
         Laundry Processing at the Outlet
@@ -67,7 +57,7 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <RiSecurePaymentLine className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
         Payment and Delivery
@@ -77,13 +67,13 @@ const HowToOrder = () => {
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10">
+      <div className="flex flex-col justify-center items-center text-center px-10 md:px-28 mb-10 text-black">
         <IoCheckmarkDoneSharp className="w-12 h-12 md:w-16 md:h-16" />
         <h1 className="text-lg md:text-xl font-bold">
         Order Completion and Feedback
         </h1>
         <p className="text-lg font-medium">
-        Setelah laundry Anda diterima, status pesanan akan diperbarui menjadi "Laundry Telah Diterima Customer". Jika ada masalah seperti kerusakan atau kehilangan barang, Anda dapat mengajukan keluhan melalui aplikasi. Tim LaunON akan segera menindaklanjuti keluhan Anda.
+        Setelah laundry Anda diterima, status pesanan akan diperbarui menjadi &quot;Laundry Telah Diterima Customer&quot;. Jika ada masalah seperti kerusakan atau kehilangan barang, Anda dapat mengajukan keluhan melalui aplikasi. Tim LaunON akan segera menindaklanjuti keluhan Anda.
         </p>
       </div>
     </section>

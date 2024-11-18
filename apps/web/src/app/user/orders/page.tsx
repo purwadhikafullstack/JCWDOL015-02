@@ -1,7 +1,11 @@
+import AllOrderPage from '@/components/(orders)/AllOrderPage';
+
 const page = () => {
   return (
-    <div>page</div>
-  )
-}
+    <section className="bg-lightCustom">
+      <AllOrderPage />
+    </section>
+  );
+};
 
-export default page
+export default page;

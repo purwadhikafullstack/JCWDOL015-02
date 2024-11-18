@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const AboutUs = () => {
   return (
-    <section className="w-full flex flex-col py-10 justify-center items-center bg-beigeCustom">
+    <section className="w-full flex flex-col py-10 justify-center items-center bg-lightCustom">
       <h1 className="text-3xl md:text-6xl font-semibold uppercase tracking-wide text-black mb-0 mt-12 md:mb-3 md:mt-0">
         About Us
       </h1>

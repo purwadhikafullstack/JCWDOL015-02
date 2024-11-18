@@ -3,7 +3,7 @@ import { MdMailOutline } from "react-icons/md";
 
 const Contact = () => {
   return (
-    <section className="w-full flex flex-col justify-center items-center bg-lightCustom pb-5 md:pb-10">
+    <section className="w-full flex flex-col justify-center items-center bg-lightCustom pb-5 md:pb-10 text-black">
         <h1 className="font-bold text-2xl mt-8">Come Talk With Us</h1>
         <div className="mt-6 w-full flex flex-wrap gap-3 justify-evenly items-center">
             <a target='blank' href='https://www.instagram.com/' className="flex flex-col justify-center items-center hover:scale-110 duration-300">

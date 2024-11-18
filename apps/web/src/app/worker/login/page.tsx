@@ -7,14 +7,21 @@ export default function LoginWorker() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [isOutletAdmin, setIsOutletAdmin] = useState(false);
     const router = useRouter();
 
-    const handleLogin = async (e) => {
+    const handleLogin = async (e:any) => {
         e.preventDefault();
         setMessage('');
 
+        const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
+
+        const loginUrl = isOutletAdmin
+            ? `${BACKEND_URL}/api/outlet/login`
+            : `${BACKEND_URL}/api/worker/login`;
+        
         try {
-            const response = await fetch('http://localhost:8000/api/worker/login', {
+            const response = await fetch(loginUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -28,9 +35,12 @@ export default function LoginWorker() {
             if (response.ok) {
                 setMessage('Login successful');
                 
-                localStorage.setItem('outletWorker', JSON.stringify(data.outletWorker));
+                localStorage.setItem(
+                    isOutletAdmin ? 'outletAdmin' : 'outletWorker',
+                    JSON.stringify(isOutletAdmin ? data : data.outletWorker)
+                );
 
-                router.push('/worker/dashboard');
+                router.push(isOutletAdmin ? '/outlets/dashboard' : '/worker/dashboard');
             } else {
                 setMessage(data.error || 'Login failed');
             }
@@ -56,7 +66,7 @@ export default function LoginWorker() {
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-2 mt-1"
+                            className="w-full px-4 py-2 mt-1 border border-slate-300 bg-white"
                             required
                         />
                     </div>
@@ -67,9 +77,19 @@ export default function LoginWorker() {
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-2 mt-1"
+                            className="w-full px-4 py-2 mt-1 bg-white border border-slate-300"
                             required
                         />
+                    </div>
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="isOutletAdmin"
+                            checked={isOutletAdmin}
+                            onChange={(e) => setIsOutletAdmin(e.target.checked)}
+                            className="mr-2"
+                        />
+                        <label htmlFor="isOutletAdmin" className="text-sm">Login as Outlet Admin</label>
                     </div>
                     <button
                         type="submit"

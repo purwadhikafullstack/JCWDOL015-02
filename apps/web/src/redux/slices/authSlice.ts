@@ -9,9 +9,8 @@ const initialState = {
     username: "",
     verified: false,
     email: "",
-    avatar: ""
+    avatar: "",
 }
-
 export const getProfileState = createAsyncThunk(
     'user/profile',
     async(_, {rejectWithValue}) => {
@@ -24,7 +23,6 @@ export const getProfileState = createAsyncThunk(
         }
     }
 )
-
 export const userSlice = createSlice({
     name: "user",
     initialState,

@@ -11,7 +11,7 @@ const ChooseUs = () => {
           <p>Kemudahan dan efisiensi bagi pelanggan dalam mengurus kebutuhan cucian dengan berbagai fitur unggulan kami.</p>
         </div>
 
-        <div className="w-full flex flex-wrap justify-evenly items-start my-10">
+        <div className="w-full flex flex-wrap justify-evenly items-start my-10 text-black">
             <div className="w-full md:w-1/3 lg:w-1/4 text-center flex flex-col justify-center items-center my-5 mx-3">
                 <div className='w-fit h-fit p-4 bg-beigeCustom rounded-full mb-2'>
                     <BsStopwatch className='w-16 h-16 md:w-24 md:h-24'/>
