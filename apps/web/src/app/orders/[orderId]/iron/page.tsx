@@ -10,7 +10,9 @@ export default function IronStation() {
     const { orderId } = useParams();
     const searchParams = useSearchParams();
     const userId = searchParams.get("userId");
+    const workerId = searchParams.get("outletWorkerId");
     const [orderItemReference, setOrderItemReference] = useState<OrderItemData[]>(); 
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
 
     const [orderItems, setOrderItems] = useState<OrderItemData>({
         shirt: 0,
@@ -46,7 +48,7 @@ export default function IronStation() {
     useEffect(() => {
         const fetchOrderReference = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/order-item/order/${orderId}`);
+                const response = await axios.get(`${backendUrl}/api/order-item/order/${orderId}`);
                 setOrderItemReference(response.data);
             } catch (error) {
                 console.error("Error fetching order item reference:", error);
@@ -60,7 +62,7 @@ export default function IronStation() {
     };
 
     const handleConfirm = async (isConfirmed: boolean) => {
-        setShowConfirmation(false);
+        setShowConfirmation(false); 
         if (!isConfirmed) return;
         if (!orderItemReference || orderItemReference.length === 0) return;
 
@@ -83,17 +85,21 @@ export default function IronStation() {
             console.log('data:', orderItems);
             console.log('match to:', referenceData);
             return;
-        }
-    
-        if (!userId) return;
-    
+        }    
+        if (!userId || !workerId) return;
         try {
-            await axios.patch(`http://localhost:8000/api/order/${orderId}`, {
+            await axios.patch(`${backendUrl}/api/order/${orderId}`, {
                 status: "ironed",
                 userId,
             });
+
+            await axios.post(`${backendUrl}/api/work-history`, {
+                workerId: +workerId,
+                orderId: +orderId,
+                station: "packer",
+            });
     
-            await axios.post("http://localhost:8000/api/notification", {
+            await axios.post(`${backendUrl}/api/notification`, {
                 userId: +userId,
                 title: `Order ${orderId} Status Updated`,
                 message: "Your order status has been updated to 'ironed'.",
@@ -110,7 +116,7 @@ export default function IronStation() {
         setNotMatchConfirmation(false);
         if (!recalculate) {
             try {
-                await axios.patch(`http://localhost:8000/api/order/${orderId}`, {
+                await axios.patch(`${backendUrl}/api/order/${orderId}`, {
                     status: "recalculate",
                     userId,
                 });
@@ -139,7 +145,7 @@ export default function IronStation() {
                             name={item}
                             value={orderItems[item as keyof OrderItemData]}
                             onChange={handleInputChange}
-                            className="w-1/2 px-3 py-2 border rounded"
+                            className="w-1/2 px-3 py-2 border rounded bg-white border-slate-300"
                             min="0"
                         />
                     </div>

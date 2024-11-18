@@ -66,7 +66,7 @@ export default function LoginWorker() {
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-2 mt-1"
+                            className="w-full px-4 py-2 mt-1 border border-slate-300 bg-white"
                             required
                         />
                     </div>
@@ -77,7 +77,7 @@ export default function LoginWorker() {
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-2 mt-1"
+                            className="w-full px-4 py-2 mt-1 bg-white border border-slate-300"
                             required
                         />
                     </div>

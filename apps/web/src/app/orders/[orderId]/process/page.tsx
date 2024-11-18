@@ -11,6 +11,7 @@ export default function ProcessOrderPage() {
     const searchParams = useSearchParams();
     const userId = searchParams.get("userId");
     const distance = parseFloat(searchParams.get("distance") || "0");
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
 
     const [weight, setWeight] = useState(0);
     const [orderItems, setOrderItems] = useState<OrderItemData>({
@@ -58,27 +59,30 @@ export default function ProcessOrderPage() {
         }
 
         try {
-            const orderItemResponse = await axios.post(`http://localhost:8000/api/order-item`, {
+            const orderItemResponse = await axios.post(`${backendUrl}/api/order-item`, {
                 orderId: +orderId,
                 ...orderItems,
             });
 
             if (orderItemResponse.status === 201 || orderItemResponse.status === 200) {
                 // Update order price and weight
-                await axios.patch(`http://localhost:8000/api/order/price/${orderId}`, {
+
+                console.log(totalItems)
+
+                await axios.patch(`${backendUrl}/api/order/price/${orderId}`, {
                     weight: weight,
                     distance: distance,
                     userId: userId,
-                    totalItems:totalItems
+                    totalItems:+totalItems
                 });
 
-                await axios.patch(`http://localhost:8000/api/order/${orderId}`, {
-                    status: "washed", // Mark as 'washed'
+                await axios.patch(`${backendUrl}/api/order/${orderId}`, {
+                    status: "weighed", // Mark as 'washed'
                     userId: userId,
                 });
 
-                alert("Order items updated and order status set to 'washed' successfully!");
-                router.push("http://localhost:3000/outlets/dashboard");
+                alert("Order items updated and order status set to 'weighed' successfully!");
+                router.push("/outlets/dashboard");
             } else {
                 console.error("Failed to create order-item. Status:", orderItemResponse.status);
                 alert("Failed to create order-item.");
@@ -106,7 +110,7 @@ export default function ProcessOrderPage() {
                             name={item}
                             value={orderItems[item as keyof OrderItemData]}
                             onChange={handleInputChange}
-                            className="w-1/2 px-3 py-2 border rounded"
+                            className="w-1/2 px-3 py-2 border rounded bg-white border-slate-300"
                             min="0"
                         />
                     </div>
@@ -121,7 +125,7 @@ export default function ProcessOrderPage() {
                         name="weight"
                         value={weight}
                         onChange={handleWeightChange}
-                        className="w-1/2 px-3 py-2 border rounded"
+                        className="w-1/2 px-3 py-2 border rounded bg-white border-slate-300"
                         min="0"
                     />
                 </div>

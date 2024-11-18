@@ -159,9 +159,9 @@ export class PickupDeliveryRequestController {
 
         if (order) {
 
-        if (order.status === "waiting_for_pickup" || order.status === "on_the_way_to_outlet") {
+        if (order.status === "on_the_way_to_outlet") {
          const updateOrder =  await axios.patch(`${process.env.BACKEND_URL}/api/order/${order.id}`, {
-            status: "weighed",
+            status: "arrived_at_outlet",
             userId: order.userId,
           });
         }
@@ -172,6 +172,26 @@ export class PickupDeliveryRequestController {
           });
         }}
       }
+
+      if (status === "onGoing") {
+        const order = await prisma.order.findUnique({where:{id:updatedRequest.orderId}})
+
+        if (order) {
+
+        if (order.status === "waiting_for_pickup") {
+         const updateOrder =  await axios.patch(`${process.env.BACKEND_URL}/api/order/${order.id}`, {
+            status: "on_the_way_to_outlet",
+            userId: order.userId,
+          });
+        }
+        else {
+          const updateOrder =  await axios.patch(`${process.env.BACKEND_URL}/api/order/${order.id}`, {
+            status: "on_the_way_to_customer",
+            userId: order.userId,
+          });
+        }}
+      }
+      
   
       return res.status(200).json({ status: 'success', updatedRequest });
     } catch (error) {

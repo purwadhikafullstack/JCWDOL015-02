@@ -28,6 +28,7 @@ dotenv.config();
 import { OutletWorkerRouter } from './routers/outletWorker.router';
 import { PickupDeliveryRequestRouter } from './routers/pdrd.router';
 import { OrderItemRouter } from './routers/orderItem.router';
+import { WorkerJobHistoryRouter } from './routers/workHistory.router';
 import { PaymentRouter } from './routers/payment.router';
 
 export default class App {
@@ -87,6 +88,7 @@ export default class App {
     const outletWorkerRouter = new OutletWorkerRouter()
     const pickupDeliveryRequestRouter = new PickupDeliveryRequestRouter()
     const orderItemRouter = new OrderItemRouter()
+    const workHistoryRouter = new WorkerJobHistoryRouter()
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
@@ -107,6 +109,7 @@ export default class App {
     this.app.use('/api/worker', outletWorkerRouter.getRouter())
     this.app.use('/api/pdr', pickupDeliveryRequestRouter.getRouter())
     this.app.use('/api/order-item', orderItemRouter.getRouter())
+    this.app.use('/api/work-history', workHistoryRouter.getRouter())
   }
 
   public start(): void {

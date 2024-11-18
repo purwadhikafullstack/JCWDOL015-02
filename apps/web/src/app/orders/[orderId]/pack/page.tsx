@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { OrderItemData } from "@/type/worker/outletType";
 
-export default function WasherStation() {
+export default function PackStation() {
     const router = useRouter();
     const { orderId } = useParams();
     const searchParams = useSearchParams();
     const userId = searchParams.get("userId");
     const workerId = searchParams.get("outletWorkerId");
     const [orderItemReference, setOrderItemReference] = useState<OrderItemData[]>(); 
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
 
     const [orderItems, setOrderItems] = useState<OrderItemData>({
         shirt: 0,
@@ -32,7 +32,7 @@ export default function WasherStation() {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [notMatchConfirmation, setNotMatchConfirmation] = useState(false);
 
-    const handleInputChange = (e:any) => {
+    const handleInputChange = (e: any) => {
         const { name, value } = e.target;
         setOrderItems({
             ...orderItems,
@@ -65,7 +65,7 @@ export default function WasherStation() {
         setShowConfirmation(false);
         if (!isConfirmed) return;
         if (!orderItemReference || orderItemReference.length === 0) return;
-    
+
         const referenceData: OrderItemData = {
             shirt: orderItemReference[0].shirt || 0,
             longShirt: orderItemReference[0].longShirt || 0,
@@ -90,24 +90,21 @@ export default function WasherStation() {
         if (!userId || !workerId) return;
     
         try {
-            // Update order status to "washed"
             await axios.patch(`${backendUrl}/api/order/${orderId}`, {
-                status: "washed",
+                status: "waiting_for_payment",
                 userId,
             });
-    
-            // Create Worker Job History
+
             await axios.post(`${backendUrl}/api/work-history`, {
                 workerId: +workerId,
                 orderId: +orderId,
-                station: "washer",
+                station: "packer",
             });
-    
-            // Send notification
+
             await axios.post(`${backendUrl}/api/notification`, {
                 userId: +userId,
                 title: `Order ${orderId} Status Updated`,
-                message: "Your order status has been updated to 'washed'.",
+                message: "Your order status has been updated to 'waiting for payment'.",
             });
     
             router.push('/worker/dashboard');
@@ -115,7 +112,7 @@ export default function WasherStation() {
             console.error("Error processing order:", error);
         }
     };
-    
+
     const handleMismatchConfirm = async (recalculate: boolean) => {
         setNotMatchConfirmation(false);
         if (!recalculate) {
@@ -135,7 +132,7 @@ export default function WasherStation() {
     return (
         <div className="p-6 bg-white rounded-lg shadow-md w-full max-w-md mx-auto mt-10">
             <h2 className="text-2xl font-bold mb-4">
-                WASHING STATION <br /> Order {orderId}, workerID, {workerId}
+                PACKER STATION <br /> Order {orderId}, userID: {userId}
             </h2>
             <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
                 {Object.keys(orderItems).map((item) => (
