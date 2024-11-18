@@ -176,9 +176,8 @@ export class OrderController {
         message: `Successful Pickup Request. Outlet ${newOrder.outletId} will take your order, and driver ${driver?.name} will pick up your laundry. Distance: ${distance} km`,
         data: new Date(pickupSchedule),
         orderId: newOrder.id
-        data: new Date(pickupSchedule),
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof Error) {
         return res.status(400).send({ status: "error", message: error.message });
       } else {
@@ -380,7 +379,6 @@ export class OrderController {
         .status(500)
         .send({ error: 'Error updating order price and weight' });
     }
-}
   }
 
   async deleteOrder(req: Request, res: Response) {
