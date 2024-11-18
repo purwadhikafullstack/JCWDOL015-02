@@ -9,6 +9,7 @@ import { requestOrderFetchDb } from '@/lib/orderLib';
 import { toast } from 'react-toastify';
 import { AiOutlineWarning } from 'react-icons/ai';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const InputRequestPickup = () => {
   const user = useAppSelector((state) => state.auth);
@@ -16,6 +17,7 @@ const InputRequestPickup = () => {
   const [selectedAddress, setSelectedAddress] = useState<IAddressState[]>([]);
   const [allAddress, setAllAddress] = useState<IAddressState[]>([]);
   const AllAddressModal = document.getElementById('modal_another_address') as HTMLDialogElement;
+  const router = useRouter();
   const getUserAddress = useCallback(async () => {
     try {
       const { result, ok } = await getAddresByUserIdFetchDb(user.id);
@@ -36,6 +38,7 @@ const InputRequestPickup = () => {
       resetForm();
       const modal = document.getElementById("modal_pickup_request") as HTMLDialogElement;
       modal?.close();
+      router.push(`/user/orders/${result.orderId}`);
     } catch (error) {
       toast.error(`${error as Error}`);
     }

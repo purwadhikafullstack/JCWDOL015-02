@@ -28,6 +28,7 @@ dotenv.config();
 import { OutletWorkerRouter } from './routers/outletWorker.router';
 import { PickupDeliveryRequestRouter } from './routers/pdrd.router';
 import { OrderItemRouter } from './routers/orderItem.router';
+import { PaymentRouter } from './routers/payment.router';
 
 export default class App {
   private app: Express;
@@ -41,7 +42,7 @@ export default class App {
 
   private configure(): void {
     this.app.use(cookieParser());
-    this.app.use(cors({credentials: true,origin:'http://localhost:3000'}));
+    this.app.use(cors({credentials: true,origin:['http://localhost:3000', 'http://localhost:8000']}));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
     this.app.use('/api/public', express.static(path.join(__dirname, '../public')))
@@ -71,6 +72,7 @@ export default class App {
   }
 
   private routes(): void {
+    const paymentRouter = new PaymentRouter();
     const googleRouter = new GoogleRouter();
     const mailRouter = new MailRouter();
     const authRouter = new AuthRouter();
@@ -90,6 +92,7 @@ export default class App {
       res.send(`Hello, Purwadhika Student API!`);
     });
 
+    this.app.use('/api/payment', paymentRouter.getRouter());
     this.app.use('/api/google', googleRouter.getRouter());
     this.app.use('/api/mail', mailRouter.getRouter())
     this.app.use('/api/auth', authRouter.getRouter());

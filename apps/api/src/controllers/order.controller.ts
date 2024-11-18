@@ -32,12 +32,19 @@ export class OrderController {
         where: { id: Number(orderId) },
       });
       if (!order) throw 'Order not found';
-      return res
-        .status(200)
-        .send({
-          status: 'ok',
-          message: 'Get Order By Id Successfully',
-          data: order,
+      const customerAddress = await prisma.address.findUnique({
+        where: { id: order.addressId },
+      })
+      const customerIntro = await prisma.user.findUnique({
+        where: { id: order.userId },
+        select: { username: true, email: true }
+      })
+      const outletName = await prisma.outlet.findUnique({
+        where: { id: order.outletId },
+        select: { name: true }
+      })
+      return res.status(200).send({status: 'ok',message: 'Get Order By Id Successfully',
+          data: {order,customerIntro,customerAddress,outletName}
         });
     } catch (error) {
       if (error instanceof Error)
@@ -84,7 +91,7 @@ export class OrderController {
     try {
       const { Id } = req.params;
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 2;
+      const limit = parseInt(req.query.limit as string) || 5;
       const startIndex = (page - 1) * limit;
       const orders = await prisma.order.findMany({
         where: { userId: Number(Id) },
@@ -148,13 +155,15 @@ export class OrderController {
       res.status(200).send({
         status: 'ok',
         message: `Successful Pickup Request. Outlet ${newOrder.outletId} will take your order, and driver ${driver?.name} will pick up your laundry. Distance: ${distance} km`,
-        data: new Date(pickupSchedule)
+        data: new Date(pickupSchedule),
+        orderId: newOrder.id
       });
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).send({ status: "error", message: error.message });
+      } else {
+        res.status(400).send({ status: "error", message: error });
       }
-      res.status(400).send({ status: "error", message: error });
     }
   }
   
@@ -302,7 +311,6 @@ export class OrderController {
     }
 }
 
-
   async deleteOrder(req: Request, res: Response) {
     const { orderId } = req.params;
 
@@ -322,6 +330,18 @@ export class OrderController {
         return res.status(404).send({ error: 'Order not found' });
       }
       return res.status(500).send({ error: 'Error deleting order' });
+    }
+  }
+
+  async confirmOrder(req: Request, res: Response) {
+    try {
+      const { orderId } = req.body;
+      const order = await prisma.order.findUnique({where: { id: Number(orderId) }})
+      if (!order) throw 'Order not found';
+      await prisma.order.update({ where: { id: Number(orderId) }, data: { status: 'delivered_to_customer' } })
+      return res.status(200).send({ status: 'ok', message: 'Order confirmed successfully' });
+    } catch (error) {
+      res.status(400).send({ status: 'error', message: error });
     }
   }
 }

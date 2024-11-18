@@ -4,7 +4,6 @@ import userAddressSchema from "@/yup/addressSchema";
 import { ICreateCustomerAddress } from "@/type/customerType";
 import { createAddressFetchDb } from "@/lib/addressLib";
 import { toast } from "react-toastify";
-import CreateCurrentAddress from "./CreateCurrentAddress";
 import { TbMapPinPlus } from "react-icons/tb";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -139,11 +138,7 @@ const initialValues: ICreateCustomerAddress = {
                     <div className="flex flex-col justify-center items-center mt-5">
                       <button type="submit" className="w-[80%] rounded-full duration-300 bg-beigeCustom text-black mb-2 hover:bg-grayCustom hover:text-beigeCustom font-bold text-2xl py-1 tracking-wider hover:scale-105">
                         {isLoading ? 'Creating Address...' : 'Create Address'}
-                      </button>
-                      <p className="text-sm text-white md:text-lg font-medium tracking-wide my-1">
-                        - OR -
-                      </p>
-                      <CreateCurrentAddress/>
+                      </button>          
                     </div>
                   </Form>
                 </Formik>

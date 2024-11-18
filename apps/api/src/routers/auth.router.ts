@@ -18,7 +18,7 @@ export class AuthRouter {
     this.router.post('/login',validateLogin, this.authController.loginWithMail);
     this.router.delete('/logout', this.authController.logoutUser);
   }
-
+  
   getRouter(): Router {
     return this.router;
   }

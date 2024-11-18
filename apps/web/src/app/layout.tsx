@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: 'Owned and operated by LaunON Style',
   icons: {
     icon: '/favicon.ico',
-  },
+  }
 };
 
 export default function RootLayout({

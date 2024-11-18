@@ -121,7 +121,7 @@ const AllOrderPage = () => {
                   </div>
                 </div>
                 <div className="collapse-content">
-                <button onClick={() => {router.push(`/user/orders/${order?.id}`)}} className='cursor-pointer hover:bg-black hover:text-beigeCustom bg-grayCustom text-black py-2 px-4 rounded-full transition duration-200 shadow-xl shadow-[#00000048] text-sm uppercase tracking-wide my-1'>View Detail</button>
+                <button onClick={() => {router.push(`/user/orders/${order?.id}`)}} className='cursor-pointer hover:bg-black hover:text-beigeCustom bg-grayCustom text-white py-2 px-4 rounded-full transition duration-200 shadow-xl shadow-[#00000048] text-sm uppercase tracking-wide my-1'>View Detail</button>
                 </div>
               </div>
             </div>

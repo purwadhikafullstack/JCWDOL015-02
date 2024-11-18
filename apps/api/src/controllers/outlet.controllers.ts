@@ -48,7 +48,6 @@ export class OutletController {
     //     { error: 'Forbidden: You do not have permission to perform this action',}
     // );
     // }
-
     try {
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
@@ -62,8 +61,7 @@ export class OutletController {
 
       return res.status(201).send(newOutlet);
     } catch (error) {
-      console.error('Error creating outlet:', error);
-      return res.status(500).send({ error: 'Error creating outlet' });
+      return res.status(500).send({ status: 'error', message: error });
     }
   }
 
