@@ -18,9 +18,10 @@ model Sample {
 }
 
 enum WorkerRoles {
-  iron
+  ironer
   washer
-  dryer
+  packer
+  driver
 }
 
 enum OrderStatus {
@@ -35,6 +36,7 @@ enum OrderStatus {
   ready_for_delivery
   on_the_way_to_customer
   delivered_to_customer
+  recalculate
 }
 
 enum RoleUser {
@@ -45,10 +47,12 @@ enum RoleUser {
   driver
 }
 
+
+
 model User {
   id             Int              @id @default(autoincrement())
   email          String           @unique
-  username       String
+  username       String           @default("")
   avatar         String           @default("https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png")
   password       String?
   role           RoleUser         @default(customer)
@@ -69,17 +73,18 @@ model User {
   outlet         Outlet?           @relation(fields: [outletId], references: [id])
 }
 
+
 model Notification {
   id        Int      @id @default(autoincrement())
   userId    Int?
-  workerId  Int?
+  outletId    Int?
   title     String
   message   String?
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id])
-  worker OutletWorker? @relation(fields: [workerId], references: [id])
+  worker Outlet? @relation(fields: [outletId], references: [id])
 }
 
 model Address {
@@ -134,9 +139,6 @@ model Order {
 model OrderItem {
   id          Int         @id @default(autoincrement())
   orderId     Int
-  iron        Int
-  washer      Int
-  dryer       Int
   shirt       Int         @default(0)
   longShirt   Int         @default(0)
   pants       Int         @default(0)
@@ -170,7 +172,7 @@ model PickupDeliveryRequest {
   distance        Int      // in kilometer
   driverId        Int
   fromAddressId   Int
-  toAddressId     Int
+  toAddressId     Int 
   requestType     String   @default("")
   status          String   @default("Wait to pick up")
   createdAt       DateTime @default(now())
@@ -201,6 +203,7 @@ model Outlet {
   workers OutletWorker[]
   orders Order[]
   users      User[]
+  notification Notification[]
 }
 
 model OutletWorker {
@@ -218,7 +221,7 @@ model OutletWorker {
   attendances Attendance[]
   jobHistory  WorkerJobHistory[]
   pickupDeliveries PickupDeliveryRequest[] @relation("DriverRequests")
-  notification Notification[]
+
 }
 
 

@@ -3,14 +3,33 @@ import prisma from '@/prisma';
 import { OutletWorker, WorkerRoles } from '@prisma/client';
 
 export class OutletWorkerController {
-  async getAllOutletWorkers(req: Request, res: Response): Promise<Response> {
-    try {
-      const outletWorkers: OutletWorker[] =
-        await prisma.outletWorker.findMany();
 
-      if (!outletWorkers.length) {
-        return res.status(404).send({ error: 'No outlet workers found' });
-      }
+    async loginWorker(req: Request, res: Response): Promise<Response> {
+        const { email, password } = req.body;
+
+        try {
+            const outletWorker: OutletWorker | null = await prisma.outletWorker.findUnique({
+                where: { email }
+            });
+
+            if (!outletWorker || outletWorker.password !== password) {
+                return res.status(401).send({ error: 'Invalid email or password' });
+            }
+ 
+            return res.status(200).send({ message: 'Login successful', outletWorker });
+        } catch (error) {
+            console.error('Error during login:', error);
+            return res.status(500).send({ error: 'Error logging in' });
+        }
+    }
+
+    async getAllOutletWorkers(req: Request, res: Response): Promise<Response> {
+        try {
+            const outletWorkers: OutletWorker[] = await prisma.outletWorker.findMany();
+            
+            if (!outletWorkers.length) {
+                return res.status(404).send({ error: 'No outlet workers found' });
+            }
 
       return res.status(200).send(outletWorkers);
     } catch (error) {
@@ -145,4 +164,6 @@ export class OutletWorkerController {
       return res.status(500).send({ error: 'Error updating driver status' });
     }
   }
+
+  
 }

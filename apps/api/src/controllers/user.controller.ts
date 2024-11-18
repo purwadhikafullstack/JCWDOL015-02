@@ -9,6 +9,8 @@ import path from 'path';
 import fs from 'fs';
 import Handlebars from 'handlebars';
 export class UserController {
+  backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
+
   async getUserProfile(req: Request, res: Response) {
     try {
       const cookiesLoginToken = req.cookies?.loginToken;
@@ -41,15 +43,13 @@ export class UserController {
   }
   async updateAvatar(req: Request, res: Response) {
     try {
-      const ava = req.file?.filename;
-      if (!ava) throw 'File not found';
-      const linkAva = `http://localhost:8000/api/public/avatar/${ava}`;
-      const cookies = req.cookies.loginToken;
-      if (!cookies) throw 'no user is logged in !';
-      const decoded = verify(cookies, process.env.JWT_SECRET!) as {
-        id: number;
-      };
-      const userId = decoded.id;
+      const ava = req.file?.filename
+      if(!ava) throw "File not found" 
+      const linkAva = `${this.backendUrl}/api/public/avatar/${ava}`
+      const cookies = req.cookies.loginToken
+      if(!cookies) throw "no user is logged in !"
+      const decoded = verify(cookies,process.env.JWT_SECRET!) as { id: number };
+      const userId = decoded.id
 
       const user = await prisma.user.update({
         where: { id: userId },

@@ -27,6 +27,9 @@ import { MailRouter } from './routers/mail.router';
 import laundryItemRouter from './routers/laundryItem.router';
 import { OutletAssignmentRouter } from './routers/outletAssignment.router';
 dotenv.config();
+import { PickupDeliveryRequestRouter } from './routers/pdrd.router';
+import { OrderItemRouter } from './routers/orderItem.router';
+import { WorkerJobHistoryRouter } from './routers/workHistory.router';
 
 export default class App {
   private app: Express;

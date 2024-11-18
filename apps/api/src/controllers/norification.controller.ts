@@ -3,13 +3,13 @@ import prisma from '@/prisma';
 
 export class NotificationController {
   async createNotification(req: Request, res: Response): Promise<Response> {
-    const { userId, workerId, title, message } = req.body;
+    const { userId, outletId, title, message } = req.body;
 
     try {
       const notification = await prisma.notification.create({
         data: {
           userId,
-          workerId,
+          outletId,
           title,
           message,
         },
@@ -22,14 +22,14 @@ export class NotificationController {
   }
 
   async getNotifications(req: Request, res: Response): Promise<Response> {
-    const { userId, workerId } = req.query;
+    const { userId, outletId } = req.query;
 
     try {
       const notifications = await prisma.notification.findMany({
         where: {
           OR: [
             { userId: userId ? Number(userId) : undefined },
-            { workerId: workerId ? Number(workerId) : undefined },
+            { outletId: outletId ? Number(outletId) : undefined },
           ],
         },
       });

@@ -72,41 +72,24 @@ export class OutletController {
     }
   }
 
-  // Create new outlet
-  // outlet.controller.ts
-  async createOutlet(req: Request, res: Response): Promise<Response> {
-    const { name, password, email, lon, lat, address } = req.body;
-
-    if (!name || !password || !email) {
-      return res
-        .status(400)
-        .json({ message: 'Name, email, and password are required' });
-    }
-
+  async createOutlet(req: Request, res: Response) {
+    const { name, password, email } = req.body;
     const SALT_ROUNDS = 10;
 
-    // Pastikan pengguna sudah terautentikasi dengan role superAdmin
-    // if (!req.user || req.user.role !== 'superAdmin') {
-    //   return res.status(403).json({ message: 'Forbidden: Not authorized' });
+    // if (req.user?.role !== 'super_admin') {
+    //   return res.status(403).send(
+    //     { error: 'Forbidden: You do not have permission to perform this action',}
+    // );
     // }
 
     try {
-      const existingOutlet = await prisma.outlet.findUnique({
-        where: { email },
-      });
-      if (existingOutlet) {
-        return res.status(400).json({ message: 'Email is already registered' });
-      }
-
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
       const newOutlet = await prisma.outlet.create({
         data: {
           name,
           password: hashedPassword,
           email,
-          lon: String(lon),
-          lat: String(lat),
-          address,
+        
         },
       });
 
@@ -203,8 +186,9 @@ export class OutletController {
         { expiresIn: '7d' },
       );
 
-      return res.status(200).json({
-        token,
+      return res.status(200).send({
+        token: token,
+        outletId:outlet.id,
         outletName: outlet.name,
         outletEmail: outlet.email,
       });
