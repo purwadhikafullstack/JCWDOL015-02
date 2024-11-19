@@ -73,7 +73,7 @@ export class OutletController {
   }
 
   async createOutlet(req: Request, res: Response) {
-    const { name, password, email } = req.body;
+    const { name, password, email, lon, lat, address } = req.body;
     const SALT_ROUNDS = 10;
 
     // if (req.user?.role !== 'super_admin') {
@@ -89,7 +89,6 @@ export class OutletController {
           name,
           password: hashedPassword,
           email,
-        
         },
       });
 
@@ -188,7 +187,7 @@ export class OutletController {
 
       return res.status(200).send({
         token: token,
-        outletId:outlet.id,
+        outletId: outlet.id,
         outletName: outlet.name,
         outletEmail: outlet.email,
       });

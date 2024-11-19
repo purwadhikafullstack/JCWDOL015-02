@@ -182,6 +182,32 @@ export class AddressController {
       res.status(400).send({ status: 'error', message: error });
     }
   }
+
+  async getAddresByOutletId(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      if (!id) throw new Error('outlet id not found');
+      const addresses = await prisma.address.findMany({
+        where: { outletId: Number(id) },
+      });
+      if (!addresses) {
+        return res.status(404).send({
+          status: 'error',
+          message: 'The user has not created an address',
+        });
+      }
+      return res.status(200).send({
+        status: 'ok',
+        message: 'Get All Address By Outlet Id Successfully',
+        data: addresses,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).send({ status: 'error', message: error.message });
+      }
+      res.status(400).send({ status: 'error', message: error });
+    }
+  }
   async createAddressReverse(req: Request, res: Response) {
     const { userId, outletId, latitude, longitude } = req.body;
     try {

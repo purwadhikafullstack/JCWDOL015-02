@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import { UserRouter } from './routers/user.router';
-import reportRoutes from './routers/report.router';
 import dotenv from 'dotenv';
 import Outlet from './models/outlet.model';
 
@@ -35,7 +34,6 @@ app.use((req, res, next) => {
 
 // Rute user dan report
 app.use('/api/user', userRouter.getRouter());
-app.use('/api/report', reportRoutes);
 
 // Rute untuk mendapatkan data outlet
 app.get('/api/outlet', async (req, res) => {

@@ -28,6 +28,18 @@ export const getAddresByUserIdFetchDb = async (id: number) => {
   return { result, ok: res.ok };
 };
 
+export const getAddresByOutletIdFetchDb = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/address/outlet/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+  const result = await res.json();
+  return { result, ok: res.ok };
+};
+
 export const getAddressByIdFetchDb = async (id: number) => {
   const res = await fetch(`${BASE_URL}/address/id/${id}`, {
     method: 'GET',

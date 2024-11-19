@@ -18,6 +18,7 @@ import BypassRequestApproval from '@/components/(order-management)/ordermanageme
 import BypassRequestForm from '@/components/(order-management)/ordermanagement/BypassRequestForm';
 import LoadingSpinner from '@/components/(order-management)/ordermanagement/LoadingSpinner';
 import ErrorAlert from '@/components/(order-management)/ordermanagement/ErrorAlert';
+import { FormEvent } from 'react';
 
 const OrderManagement = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -65,6 +66,41 @@ const OrderManagement = () => {
     fetchOrders();
   }, [apiUrl, token, dispatch]);
 
+  const handleCreateOrder = async (e: FormEvent, orderData: any) => {
+    if (!apiUrl) {
+      dispatch(setError('API URL is not defined'));
+      return;
+    }
+
+    dispatch(setLoading());
+
+    try {
+      const response = await fetch(`${apiUrl}/order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+
+      const newOrder = await response.json();
+      dispatch(setOrders([...orders, newOrder]));
+    } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error ? error.message : 'Failed to create order',
+        ),
+      );
+    } finally {
+      dispatch(clearLoading());
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
@@ -76,7 +112,7 @@ const OrderManagement = () => {
       {error && <ErrorAlert message={error} />}
 
       {/* Create Form */}
-      <OrderCreateForm />
+      <OrderCreateForm onSubmit={handleCreateOrder} />
 
       {/* Filter Section */}
       <div className="mt-8">
@@ -98,7 +134,19 @@ const OrderManagement = () => {
         <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">
           Order List
         </h2>
-        <OrderList orders={orders} />
+        <OrderList
+          orders={orders}
+          onStatusChange={(orderId, newStatus) => {
+            // Implement status change functionality
+          }}
+          onBypassRequest={(orderId, itemId, approve) => {
+            // Implement bypass request functionality
+          }}
+          filters={{
+            status: '',
+            outlet: '',
+          }}
+        />
       </div>
 
       {/* No Orders Message at the Bottom */}

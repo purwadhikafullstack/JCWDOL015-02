@@ -1,17 +1,7 @@
 'use client';
 
 import { getToken } from '@/lib/server';
-import {
-  useState,
-  useEffect,
-  SetStateAction,
-  AwaitedReactNode,
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-} from 'react';
+import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { PencilIcon } from '@heroicons/react/24/solid';
@@ -29,11 +19,9 @@ const AssignManagement = () => {
   const [assignedUserDetail, setAssignedUserDetail] = useState<any>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  //   console.log(selectedAdmin, 'selectedAdmin');
-  //   console.log(selectedDriver, 'selectedDriver');
-  console.log(outlets, 'outlets');
-
   const apiUrl = process.env.NEXT_PUBLIC_BASE_API_URL;
+
+  // Fetch data for outlet assignments
   const fetchOutletsAssign = async () => {
     try {
       const token = await getToken();
@@ -45,86 +33,77 @@ const AssignManagement = () => {
         },
       });
       const data = await response.json();
-      const filtereOutlets = data.data.filter(
+      const filteredOutlets = data.data.filter(
         (item: { outlet: any; isAssign: string }) =>
           item.outlet.isAssign != null,
       );
-      setAssignedUsers(filtereOutlets);
+      setAssignedUsers(filteredOutlets);
     } catch (error) {
       console.error('Error fetching outlets:', error);
     }
   };
+
+  // Fetch available outlets for assignment
   const fetchOutlets = async () => {
     try {
       const response = await fetch(`${apiUrl}/outlet`);
       const data = await response.json();
-      const filtereOutlets = data.data.filter(
+      const filteredOutlets = data.data.filter(
         (item: { isAssign: string }) => item.isAssign == null,
       );
-      setOutlets(filtereOutlets);
+      setOutlets(filteredOutlets);
     } catch (error) {
       console.error('Error fetching outlets:', error);
     }
   };
 
+  // Fetch available admins for assignment
   const fetchAdmins = async () => {
     try {
       const response = await fetch(`${apiUrl}/users`);
       let data = await response.json();
-      let filtereAdmins;
-
-      if (!isModalOpen) {
-        data = data.filter(
-          (item: { role: string; outletId: number }) =>
-            item.role === 'admin' && item.outletId == null,
-        );
-      } else {
-        data = data.filter(
-          (item: { role: string; outletId: number }) => item.role === 'admin',
-        );
-      }
-      setAdmins(data);
+      const filteredAdmins = data.filter(
+        (item: { role: string; outletId: number }) =>
+          item.role === 'admin' && item.outletId == null,
+      );
+      setAdmins(filteredAdmins);
     } catch (error) {
       console.error('Error fetching Admins:', error);
     }
   };
-  useEffect(() => {
-    // fetchOutlets();
-    fetchOutletsAssign();
-  }, [apiUrl]);
 
-  // Fungsi untuk mengambil daftar pekerja saat select dibuka
+  // Fetch workers data when select menu opens
   const handleOpenWorkerSelect = async () => {
     try {
       const response = await fetch(`${apiUrl}/users/workers`);
-      let res = await response.json();
-      if (workers.length > 0 && isModalOpen) {
-        const data = [...workers, ...res];
-        setWorkers(data);
-      } else {
-        setWorkers(res);
-      }
-    } catch (error) {
-      console.error('Error fetching workers:', error);
-    }
-  };
-  const handleOpenDriverSelect = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/users/drivers`);
       const res = await response.json();
-      if (drivers.length > 0 && isModalOpen) {
-        const data = [...drivers, ...res];
-        setDrivers(data);
-      } else {
-        setDrivers(res);
-      }
+      setWorkers(res);
     } catch (error) {
       console.error('Error fetching workers:', error);
     }
   };
 
+  // Fetch drivers data when select menu opens
+  const handleOpenDriverSelect = async () => {
+    try {
+      const token = await getToken();
+      const response = await fetch(`${apiUrl}/users/drivers/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      console.log('Driver Data Response:', data);
+      setDrivers(data);
+    } catch (error) {
+      console.error('Error fetching drivers:', error);
+    }
+  };
+
+  // Assign roles to an outlet
   const handleAssignRole = async () => {
-    // if (selectedOutlet && selectedWorker.length > 0) {
     try {
       const token = await getToken();
       const response = await fetch(`${apiUrl}/outlet-assignment`, {
@@ -141,8 +120,6 @@ const AssignManagement = () => {
         }),
       });
       const data = await response.json();
-      console.log(data, 'DATAAA');
-
       fetchOutletsAssign();
       setOutlets([]);
       setAdmins([]);
@@ -151,14 +128,14 @@ const AssignManagement = () => {
       if (isModalOpen) {
         setIsModalOpen(false);
       }
-      toast.success('Successfully Update Assigned');
+      toast.success('Successfully Assigned');
     } catch (error) {
       toast.error('Failed to Assign');
       console.error('Error assigning role:', error);
     }
-    // }
   };
 
+  // Edit the assignment of roles for a specific outlet
   const handleEdit = async (id?: number) => {
     try {
       const token = await getToken();
@@ -170,40 +147,27 @@ const AssignManagement = () => {
         },
       });
       const data = await response.json();
-      if (data) {
-        let ads: SetStateAction<any[]> = [];
-        let w: SetStateAction<any[]> = [];
-        let d: SetStateAction<any[]> = [];
-        setAssignedUserDetail(data.outlet);
-        data.user.forEach((element: any) => {
-          if (element.role === 'admin') ads.push(element);
-          if (element.role === 'worker') w.push(element);
-          if (element.role === 'driver') d.push(element);
-        });
-        console.log(ads, 'ads');
-
-        setSelectedOutlet(data.outlet.id);
-        setWorkers(w);
-        setSelectedWorker(w.map((item) => item.id));
-        setDrivers(d);
-        setSelectedDriver(d.map((item) => item.id));
-        setAdmins(ads);
-        setSelectedAdmin(ads.map((item) => item.id));
-        // setSelectedAdmin(ads);
-        console.log(selectedAdmin, 'selectedAdmin');
-        setIsModalOpen(true);
-      }
+      setAssignedUserDetail(data.outlet);
+      setSelectedOutlet(data.outlet.id);
+      setAdmins(data.users.admins);
+      setWorkers(data.users.workers);
+      setDrivers(data.users.drivers);
+      setIsModalOpen(true);
     } catch (error) {
-      console.error('Error fetching Admins:', error);
+      console.error('Error fetching assignment data:', error);
     }
   };
-
-  console.log(assignedUsers, 'assignedUsers');
 
   const closeModal = () => {
     setIsModalOpen(false);
     setAssignedUserDetail({});
   };
+
+  useEffect(() => {
+    fetchOutletsAssign();
+    fetchOutlets();
+    fetchAdmins();
+  }, [apiUrl]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -211,48 +175,34 @@ const AssignManagement = () => {
         Assign Management
       </h2>
 
-      {/* Form untuk menugaskan peran */}
+      {/* Assignment form */}
       <div className="mt-6 bg-white p-6 rounded-lg shadow-lg">
         <h3 className="text-lg font-semibold">Assign Employee to Outlet</h3>
         <div className="mt-4">
           <label className="block text-gray-700">Select Outlet</label>
           <Select
-            options={outlets.map((admin) => ({
-              value: admin.id,
-              label: admin.name,
+            options={outlets.map((outlet) => ({
+              value: outlet.id,
+              label: outlet.name,
             }))}
             onChange={(selected) =>
-              setSelectedOutlet(selected ? selected.value : [])
+              setSelectedOutlet(selected ? selected.value : null)
             }
             onMenuOpen={fetchOutlets}
-            placeholder="Select Outlets"
+            placeholder="Select Outlet"
             className="mt-2"
           />
         </div>
 
         <div className="mt-4">
           <label className="block text-gray-700">Select Admin Outlet</label>
-          {/* <select
-            value={selectedAdmin || ''}
-            onChange={(e) => setSelectedAdmin(e.target.value)}
-            className="mt-2 bg-white block w-full p-2 border rounded-md"
-          >
-            <option disabled value="">
-              Select Admin Outlet
-            </option>
-            {admins.map((admin) => (
-              <option key={admin.id} value={admin.id}>
-                {admin.username}
-              </option>
-            ))}
-          </select> */}
           <Select
             options={admins.map((admin) => ({
               value: admin.id,
               label: admin.username,
             }))}
             onChange={(selected) =>
-              setSelectedAdmin(selected ? selected.value : [])
+              setSelectedAdmin(selected ? selected.value : null)
             }
             onMenuOpen={fetchAdmins}
             placeholder="Select Admin"
@@ -306,7 +256,7 @@ const AssignManagement = () => {
         </button>
       </div>
 
-      {/* Daftar Penugasan */}
+      {/* Assigned users list */}
       <div className="mt-8 bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
         <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
           Outlet Assignments
@@ -320,285 +270,81 @@ const AssignManagement = () => {
               >
                 <div className="flex justify-between items-center mb-4">
                   <div>
-                    <p className="text-xl font-semibold text-blue-700">
+                    <h4 className="text-xl font-semibold text-blue-700">
                       {user.outlet.name}
+                    </h4>
+                    <p className="text-gray-600">
+                      {user.outlet.isAssign ? 'Assigned' : 'Not Assigned'}
                     </p>
-                    <p className="text-gray-600">Assigned to:</p>
+                    {user.outlet.isAssign && (
+                      <div className="mt-4">
+                        {/* Admins */}
+                        {user.admins && user.admins.length > 0 && (
+                          <div className="mt-2">
+                            <p className="font-semibold text-gray-700">
+                              Admin:
+                            </p>
+                            {user.admins.map((admin: any) => (
+                              <p key={admin.id} className="text-gray-600">
+                                {admin.username}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                        {/* Workers */}
+                        {user.workers && user.workers.length > 0 && (
+                          <div className="mt-2">
+                            <p className="font-semibold text-gray-700">
+                              Workers:
+                            </p>
+                            <ul>
+                              {user.workers.map((worker: any) => (
+                                <li key={worker.id} className="text-gray-600">
+                                  {worker.username}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {/* Drivers */}
+                        {user.drivers && user.drivers.length > 0 && (
+                          <div className="mt-2">
+                            <p className="font-semibold text-gray-700">
+                              Drivers:
+                            </p>
+                            <ul></ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <button
-                    className="px-5 py-2 rounded bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition-colors shadow-md flex items-center"
                     onClick={() => handleEdit(user.outlet.id)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded-md"
                   >
-                    <PencilIcon className="h-5 w-5 mr-2" /> {/* Icon Pen */}
-                    Edit
+                    <PencilIcon className="h-5 w-5" />
                   </button>
                 </div>
-
-                {/* Admins Section */}
-                {user.users.admins.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-lg font-medium text-gray-800">Admin:</p>
-                    <ul className="list-disc ml-6 text-gray-700">
-                      {user.users.admins.map(
-                        (admin: {
-                          id: Key | null | undefined;
-                          username:
-                            | string
-                            | number
-                            | bigint
-                            | boolean
-                            | ReactElement<
-                                any,
-                                string | JSXElementConstructor<any>
-                              >
-                            | Iterable<ReactNode>
-                            | ReactPortal
-                            | Promise<AwaitedReactNode>
-                            | null
-                            | undefined;
-                        }) => (
-                          <li key={admin.id}>{admin.username}</li>
-                        ),
-                      )}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Workers Section */}
-                {user.users.workers.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-lg font-medium text-gray-800">
-                      Worker(s):
-                    </p>
-                    <ul className="list-disc ml-6 text-gray-700">
-                      {user.users.workers.map(
-                        (worker: {
-                          id: Key | null | undefined;
-                          username:
-                            | string
-                            | number
-                            | bigint
-                            | boolean
-                            | ReactElement<
-                                any,
-                                string | JSXElementConstructor<any>
-                              >
-                            | Iterable<ReactNode>
-                            | ReactPortal
-                            | Promise<AwaitedReactNode>
-                            | null
-                            | undefined;
-                        }) => (
-                          <li key={worker.id}>{worker.username}</li>
-                        ),
-                      )}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Drivers Section */}
-                {user.users.drivers.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-lg font-medium text-gray-800">
-                      Driver(s):
-                    </p>
-                    <ul className="list-disc ml-6 text-gray-700">
-                      {user.users.drivers.map(
-                        (driver: {
-                          id: Key | null | undefined;
-                          username:
-                            | string
-                            | number
-                            | bigint
-                            | boolean
-                            | ReactElement<
-                                any,
-                                string | JSXElementConstructor<any>
-                              >
-                            | Iterable<ReactNode>
-                            | ReactPortal
-                            | Promise<AwaitedReactNode>
-                            | null
-                            | undefined;
-                        }) => (
-                          <li key={driver.id}>{driver.username}</li>
-                        ),
-                      )}
-                    </ul>
-                  </div>
-                )}
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* Modal for editing assignments */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 w-1/2">
-            <h2 className="text-2xl font-bold mb-4">Edit Assign</h2>
-            <div className="space-y-4">
-              <label className="block text-gray-700">Outlet</label>
-              <input
-                disabled
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={assignedUserDetail?.name}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-gray-200 text-gray-700"
-              />
-              <label className="block text-gray-700">Email Outlet</label>
-              <input
-                disabled
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={assignedUserDetail?.email}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-gray-200 text-gray-700"
-              />
-              {assignedUserDetail?.address && (
-                <>
-                  <label className="block text-gray-700">Address Outlet</label>
-                  <textarea
-                    disabled
-                    name="name"
-                    placeholder="Name"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 bg-gray-200 text-gray-700"
-                  >
-                    {assignedUserDetail.address}
-                  </textarea>
-                </>
-              )}
-            </div>
-            <div className="mt-6 bg-white p-6 rounded-lg shadow-lg">
-              <h3 className="text-lg font-semibold">
-                Update Assign Employee to Outlet
-              </h3>
-
-              <div className="mt-4">
-                <label className="block text-gray-700">
-                  Select Admin Outlet
-                </label>
-                {/* <select
-                  value={selectedAdmin || ''}
-                  onChange={(e) => setSelectedAdmin(e.target.value)}
-                  className="mt-2 bg-white block w-full p-2 border rounded-md"
-                >
-                  <option disabled value="">
-                    Select Admin Outlet
-                  </option>
-                  {admins.map((admin) => (
-                    <option key={admin.id} value={admin.id}>
-                      {admin.username}
-                    </option>
-                  ))}
-                </select> */}
-                <Select
-                  options={admins.map((admin) => ({
-                    value: admin.id,
-                    label: admin.username,
-                  }))}
-                  defaultValue={
-                    selectedAdmin.length > 0 // Kondisi jika modal terbuka
-                      ? selectedAdmin
-                          .map((adminId: any) => {
-                            const admin = admins.find((w) => w.id === adminId);
-                            return admin
-                              ? { value: admin.id, label: admin.username }
-                              : null;
-                          })
-                          .filter(Boolean)
-                      : []
-                  }
-                  onChange={(selected) =>
-                    setSelectedAdmin(selected ? selected.value : [])
-                  }
-                  onMenuOpen={fetchAdmins}
-                  placeholder="Select Admin"
-                  className="mt-2"
-                />
-              </div>
-
-              <div className="mt-4">
-                <label className="block text-gray-700">Select Worker(s)</label>
-                <Select
-                  isMulti
-                  options={workers.map((worker) => ({
-                    value: worker.id,
-                    label: worker.username,
-                  }))}
-                  defaultValue={
-                    isModalOpen // Kondisi jika modal terbuka
-                      ? selectedWorker
-                          .map((workerId) => {
-                            const worker = workers.find(
-                              (w) => w.id === workerId,
-                            );
-                            return worker
-                              ? { value: worker.id, label: worker.username }
-                              : null;
-                          })
-                          .filter(Boolean)
-                      : []
-                  }
-                  onChange={(selected) =>
-                    setSelectedWorker(
-                      selected ? selected.map((item: any) => item.value) : [],
-                    )
-                  }
-                  onMenuOpen={handleOpenWorkerSelect}
-                  placeholder="Select Workers"
-                  className="mt-2"
-                />
-              </div>
-
-              <div className="mt-4">
-                <label className="block text-gray-700">Select Driver(s)</label>
-                <Select
-                  isMulti
-                  options={drivers.map((driver) => ({
-                    value: driver.id,
-                    label: driver.username,
-                  }))}
-                  defaultValue={
-                    isModalOpen // Kondisi jika modal terbuka
-                      ? selectedDriver
-                          .map((driverId) => {
-                            const driver = drivers.find(
-                              (w) => w.id === driverId,
-                            );
-                            return driver
-                              ? { value: driver.id, label: driver.username }
-                              : null;
-                          })
-                          .filter(Boolean) // Menghilangkan nilai `null`
-                      : [] // Jika modal tidak terbuka, defaultValue kosong
-                  }
-                  onChange={(selected) =>
-                    setSelectedDriver(
-                      selected ? selected.map((item: any) => item.value) : [],
-                    )
-                  }
-                  onMenuOpen={handleOpenDriverSelect}
-                  placeholder="Select Drivers"
-                  className="mt-2"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end mt-6 space-x-2">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-3/4">
+            <h3 className="text-xl font-semibold mb-6">
+              Edit Outlet Assignment
+            </h3>
+            <div>
+              {/* Outlet name and admins form here */}
               <button
                 onClick={closeModal}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition"
+                className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
               >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleAssignRole}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition"
-              >
-                Save
+                Close
               </button>
             </div>
           </div>

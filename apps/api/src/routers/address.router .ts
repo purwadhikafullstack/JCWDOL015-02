@@ -21,6 +21,7 @@ export class AddressRouter {
       this.addressController.getAllAddressByRole,
     );
     this.router.get('/user/:id', this.addressController.getAddresByUserId);
+    this.router.get('/outlet/:id', this.addressController.getAddresByOutletId);
     this.router.patch('/set-main', this.addressController.setMainAddress);
     this.router.post(
       '/create',

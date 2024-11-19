@@ -4,6 +4,22 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export class OutletAssignmentController {
+  updateOutletAssignment(
+    arg0: string,
+    verifyToken: (
+      req: Request,
+      res: Response,
+      next: import('express').NextFunction,
+    ) => void,
+    verifySuperAdmin: (
+      req: Request,
+      res: Response,
+      next: import('express').NextFunction,
+    ) => void | Response<any, Record<string, any>>,
+    updateOutletAssignment: any,
+  ) {
+    throw new Error('Method not implemented.');
+  }
   private static calculateTotalPages(
     totalItems: number,
     itemsPerPage: number,

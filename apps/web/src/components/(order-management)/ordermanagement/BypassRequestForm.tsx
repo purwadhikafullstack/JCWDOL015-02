@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
 import { setError } from '@/redux/slices/orderSlice';
 import { getToken } from '@/lib/server';
 
-const token = getToken();
 const BypassRequestForm: React.FC<{ orderId: number; workerId: number }> = ({
   orderId,
   workerId,
@@ -13,9 +12,27 @@ const BypassRequestForm: React.FC<{ orderId: number; workerId: number }> = ({
   const [status, setStatus] = useState<
     'PENDING' | 'APPROVED' | 'REJECTED' | null
   >(null);
+  const [token, setToken] = useState<string | null>(null); // Add token state
   const dispatch = useDispatch<AppDispatch>();
 
+  // Fetch the token on component mount
+  useEffect(() => {
+    const fetchToken = async () => {
+      const fetchedToken = await getToken();
+      if (fetchedToken) {
+        setToken(fetchedToken); // Set the token in state
+      }
+    };
+
+    fetchToken();
+  }, []);
+
   const handleRequest = async () => {
+    if (!token) {
+      dispatch(setError('Token is not available'));
+      return; // Prevent request if token is not available
+    }
+
     setIsRequesting(true);
 
     try {

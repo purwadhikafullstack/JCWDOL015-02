@@ -26,11 +26,11 @@ import { UserRouter } from './routers/user.router';
 import { MailRouter } from './routers/mail.router';
 import laundryItemRouter from './routers/laundryItem.router';
 import { OutletAssignmentRouter } from './routers/outletAssignment.router';
-dotenv.config();
 import { PickupDeliveryRequestRouter } from './routers/pdrd.router';
 import { OrderItemRouter } from './routers/orderItem.router';
 import { WorkerJobHistoryRouter } from './routers/workHistory.router';
-
+import { ReportAnalysisRouter } from './routers/reportAnalysis.router';
+dotenv.config();
 export default class App {
   private app: Express;
   private PORT: string | number;
@@ -109,6 +109,7 @@ export default class App {
     const orderRouter = new OrderRouter();
     const superAdminRouter = new SuperAdminRouter();
     const notificationRouter = new NotificationRouter();
+    const reportAnalysisRouter = new ReportAnalysisRouter();
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
@@ -128,6 +129,7 @@ export default class App {
     this.app.use('/api/outlet-assignment', outletAssignmentRouter.getRouter());
     this.app.use('/api/super-admin', superAdminRouter.getRouter());
     this.app.use('/api/notification', notificationRouter.getRouter());
+    this.app.use('/api/report-analysis', reportAnalysisRouter.getRouter());
   }
 
   public start(): void {

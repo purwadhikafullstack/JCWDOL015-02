@@ -9,6 +9,7 @@ import { requestOrderFetchDb } from '@/lib/orderLib';
 import { toast } from 'react-toastify';
 import { AiOutlineWarning } from 'react-icons/ai';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const InputRequestPickup = () => {
   const user = useAppSelector((state) => state.auth);
@@ -18,6 +19,7 @@ const InputRequestPickup = () => {
   const AllAddressModal = document.getElementById(
     'modal_another_address',
   ) as HTMLDialogElement;
+  const router = useRouter();
   const getUserAddress = useCallback(async () => {
     try {
       const { result, ok } = await getAddresByUserIdFetchDb(user.id);
@@ -33,18 +35,23 @@ const InputRequestPickup = () => {
   }, [user.id]);
   const handleRequestPickup = async (values: any, resetForm: any) => {
     setIsLoading(true);
-    // try {
-    //   const { result, ok } = await requestOrderFetchDb({userId: user.id, addressId: selectedAddress[0].id, ...values})
-    //   if (!ok) throw new Error(result.message);
-    //   toast.success(result.message);
-    //   resetForm();
-    //   const modal = document.getElementById("modal_pickup_request") as HTMLDialogElement;
-    //   modal?.close();
-    // } catch (error) {
-    //   toast.error(`${error as Error}`);
-    // }
-    console.log(selectedAddress[0].id);
-
+    try {
+      const { result, ok } = await requestOrderFetchDb({
+        userId: user.id,
+        addressId: selectedAddress[0].id,
+        ...values,
+      });
+      if (!ok) throw new Error(result.message);
+      toast.success(result.message);
+      resetForm();
+      const modal = document.getElementById(
+        'modal_pickup_request',
+      ) as HTMLDialogElement;
+      modal?.close();
+      router.push(`/user/orders/${result.orderId}`);
+    } catch (error) {
+      toast.error(`${error as Error}`);
+    }
     setIsLoading(false);
   };
   const beforeSelectAddress = (address: any) => {

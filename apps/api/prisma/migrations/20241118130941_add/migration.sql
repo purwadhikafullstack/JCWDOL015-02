@@ -14,11 +14,11 @@ CREATE TABLE `samples` (
 CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
-    `username` VARCHAR(191) NOT NULL,
+    `username` VARCHAR(191) NOT NULL DEFAULT '',
     `avatar` VARCHAR(191) NOT NULL DEFAULT 'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_960_720.png',
     `password` VARCHAR(191) NULL,
     `role` ENUM('customer', 'admin', 'superAdmin', 'worker', 'driver') NOT NULL DEFAULT 'customer',
-    `workerRole` ENUM('iron', 'washer', 'dryer') NULL,
+    `workerRole` ENUM('ironer', 'washer', 'packer', 'driver') NULL,
     `outletId` INTEGER NULL,
     `verified` BOOLEAN NOT NULL DEFAULT false,
     `LoginToken` VARCHAR(191) NULL,
@@ -39,7 +39,7 @@ CREATE TABLE `User` (
 CREATE TABLE `Notification` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NULL,
-    `workerId` INTEGER NULL,
+    `outletId` INTEGER NULL,
     `title` VARCHAR(191) NOT NULL,
     `message` VARCHAR(191) NULL,
     `read` BOOLEAN NOT NULL DEFAULT false,
@@ -75,7 +75,7 @@ CREATE TABLE `Order` (
     `addressId` INTEGER NOT NULL,
     `outletId` INTEGER NOT NULL,
     `package` VARCHAR(191) NULL,
-    `status` ENUM('waiting_for_pickup', 'on_the_way_to_outlet', 'arrived_at_outlet', 'weighed', 'washed', 'ironed', 'packed', 'waiting_for_payment', 'ready_for_delivery', 'on_the_way_to_customer', 'delivered_to_customer') NOT NULL DEFAULT 'waiting_for_pickup',
+    `status` ENUM('waiting_for_pickup', 'on_the_way_to_outlet', 'arrived_at_outlet', 'weighed', 'washed', 'ironed', 'packed', 'waiting_for_payment', 'ready_for_delivery', 'on_the_way_to_customer', 'delivered_to_customer', 'recalculate') NOT NULL DEFAULT 'waiting_for_pickup',
     `pickupSchedule` DATETIME(3) NOT NULL,
     `totalWeight` DOUBLE NULL,
     `totalItems` INTEGER NOT NULL DEFAULT 0,
@@ -93,9 +93,6 @@ CREATE TABLE `Order` (
 CREATE TABLE `OrderItem` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `orderId` INTEGER NOT NULL,
-    `iron` INTEGER NOT NULL,
-    `washer` INTEGER NOT NULL,
-    `dryer` INTEGER NOT NULL,
     `shirt` INTEGER NOT NULL DEFAULT 0,
     `longShirt` INTEGER NOT NULL DEFAULT 0,
     `pants` INTEGER NOT NULL DEFAULT 0,
@@ -151,7 +148,7 @@ CREATE TABLE `Outlet` (
     `lat` VARCHAR(191) NOT NULL,
     `lon` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
-    `isAssign` VARCHAR(191) NOT NULL,
+    `isAssign` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -166,7 +163,7 @@ CREATE TABLE `OutletWorker` (
     `name` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `role` ENUM('iron', 'washer', 'dryer') NOT NULL,
+    `role` ENUM('ironer', 'washer', 'packer', 'driver') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -192,7 +189,7 @@ CREATE TABLE `WorkerJobHistory` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `workerId` INTEGER NOT NULL,
     `orderId` INTEGER NOT NULL,
-    `station` ENUM('iron', 'washer', 'dryer') NOT NULL,
+    `station` ENUM('ironer', 'washer', 'packer', 'driver') NOT NULL,
     `pickupDelivery` INTEGER NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -240,7 +237,7 @@ ALTER TABLE `User` ADD CONSTRAINT `User_outletId_fkey` FOREIGN KEY (`outletId`) 
 ALTER TABLE `Notification` ADD CONSTRAINT `Notification_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Notification` ADD CONSTRAINT `Notification_workerId_fkey` FOREIGN KEY (`workerId`) REFERENCES `OutletWorker`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Notification` ADD CONSTRAINT `Notification_outletId_fkey` FOREIGN KEY (`outletId`) REFERENCES `Outlet`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Address` ADD CONSTRAINT `Address_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

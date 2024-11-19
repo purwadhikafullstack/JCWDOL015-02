@@ -61,7 +61,7 @@ export const verifySuperAdmin = (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log(req.user, 'REQQQQ');
+  // console.log(req.user, 'REQQQQ');
 
   // Pastikan user ada dan memiliki role 'superAdmin'
   if (req.user && req.user.role === 'superAdmin') {

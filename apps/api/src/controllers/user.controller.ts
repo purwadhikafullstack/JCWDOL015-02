@@ -9,7 +9,7 @@ import path from 'path';
 import fs from 'fs';
 import Handlebars from 'handlebars';
 export class UserController {
-  backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
+  backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
 
   async getUserProfile(req: Request, res: Response) {
     try {
@@ -43,13 +43,15 @@ export class UserController {
   }
   async updateAvatar(req: Request, res: Response) {
     try {
-      const ava = req.file?.filename
-      if(!ava) throw "File not found" 
-      const linkAva = `${this.backendUrl}/api/public/avatar/${ava}`
-      const cookies = req.cookies.loginToken
-      if(!cookies) throw "no user is logged in !"
-      const decoded = verify(cookies,process.env.JWT_SECRET!) as { id: number };
-      const userId = decoded.id
+      const ava = req.file?.filename;
+      if (!ava) throw 'File not found';
+      const linkAva = `${this.backendUrl}/api/public/avatar/${ava}`;
+      const cookies = req.cookies.loginToken;
+      if (!cookies) throw 'no user is logged in !';
+      const decoded = verify(cookies, process.env.JWT_SECRET!) as {
+        id: number;
+      };
+      const userId = decoded.id;
 
       const user = await prisma.user.update({
         where: { id: userId },
@@ -254,7 +256,6 @@ export class UserController {
         where: {
           // Ambil semua user yang sudah terdaftar, kecuali yang memiliki role admin
           role: 'worker',
-          outletId: null,
         },
       });
       return res.status(200).json(user);
@@ -268,11 +269,9 @@ export class UserController {
 
   async getUserDrivers(req: Request, res: Response) {
     try {
-      // Ambil semua driver yang memiliki outletId yang valid (tidak null atau kosong)
-      const drivers = await prisma.user.findMany({
+      const drivers = await prisma.outletWorker.findMany({
         where: {
           role: 'driver',
-          outletId: null,
         },
       });
 

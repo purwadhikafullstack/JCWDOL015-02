@@ -7,7 +7,8 @@ import Image from 'next/image';
 import { toast } from 'react-toastify';
 import { getToken } from '@/lib/server';
 import MyMap from '@/components/(map)/Map';
-
+import CreateAddress from '@/components/(profile)/CreateAddress';
+import AddressComp from '@/components/(profile)/AddressComp';
 interface Outlet {
   id: number;
   name: string;
@@ -21,6 +22,7 @@ interface Outlet {
 
 const OutletManagement: React.FC = () => {
   const [outlets, setOutlets] = useState<Outlet[]>([]);
+  const [outletId, setOutletId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOutlet, setEditingOutlet] = useState<Partial<Outlet>>({
     name: '',
@@ -88,6 +90,7 @@ const OutletManagement: React.FC = () => {
       newOutlets.lat = parseFloat(String(newOutlets.lat));
       newOutlets.lon = parseFloat(String(newOutlets.lon));
     }
+    setOutletId(newOutlets.id || null);
 
     setEditingOutlet(
       newOutlets || {
@@ -322,11 +325,15 @@ const OutletManagement: React.FC = () => {
                         {editingOutlet.address}
                       </textarea>
                     )}
-                    <MyMap
+                    {editingOutlet.id ? (
+                      // <CreateAddress outletId={editingOutlet.id} />
+                      <AddressComp outletId={outletId} />
+                    ) : null}
+                    {/* <MyMap
                       position={position}
                       address={address}
                       onPositionChange={handlePositionChange}
-                    />
+                    /> */}
                   </div>
                   <div className="flex justify-end mt-6 space-x-2">
                     <button
