@@ -31,6 +31,7 @@ export interface ICustomerAddress {
   country : string
   phone : string
   isMain : boolean
+  isDeleted: boolean
   userId : number
   longitude : number
   latitude : number

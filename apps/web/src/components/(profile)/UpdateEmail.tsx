@@ -15,7 +15,6 @@ const UpdateEmail = () => {
             const { result, ok } = await mailUpdateEmailFetchDb({email})
             if(!ok) throw result.message
             toast.success(result.message)
-            modal.close();
         } catch (error) {
             toast.error(error as string)
         }

@@ -28,13 +28,13 @@ export class MailController {
           userTokenExp,
         }
       })
-      const templatePath = path.join(__dirname, "../templates/updateMail.hbs");
+      const templatePath = path.join(__dirname, "../templates/verificationMail.hbs");
       const tempalteSource = fs.readFileSync(templatePath, "utf-8");
       const compiledTemplate = handlebars.compile(tempalteSource);
       const html = compiledTemplate({username, link: `${process.env.FRONTEND_URL}/auth/verify-account/${userToken}`});
-      transporter.sendMail({
+      await transporter.sendMail({
         from: process.env.MAIL_USER,
-        to: email,
+        to: email, 
         subject: "Email Confirmation to verify your account",
         html: html,
       }, (err) => {
@@ -76,7 +76,7 @@ export class MailController {
           const tempalteSource = fs.readFileSync(templatePath, "utf-8");
           const compiledTemplate = handlebars.compile(tempalteSource);
           const html = compiledTemplate({username, link: `${process.env.FRONTEND_URL}/auth/set-password/${userToken}`});
-          transporter.sendMail({
+          await transporter.sendMail({
             from: process.env.MAIL_USER,
             to: email,
             subject: "Email Confirmation to Reset your password",
@@ -124,7 +124,7 @@ export class MailController {
           const tempalteSource = fs.readFileSync(templatePath, "utf-8");
           const compiledTemplate = handlebars.compile(tempalteSource);
           const html = compiledTemplate({username, link: `${process.env.FRONTEND_URL}/auth/update-mail/${userToken}`});
-          transporter.sendMail({
+          await transporter.sendMail({
             from: process.env.MAIL_USER,
             to: email,
             subject: "Email Confirmation to Set new email",

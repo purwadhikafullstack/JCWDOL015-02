@@ -4,12 +4,16 @@ import InputRequestPickup from "./InputRequestPickup";
 import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 const PickupRequest = () => {
   const user = useAppSelector((state) => state.auth);
   const router = useRouter();
   const handleOrder = () => {
     if(user.isLogin == false) return router.push('/auth/login?redirect=/services');
+    if(user.verified == false) {
+      return toast.error('Please verify your email first on profile page!');
+    }
     const modal = document.getElementById("modal_pickup_request") as HTMLDialogElement;
     return modal?.showModal();
   }

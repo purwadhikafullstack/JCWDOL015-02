@@ -35,7 +35,7 @@ const CardUserAddress: React.FC<CardAddressProps> = (props) => {
         </p>
         <div className="w-full flex justify-center gap-2 items-center">
           <BtnEditAddress addressId={addressId} />
-          {<BtnDeleteAddress addressId={addressId} />}
+          {isMain == false && <BtnDeleteAddress addressId={addressId} />}
         </div>
       </div>
     </div>

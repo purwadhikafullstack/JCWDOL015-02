@@ -19,7 +19,6 @@ const BtnDeleteAddress = (props: Props) => {
             window.location.reload()
         } catch (error) {
             console.log(error)
-            toast.error(`${(error as Error)}`)
         }
         setIsLoading(false)
     }
@@ -40,7 +39,6 @@ const BtnDeleteAddress = (props: Props) => {
             </form>
             <div className="flex flex-col justify-center items-center">
               <h3 className="font-bold text-lg text-beigeCustom">Are you sure you want to delete this address?</h3>
-              <p className="py-4 text-white text-center">All related data will be permanently lost. Make sure no active orders are using this address</p>
               <button onClick={() => {handleDeleteAddress(addressId)}} className="text-black hover:text-beigeCustom bg-beigeCustom hover:bg-black duration-300 rounded-full text-lg md:text-sm font-semibold px-2 py-1 mt-1">
                 {isLoading ? 'Proccessing..':'Delete'}
               </button>

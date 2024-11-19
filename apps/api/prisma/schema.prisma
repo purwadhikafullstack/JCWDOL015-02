@@ -99,6 +99,7 @@ model Address {
   phone        String?
   latitude     Float?
   longitude    Float?
+  isDeleted    Boolean @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
