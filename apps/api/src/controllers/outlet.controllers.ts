@@ -81,7 +81,6 @@ export class OutletController {
     //     { error: 'Forbidden: You do not have permission to perform this action',}
     // );
     // }
-
     try {
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
       const newOutlet = await prisma.outlet.create({

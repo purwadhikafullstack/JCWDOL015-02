@@ -5,13 +5,132 @@ import { findNearestOutlet } from '@/helpers/haversine';
 import axios from 'axios';
 
 export class OrderController {
-  async getAllOrder(req: Request, res: Response) {}
+  async getAllOrder(req: Request, res: Response) {
+    try {
+      const orders = await prisma.order.findMany({
+        include: {
+          pickupDeliveryRequests: true,
+          user: true,
+        },
+      });
 
-  async getOrderById(req: Request, res: Response) {}
+      if (!orders.length) {
+        return res.status(404).send({ error: 'No orders found' });
+      }
 
-  async searcOrder(req: Request, res: Response) {}
+      return res.status(200).send(orders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      return res.status(500).send({ error: 'Error fetching orders' });
+    }
+  }
 
-  async getAllOrderByUserId(req: Request, res: Response) {}
+  async getOrderById(req: Request, res: Response) {
+    const { orderId } = req.params;
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: Number(orderId) },
+      });
+      if (!order) throw 'Order not found';
+      const customerAddress = await prisma.address.findUnique({
+        where: { id: order.addressId },
+      });
+      const customerIntro = await prisma.user.findUnique({
+        where: { id: order.userId },
+        select: { username: true, email: true },
+      });
+      const outletName = await prisma.outlet.findUnique({
+        where: { id: order.outletId },
+        select: { name: true },
+      });
+      return res
+        .status(200)
+        .send({
+          status: 'ok',
+          message: 'Get Order By Id Successfully',
+          data: { order, customerIntro, customerAddress, outletName },
+        });
+      return res.status(200).send({
+        status: 'ok',
+        message: 'Get Order By Id Successfully',
+        data: order,
+      });
+    } catch (error) {
+      if (error instanceof Error)
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
+      res.status(400).send({ status: 'error', message: error });
+    }
+  }
+
+  async searcOrder(req: Request, res: Response) {
+    try {
+      const { date, orderId } = req.body;
+      if (date == null && orderId == null)
+        throw 'date or orderId is required !';
+      if (date) {
+        const targetDate = new Date(date).setUTCHours(0, 0, 0, 0);
+        const endOfDay = new Date(targetDate).setUTCHours(23, 59, 59, 999);
+        const orderByDate = await prisma.order.findMany({
+          where: {
+            createdAt: {
+              gte: new Date(targetDate).toISOString(),
+              lte: new Date(endOfDay).toISOString(),
+            },
+          },
+        });
+        return res.status(200).send({
+          status: 'ok',
+          message: 'Get Order By Date Successfully',
+          data: orderByDate,
+        });
+      }
+      if (orderId) {
+        const orderById = await prisma.order.findMany({
+          where: { id: Number(orderId) },
+        });
+        return res.status(200).send({
+          status: 'ok',
+          message: 'Get Order By Id Successfully',
+          data: orderById,
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error)
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
+      res.status(400).send({ status: 'error', message: error });
+    }
+  }
+
+  async getAllOrderByUserId(req: Request, res: Response) {
+    try {
+      const { Id } = req.params;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 5;
+      const startIndex = (page - 1) * limit;
+      const orders = await prisma.order.findMany({
+        where: { userId: Number(Id) },
+        orderBy: { createdAt: 'desc' },
+      });
+      const paginatedOrders = orders.slice(startIndex, startIndex + limit);
+      res.status(200).send({
+        status: 'ok',
+        message: 'Get All Orders By User Id Successfully',
+        data: paginatedOrders,
+        currentPage: page,
+        totalPages: Math.ceil(orders.length / limit),
+      });
+    } catch (error) {
+      if (error instanceof Error)
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
+      res.status(400).send({ status: 'error', message: error });
+    }
+  }
 
   async createOrder(req: Request, res: Response) {
     try {
@@ -289,6 +408,7 @@ export class OrderController {
       return res.status(500).send({ error: 'Error deleting order' });
     }
   }
+
   async confirmOrder(req: Request, res: Response) {
     try {
       const { orderId } = req.body;

@@ -1,11 +1,9 @@
 'use client';
 import { MdDeleteSweep } from 'react-icons/md';
 import { AiOutlineWarning } from 'react-icons/ai';
-import { useShallow } from 'zustand/shallow';
 import CardUserAddress from './CardUserAddress';
 import CreateAddress from './CreateAddress';
 import {
-  getAddresByOutletIdFetchDb,
   getAddresByUserIdFetchDb,
   getAddressByIdFetchDb,
 } from '@/lib/addressLib';
@@ -13,11 +11,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { ICustomerAddress } from '@/type/customerType';
 import FormUpdateAddress from './FormUpdateAddress';
 import { useAppSelector } from '@/redux/hooks';
-// Define the component to accept the outletId prop
-interface CreateAddressProps {
-  outletId?: number | null;
-}
-const AddressComp: React.FC<CreateAddressProps> = ({ outletId = null }) => {
+
+const AddressComp = () => {
   const user = useAppSelector((state) => state.auth);
   const [addresses, setAddresses] = useState<ICustomerAddress[]>([]);
   const allUserAddress = useCallback(async () => {

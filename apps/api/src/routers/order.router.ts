@@ -21,6 +21,7 @@ export class OrderRouter {
     this.router.patch('/:orderId', this.orderController.updateOrderStatus);
     this.router.patch('/price/:orderId', this.orderController.updateOrderPriceAndWeight);
     this.router.delete('/:orderId',  this.orderController.deleteOrder);
+    this.router.post('/confirm', this.orderController.confirmOrder);
   }
 
   getRouter(): Router {

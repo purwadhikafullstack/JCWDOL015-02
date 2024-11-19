@@ -14,7 +14,7 @@ const CardUserAddress: React.FC<CardAddressProps> = (props) => {
   const { city, address, phone, isMain, addressId } = { ...props };
   return (
     <div
-      className={`card bg-base-100 w-96 shadow-xl  ${isMain ? 'border-2 border-beigeCustom' : ''}`}
+      className={`card bg-base-100 w-96 shadow-xl`}
     >
       <div className={`card-body h-56`}>
         <div className="flex justify-between items-center">
@@ -35,7 +35,7 @@ const CardUserAddress: React.FC<CardAddressProps> = (props) => {
         </p>
         <div className="w-full flex justify-center gap-2 items-center">
           <BtnEditAddress addressId={addressId} />
-          <BtnDeleteAddress addressId={addressId} />
+          {<BtnDeleteAddress addressId={addressId} />}
         </div>
       </div>
     </div>

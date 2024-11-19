@@ -47,7 +47,11 @@ enum RoleUser {
   driver
 }
 
-
+enum PaymentStatus {
+  pending
+  unpaid
+  paid
+}
 
 model User {
   id             Int              @id @default(autoincrement())
@@ -121,8 +125,7 @@ model Order {
   totalWeight   Float?
   totalItems    Int         @default(0)
   totalPrice    Float?
-  paymentStatus String      @default("unpaid")
-  paymentLink   String?
+  paymentStatus PaymentStatus @default(pending)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 

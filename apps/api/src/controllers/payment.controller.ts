@@ -1,62 +1,82 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/prisma';
+import midtransClient from 'midtrans-client';
+import dotenv from 'dotenv';
+import axios from 'axios';
+dotenv.config();
 
-const prisma = new PrismaClient();
+export const snap = new midtransClient.Snap({
+  isProduction: false,
+  serverKey: process.env.MIDTRANS_SERVER_KEY!,
+  clientKey: process.env.MIDTRANS_CLIENT_KEY!,
+});
 
-export const createOrder = async (req: Request, res: Response) => {
-  const {
-    userId,
-    outletId,
-    outlet,
-    user,
-    addressId,
-    orderPackage,
-    totalWeight,
-    totalPrice,
-    status,
-    pickupSchedule,
-  } = req.body;
-  try {
-    const order = await prisma.order.create({
-      data: {
-        userId,
-        outletId,
-        outlet: { connect: { id: outletId } },
-        user: { connect: { id: user } },
-        address: { connect: { id: addressId } },
-        addressId,
-        package: orderPackage,
-        totalWeight,
-        totalPrice,
-        status,
-        pickupSchedule,
-      },
-    });
-    res.status(201).json(order);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Internal server error' });
+export class PaymentController {
+  async createPayment(req: Request, res: Response) {
+    try {
+      const { orderId, email, totalPrice, customerName } = req.body;
+      const order = await prisma.order.findUnique({
+        where: { id: Number(orderId) },
+      });
+      if (!order) throw 'Order not found';
+      const parameter = {
+        transaction_details: {
+          order_id: orderId,
+          gross_amount: totalPrice,
+        },
+        customer_details: {
+          first_name: customerName,
+          email: email,
+        },
+        item_details: {
+          id: orderId,
+          price: totalPrice,
+          quantity: 1,
+          name: 'Comlplete Wash',
+        },
+      };
+      const token = await snap.createTransaction(parameter);
+
+      return res
+        .status(200)
+        .send({ status: 'ok', message: 'Success', data: token });
+    } catch (error) {
+      if (error instanceof Error) {
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
+      }
+      res.status(400).send({ status: 'error', message: error });
     }
   }
-};
+  async callbackPayment(req: Request, res: Response) {
+    try {
+      const statusResponse = await snap.transaction.notification(req.body);
+      const orderId = statusResponse.order_id;
+      const transactionStatus = statusResponse.transaction_status;
+      const fraudStatus = statusResponse.fraud_status;
 
-export const getOrder = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
-    const order = await prisma.order.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
-    }
-    res.status(200).json(order);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Internal server error' });
+      const orderData = await prisma.order.findUnique({
+        where: { id: Number(orderId) },
+      });
+      if (!orderData) throw new Error('Order not found');
+
+      if (transactionStatus == 'capture' || transactionStatus == 'settlement') {
+        if (fraudStatus == 'accept') {
+          await prisma.order.update({
+            where: { id: Number(orderId) },
+            data: { paymentStatus: 'paid' },
+          });
+        }
+      }
+
+      return res
+        .status(200)
+        .send({ status: 'ok', message: 'Success', data: orderData });
+    } catch (error) {
+      // Pastikan hanya satu respons yang dikirim
+      const errorMessage = error instanceof Error ? error.message : error;
+      return res.status(400).send({ status: 'error', message: errorMessage });
     }
   }
-};
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
 import {
@@ -9,7 +9,6 @@ import {
   setLoading,
   clearLoading,
 } from '@/redux/slices/orderSlice';
-import { useRouter } from 'next/navigation';
 import { getToken } from '@/lib/server';
 import OrderList from '@/components/(order-management)/ordermanagement/OrderList';
 import OrderFilter from '@/components/(order-management)/ordermanagement/OrderFilter';
@@ -27,6 +26,7 @@ const OrderManagement = () => {
   const error = useSelector((state: any) => state.order.error);
   const apiUrl = process.env.NEXT_PUBLIC_BASE_API_URL;
   const token = getToken();
+  const [selectedOutlet, setSelectedOutlet] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -38,13 +38,16 @@ const OrderManagement = () => {
       dispatch(setLoading());
 
       try {
-        const response = await fetch(`${apiUrl}/order`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `${apiUrl}/order${selectedOutlet ? `?outlet=${selectedOutlet}` : ''}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           throw new Error('Failed to fetch orders');
@@ -64,7 +67,7 @@ const OrderManagement = () => {
     };
 
     fetchOrders();
-  }, [apiUrl, token, dispatch]);
+  }, [apiUrl, token, selectedOutlet, dispatch]);
 
   const handleCreateOrder = async (e: FormEvent, orderData: any) => {
     if (!apiUrl) {
@@ -102,8 +105,8 @@ const OrderManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
         Order Management
       </h1>
 
@@ -112,25 +115,37 @@ const OrderManagement = () => {
       {error && <ErrorAlert message={error} />}
 
       {/* Create Form */}
-      <OrderCreateForm onSubmit={handleCreateOrder} />
+      <div className="mb-8 bg-white shadow-md rounded-lg p-4">
+        <OrderCreateForm onSubmit={handleCreateOrder} />
+      </div>
 
       {/* Filter Section */}
-      <div className="mt-8">
-        <OrderFilter onFilterChange={(filters) => console.log(filters)} />
+      <div className="flex flex-col md:flex-row items-center md:justify-between bg-white shadow-md rounded-lg p-4 mb-8">
+        <OrderFilter
+          onFilterChange={(filters) => setSelectedOutlet(filters.outlet)}
+        />
+        <div className="mt-4 md:mt-0">
+          <button
+            onClick={() => setSelectedOutlet(null)}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            Reset Filter
+          </button>
+        </div>
       </div>
 
       {/* Bypass Request Form */}
-      <div className="mt-8">
+      <div className="mb-8">
         <BypassRequestForm orderId={1} workerId={101} />
       </div>
 
       {/* Bypass Request Approval */}
-      <div className="mt-8">
+      <div className="mb-8">
         <BypassRequestApproval requestId={1} initialStatus="PENDING" />
       </div>
 
       {/* Order List */}
-      <div className="mt-12">
+      <div className="mb-8 bg-white shadow-md rounded-lg p-4">
         <h2 className="text-2xl font-semibold text-center mb-4 text-gray-700">
           Order List
         </h2>
@@ -144,7 +159,7 @@ const OrderManagement = () => {
           }}
           filters={{
             status: '',
-            outlet: '',
+            outlet: selectedOutlet || '',
           }}
         />
       </div>

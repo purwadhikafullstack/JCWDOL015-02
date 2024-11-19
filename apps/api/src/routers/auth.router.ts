@@ -34,7 +34,7 @@ export class AuthRouter {
     );
     this.router.delete('/logout', this.authController.logoutUser);
   }
-
+  
   getRouter(): Router {
     return this.router;
   }

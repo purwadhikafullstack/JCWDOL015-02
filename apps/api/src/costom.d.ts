@@ -12,9 +12,22 @@ export interface IUserData extends JwtPayload {
 declare global {
   namespace Express {
     export interface Request {
-      user?: IUserData; // Tambahkan `user` sebagai properti opsional di `Request`
+      user?: IUserData;
+    }
+  }
+
+  declare module 'midtrans-client' {
+    export class Snap {
+      constructor(config: {
+        isProduction: boolean;
+        serverKey: string;
+        clientKey: string;
+      });
+
+      createTransaction(param: any): Promise<any>;
+      transaction: {
+        notification(param: any): Promise<any>;
+      };
     }
   }
 }
-
-export {}; // Pastikan file dianggap sebagai modul

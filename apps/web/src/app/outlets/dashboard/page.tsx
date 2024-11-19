@@ -27,8 +27,6 @@ export default function OutletDashboard() {
       axios
         .get(`${backendUrl}/api/order`)
         .then((response) => {
-          console.log(response);
-
           const filteredOrders = response.data.filter(
             (order: OrderData) => order.outletId === outlet.outletId,
           );

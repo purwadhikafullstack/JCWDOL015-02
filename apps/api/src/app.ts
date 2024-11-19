@@ -31,6 +31,8 @@ import { OrderItemRouter } from './routers/orderItem.router';
 import { WorkerJobHistoryRouter } from './routers/workHistory.router';
 import { ReportAnalysisRouter } from './routers/reportAnalysis.router';
 dotenv.config();
+import { PaymentRouter } from './routers/payment.router';
+
 export default class App {
   private app: Express;
   private PORT: string | number;
@@ -96,6 +98,7 @@ export default class App {
   }
 
   private routes(): void {
+    const paymentRouter = new PaymentRouter();
     const googleRouter = new GoogleRouter();
     const mailRouter = new MailRouter();
     const authRouter = new AuthRouter();
@@ -115,6 +118,7 @@ export default class App {
       res.send(`Hello, Purwadhika Student API!`);
     });
 
+    this.app.use('/api/payment', paymentRouter.getRouter());
     this.app.use('/api/google', googleRouter.getRouter());
     this.app.use('/api/mail', mailRouter.getRouter());
     this.app.use('/api/auth', authRouter.getRouter());
@@ -130,6 +134,7 @@ export default class App {
     this.app.use('/api/super-admin', superAdminRouter.getRouter());
     this.app.use('/api/notification', notificationRouter.getRouter());
     this.app.use('/api/report-analysis', reportAnalysisRouter.getRouter());
+    this.app.use('/api/worker', outletWorkerRouter.getRouter());
   }
 
   public start(): void {
