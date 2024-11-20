@@ -68,7 +68,7 @@ export class GoogleController {
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
           });
-        res.redirect("http://localhost:3000/");
+        res.redirect(process.env.FRONTEND_URL!);
     }
 }
  
