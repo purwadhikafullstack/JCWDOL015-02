@@ -359,6 +359,7 @@ export class OrderController {
           totalWeight: weight,
           totalPrice: calculatedPrice,
           totalItems: totalItems,
+          paymentStatus: 'unpaid',
         },
         include: {
           user: true,
