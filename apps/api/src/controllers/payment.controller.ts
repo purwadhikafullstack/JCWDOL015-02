@@ -64,10 +64,8 @@ export class PaymentController {
     
             return res.status(200).send({ status: "ok", message: "Success", data: orderData });
         } catch (error) {
-            // Pastikan hanya satu respons yang dikirim
             const errorMessage = error instanceof Error ? error.message : error;
             return res.status(400).send({ status: "error", message: errorMessage });
         }
     }
-    
 }
