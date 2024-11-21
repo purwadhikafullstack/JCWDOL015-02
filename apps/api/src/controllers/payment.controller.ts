@@ -76,7 +76,7 @@ export class PaymentController {
                     } else {
                         await prisma.order.update({
                             where: { id: Number(orderId) },
-                            data: {paymentStatus: 'paid', status: 'ready_for_delivery'}
+                            data: {paymentStatus: 'paid'}
                         })
                     }
                 }

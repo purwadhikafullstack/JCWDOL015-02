@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '@/prisma';
-import { Order, OrderStatus, WorkerRoles } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 import { findNearestOutlet } from '@/helpers/haversine';
 import axios from 'axios';
 
@@ -46,16 +46,7 @@ export class OrderController {
       return res.status(200).send({status: 'ok',message: 'Get Order By Id Successfully',
           data: {order,customerIntro,customerAddress,outletName}
         });
-      return res.status(200).send({
-        status: 'ok',
-        message: 'Get Order By Id Successfully',
-        data: order,
-      });
     } catch (error) {
-      if (error instanceof Error)
-        return res
-          .status(400)
-          .send({ status: 'error', message: error.message });
       res.status(400).send({ status: 'error', message: error });
     }
   }
@@ -186,7 +177,6 @@ export class OrderController {
           .status(400)
           .send({ status: 'error', message: error.message });
       }
-      res.status(400).send({ status: 'error', message: error });
     }
   }
 
@@ -269,11 +259,11 @@ export class OrderController {
           where: { id: orderIdInt },
           include: { pickupDeliveryRequests: true },
         });
-  
+
         if (!order) {
           return res.status(404).send({ error: 'Order not found' });
         }
-  
+
         if (order.paymentStatus === 'paid' && order.pickupDeliveryRequests?.length) {
           const pdrData = {
             orderId:+orderId,

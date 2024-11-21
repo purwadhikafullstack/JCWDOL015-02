@@ -1,4 +1,5 @@
 import { PaymentController } from '@/controllers/payment.controller';
+import { validatePayment } from '@/middlewares/validator/paymentValidator';
 
 import { Router } from 'express';
 
@@ -13,7 +14,7 @@ export class PaymentRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.post('/create', this.paymentController.createPayment);
+    this.router.post('/create',validatePayment, this.paymentController.createPayment);
     this.router.post('/callback/midtrans', this.paymentController.callbackPayment);
   }
 

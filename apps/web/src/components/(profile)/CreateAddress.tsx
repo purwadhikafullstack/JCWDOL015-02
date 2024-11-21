@@ -43,7 +43,7 @@ const initialValues: ICreateCustomerAddress = {
 }
   return (
     <div>
-      <button className="text-sm flex justify-center items-center gap-1 font-semibold bg-grayCustom text-black hover:bg-black hover:text-beigeCustom duration-300 px-3 py-2 rounded-full tracking-wide shadow-xl" onClick={() => openModal()}>Add Address <TbMapPinPlus className="w-5 h-5"/></button>
+      <button className="text-sm flex justify-center items-center gap-1 font-semibold bg-grayCustom text-white hover:bg-black hover:text-beigeCustom duration-300 px-3 py-2 rounded-full tracking-wide shadow-xl" onClick={() => openModal()}>Add Address <TbMapPinPlus className="w-5 h-5"/></button>
             <dialog id="modal_create_address" className="modal">
               <div className="modal-box w-11/12 max-w-3xl bg-[#0000006b]">
               <form method="dialog">

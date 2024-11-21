@@ -1,5 +1,5 @@
 import { AddressController } from '@/controllers/address.controllers';
-import { validateCreateAddress } from '@/middlewares/validator/addressValidator';
+import { validateAddress } from '@/middlewares/validator/addressValidator';
 
 import { Router } from 'express';
 
@@ -19,8 +19,8 @@ export class AddressRouter {
     this.router.get('/outlets/:role', this.addressController.getAllAddressByRole);
     this.router.get('/user/:id', this.addressController.getAddresByUserId);
     this.router.patch('/set-main', this.addressController.setMainAddress);
-    this.router.post('/create',validateCreateAddress, this.addressController.createAddress);
-    this.router.put('/update', this.addressController.updateAddress);
+    this.router.post('/create',validateAddress, this.addressController.createAddress);
+    this.router.put('/update',validateAddress, this.addressController.updateAddress);
     this.router.delete('/delete/:id', this.addressController.deleteAddress);
   }
 
