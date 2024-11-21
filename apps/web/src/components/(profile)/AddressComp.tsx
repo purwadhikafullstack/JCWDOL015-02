@@ -16,7 +16,8 @@ const AddressComp = () => {
     const { result, ok } = await getAddresByUserIdFetchDb(user.id)
     try {
       if(!ok) throw result.message
-      setAddresses([...result.data])
+      const availableAddress = result.data.filter((item: ICustomerAddress) => item.isDeleted === false)
+      setAddresses([...availableAddress])
     } catch (error) {
       console.log(error)
     }

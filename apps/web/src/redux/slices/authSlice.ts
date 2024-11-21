@@ -7,6 +7,7 @@ const initialState = {
     id: 0,
     role: "",
     username: "",
+    isGoogle: false,
     verified: false,
     email: "",
     avatar: "",
@@ -32,6 +33,11 @@ export const userSlice = createSlice({
             state.id = action.payload.id
             state.username = action.payload.username
             state.verified = action.payload.verified
+            if(action.payload.password == null){
+                state.isGoogle = true
+            } else {
+                state.isGoogle = false
+            }
             state.email = action.payload.email
             state.role = action.payload.role
             state.avatar = action.payload.avatar
@@ -51,6 +57,11 @@ export const userSlice = createSlice({
             state.id = action.payload.id
             state.username = action.payload.username
             state.verified = action.payload.verified
+            if(action.payload.password == null){
+                state.isGoogle = true
+            } else {
+                state.isGoogle = false
+            }
             state.email = action.payload.email
             state.role = action.payload.role
             state.avatar = action.payload.avatar

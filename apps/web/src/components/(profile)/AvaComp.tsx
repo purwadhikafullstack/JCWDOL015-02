@@ -89,7 +89,7 @@ const AvaComp: React.FC = () => {
           <button>close</button>
         </form>
       </dialog>
-        <p onClick={() => openModal("modal_update_email")} className="text-sm font-bold md:text-base tracking-wide mt-2 cursor-pointer">{user.email}</p>
+        <p onClick={() => {user.isGoogle !== true && openModal("modal_update_email")}} className={`text-sm font-bold md:text-base tracking-wide mt-2 ${user.isGoogle !== true && "cursor-pointer"}`}>{user.email}</p>
         {!user.verified && <BtnVerify/>}
         <UpdateEmail/>
       </div>

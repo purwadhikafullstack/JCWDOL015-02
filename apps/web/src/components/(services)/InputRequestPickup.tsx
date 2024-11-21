@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { AiOutlineWarning } from 'react-icons/ai';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { ICustomerAddress } from '@/type/customerType';
 
 const InputRequestPickup = () => {
   const user = useAppSelector((state) => state.auth);
@@ -22,7 +23,8 @@ const InputRequestPickup = () => {
     try {
       const { result, ok } = await getAddresByUserIdFetchDb(user.id);
       if (!ok) throw new Error(result.message);
-      setAllAddress(result.data);
+      const availableAddress = result.data.filter((item: ICustomerAddress) => item.isDeleted === false)
+      setAllAddress([...availableAddress]);
       const isMain = result.data.filter((address: any) => address.isMain == true);
       setSelectedAddress(isMain);
     } catch (error) {

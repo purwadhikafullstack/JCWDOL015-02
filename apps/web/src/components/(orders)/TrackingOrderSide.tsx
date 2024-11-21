@@ -1,7 +1,6 @@
 'use client';
 import React from 'react'
 import { RiTimeLine } from "react-icons/ri";
-import { TbMapSearch } from "react-icons/tb";
 
 type Props = {
   orderDetail: any,

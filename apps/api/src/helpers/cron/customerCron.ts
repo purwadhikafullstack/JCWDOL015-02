@@ -15,7 +15,7 @@ cron.schedule('0 0 * * *', async () => {
                 },
             },
             data: {
-                status: 'on_the_way_to_customer',
+                status: 'delivered_to_customer',
             },
         });
     } catch (error) {

@@ -55,19 +55,37 @@ export class PaymentController {
     
             if (transactionStatus == 'capture' || transactionStatus == 'settlement') {
                 if (fraudStatus == 'accept') {
-                    await prisma.order.update({
-                        where: { id: Number(orderId) },
-                        data: { paymentStatus: "paid" }
-                    });
+                    const currentOrder = await prisma.order.findUnique({ where: { id: Number(orderId) } , include: {pickupDeliveryRequests: true}});
+                    if(!currentOrder) throw "Order not found";
+                    if(currentOrder.status == 'waiting_for_payment'){ 
+                        await prisma.order.update({
+                            where: { id: Number(orderId) },
+                            data: {paymentStatus: 'paid', status: 'ready_for_delivery'}
+                        })
+                        const pdrData = {
+                            orderId: Number(orderId),
+                            distance: currentOrder.pickupDeliveryRequests[0].distance,
+                            driverId: currentOrder.pickupDeliveryRequests[0].driverId,
+                            fromAddressId: currentOrder.pickupDeliveryRequests[0].toAddressId,
+                            toAddressId: currentOrder.pickupDeliveryRequests[0].fromAddressId,
+                            requestType: 'deliver',
+                            status: 'wait_to_pickup_at_outlet',
+                        }
+                        const pdr = await axios.post(`${process.env.BACKEND_URL}/api/pdr/`, pdrData);
+                        if(!pdr) throw "Error creating Pickup Delivery Request";
+                    } else {
+                        await prisma.order.update({
+                            where: { id: Number(orderId) },
+                            data: {paymentStatus: 'paid', status: 'ready_for_delivery'}
+                        })
+                    }
                 }
             }
     
             return res.status(200).send({ status: "ok", message: "Success", data: orderData });
         } catch (error) {
-            // Pastikan hanya satu respons yang dikirim
             const errorMessage = error instanceof Error ? error.message : error;
             return res.status(400).send({ status: "error", message: errorMessage });
         }
     }
-    
 }

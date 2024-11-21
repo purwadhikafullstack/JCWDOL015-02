@@ -21,7 +21,7 @@ export class AuthController {
       if (existingUser?.username && existingUser.verified == true) throw "username already exists!";
       if (existingUser?.email && existingUser.verified == true) throw "email already exists!";
       if (existingUser && existingUser.verifyTokenExp && dayjs().isBefore(dayjs(existingUser.verifyTokenExp))) {
-        return res.status(400).json({ message: 'Email already sent, please try again 1 hour after the previous email was sent' });
+        throw 'Email already sent, please try again 1 hour after the previous email was sent'
       }
 
       if (existingUser) {
@@ -63,15 +63,9 @@ export class AuthController {
       })
     } catch (error) {
       if (error instanceof Error) {
-        res.status(400).send({
-          status: "error",
-          message: error.message,
-        });
+        res.status(400).send({status: "error",message: error.message});
       }
-      res.status(400).send({
-        status: "error",
-        message: error,
-      });
+      res.status(400).send({status: "error",message: error});
     }
   }
 
