@@ -12,6 +12,7 @@ export default function OrderList(): JSX.Element {
   const [dateFilter, setDateFilter] = useState<string>('');
   const [dateFilterType, setDateFilterType] = useState<string>('day'); // day, month, year
   const [loading, setLoading] = useState(false);
+  const [incomes, setIncomes] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [outlets, setOutlets] = useState<{ id: number; name: string }[]>([]);
 
@@ -27,6 +28,11 @@ export default function OrderList(): JSX.Element {
       const response = await axios.get('http://localhost:8000/api/order/');
       setOrders(response.data);
       setFilteredOrders(response.data);
+      let tot: number = 0;
+      response.data.map((item: any) => {
+        tot += item.totalPrice;
+      });
+      setIncomes(tot);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Error fetching orders');
     } finally {
@@ -37,7 +43,7 @@ export default function OrderList(): JSX.Element {
   const fetchOutlets = async () => {
     try {
       const response = await axios.get('http://localhost:8000/api/outlet/');
-      setOutlets(response.data);
+      setOutlets(response.data.data);
     } catch (err) {
       console.error('Error fetching outlets', err);
     }
@@ -45,17 +51,17 @@ export default function OrderList(): JSX.Element {
 
   const handleFilter = () => {
     let filtered = [...orders];
+    console.log(filtered, '<><><');
 
     // Filter by Outlet
     if (outletFilter) {
-      const outlet = outlets.find(
-        (o) => o.name.toLowerCase() === outletFilter.toLowerCase(),
-      );
-      if (outlet) {
-        filtered = filtered.filter((order) => order.outletId?.id === outlet.id);
-      } else {
-        filtered = [];
-      }
+      const searchKeyword = outletFilter.toLowerCase();
+      filtered = filtered.filter((order) => {
+        const outletName = order.outlet?.name?.toLowerCase() || '';
+        console.log(outletName.indexOf(searchKeyword) !== -1, '???');
+
+        return outletName.indexOf(searchKeyword) !== -1;
+      });
     }
 
     // Filter by Date (Day, Month, Year)
@@ -81,13 +87,23 @@ export default function OrderList(): JSX.Element {
     }
 
     setFilteredOrders(filtered);
+    let tot: number = 0;
+    filtered.map((item: any) => {
+      tot += item.totalPrice;
+    });
+    setIncomes(tot);
   };
 
   const handleReset = () => {
     setOutletFilter('');
     setDateFilter('');
     setDateFilterType('day');
-    setFilteredOrders(orders); // Reset filtered orders to original orders
+    setFilteredOrders(orders);
+    let tot: number = 0;
+    orders.map((item: any) => {
+      tot += item.totalPrice;
+    });
+    setIncomes(tot);
   };
 
   const getOutletName = (outlet: any | null) => {
@@ -149,8 +165,7 @@ export default function OrderList(): JSX.Element {
       }}
     >
       <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Order List</h1>
-
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Sales Report</h1>
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* Filter by Outlet */}
@@ -208,22 +223,25 @@ export default function OrderList(): JSX.Element {
               Reset Filters
             </button>
           </div>
-        </div>
+        </div>{' '}
+        <div className="flex items-end space-x-2">
+          <h5>total income:</h5>
 
+          {/* Reset Button */}
+          <h5>{incomes.toLocaleString()}</h5>
+        </div>
         {/* Error Message */}
         {error && (
           <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
             <p>{error}</p>
           </div>
         )}
-
         {/* Loading Spinner */}
         {loading && (
           <div className="flex justify-center items-center py-4">
             <div className="spinner-border animate-spin w-8 h-8 border-4 rounded-full border-blue-500"></div>
           </div>
         )}
-
         {/* Orders Table */}
         {!loading && filteredOrders.length > 0 && (
           <div className="overflow-x-auto">
@@ -235,6 +253,9 @@ export default function OrderList(): JSX.Element {
                   <th className="border border-gray-300 px-4 py-2">Customer</th>
                   <th className="border border-gray-300 px-4 py-2">Date</th>
                   <th className="border border-gray-300 px-4 py-2">Status</th>
+                  <th className="border border-gray-300 px-4 py-2">
+                    Total Price
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -255,25 +276,26 @@ export default function OrderList(): JSX.Element {
                     <td className="border border-gray-300 px-4 py-2">
                       {order.status}
                     </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {order.totalPrice?.toLocaleString()}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-
         {/* No Orders Found */}
         {!loading && filteredOrders.length === 0 && (
           <div className="text-center py-4 text-gray-700">
             <p>No orders found</p>
           </div>
         )}
-
         {/* Kembali ke Dashboard Button */}
         <div className="mt-6 flex justify-center">
           <Link href="/admin">
             <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
-              Kembali ke Dashboard
+              Go ke Dashboard
             </button>
           </Link>
         </div>
