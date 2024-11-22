@@ -1,14 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Link from 'next/link';
 
 export default function OutletDetail() {
   const [outletId, setOutletId] = useState<number | string>('');
   const [outletData, setOutletData] = useState<any>(null);
+  const [addressData, setAddressData] = useState<any | null>(null);
   const [orders, setOrders] = useState<any[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Fetch Orders on Component Mount
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/order');
+        setOrders(response.data);
+        setFilteredOrders(response.data); // Initialize filteredOrders with all orders
+      } catch (err: any) {
+        setError(err.response?.data?.error || 'Error fetching orders.');
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   const fetchOutlet = async () => {
     if (!outletId || isNaN(Number(outletId))) {
@@ -20,30 +38,39 @@ export default function OutletDetail() {
     setError(null);
 
     try {
-      const response = await axios.get(
+      // Fetch Outlet Details
+      const outletResponse = await axios.get(
         `http://localhost:8000/api/outlet/id/${outletId}`,
       );
-      setOutletData(response.data);
+      setOutletData(outletResponse.data);
+
+      // Fetch Address by Outlet ID
+      const addressResponse = await axios.get(
+        `http://localhost:8000/api/address/outlet/${outletId}`,
+      );
+      setAddressData(addressResponse.data.data || null);
+
+      // Filter Orders by Outlet ID
+      const filtered = orders.filter(
+        (order) => order.outletId === Number(outletId),
+      );
+      setFilteredOrders(filtered);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Error fetching outlet data.');
+      setError(err.response?.data?.error || 'Error fetching data.');
       setOutletData(null);
+      setAddressData(null);
+      setFilteredOrders([]); // Clear filtered orders on error
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchOrders = async () => {
-    setLoading(true);
+  const resetFilter = () => {
+    setOutletData(null);
+    setAddressData(null);
     setError(null);
-
-    try {
-      const response = await axios.get('http://localhost:8000/api/order');
-      setOrders(response.data);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error fetching orders.');
-    } finally {
-      setLoading(false);
-    }
+    setOutletId('');
+    setFilteredOrders(orders); // Reset to show all orders
   };
 
   return (
@@ -53,10 +80,18 @@ export default function OutletDetail() {
         backgroundImage: `url('https://keranji.id/storage/artikel/content/828-Desain-Toko-Laundry-Minimalis-4.jpg')`,
       }}
     >
-      <div className="p-6 bg-white bg-opacity-90 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">
-          Search Outlet & View Orders
+      <div className="p-6 bg-white bg-opacity-90 rounded-lg shadow-lg w-full max-w-5xl">
+        <h1 className="text-2xl text-center font-bold mb-4 text-gray-800">
+          View Orders
         </h1>
+        <div className="flex justify-center mb-8">
+          <Link
+            href="/admin"
+            className="p-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
 
         {/* Input Outlet ID */}
         <div className="mb-4">
@@ -76,27 +111,16 @@ export default function OutletDetail() {
           />
         </div>
 
-        {/* Tombol Actions */}
-        <div className="flex justify-between items-center space-x-2">
+        {/* Tombol Search Outlet */}
+        <div className="flex justify-between items-center space-x-2 mb-6">
           <button
             onClick={fetchOutlet}
             className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
           >
-            {loading && outletData === null ? 'Searching...' : 'Search Outlet'}
+            {loading ? 'Searching...' : 'Search Outlet'}
           </button>
           <button
-            onClick={fetchOrders}
-            className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
-          >
-            {loading && orders.length === 0 ? 'Loading...' : 'View All Orders'}
-          </button>
-          <button
-            onClick={() => {
-              setOutletData(null);
-              setOrders([]);
-              setError(null);
-              setOutletId('');
-            }}
+            onClick={resetFilter}
             className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
           >
             Reset
@@ -110,46 +134,62 @@ export default function OutletDetail() {
           </div>
         )}
 
-        {/* Outlet Details */}
-        {outletData && (
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Outlet Details
-            </h2>
-            <ul className="mt-2 space-y-2 text-gray-700">
-              <li>
-                <strong>ID:</strong> {outletData.id}
-              </li>
-              <li>
-                <strong>Name:</strong> {outletData.name}
-              </li>
-              <li>
-                <strong>Email:</strong> {outletData.email}
-              </li>
-              <li>
-                <strong>Address:</strong> {outletData.address}
-              </li>
-              <li>
-                <strong>Phone:</strong> {outletData.phone}
-              </li>
-            </ul>
-          </div>
-        )}
-
-        {/* Orders */}
-        {orders.length > 0 && (
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-800">All Orders</h2>
-            <ul className="mt-2 space-y-2 text-gray-700">
-              {orders.map((order, index) => (
-                <li key={index} className="border-b pb-2">
-                  <strong>ID:</strong> {order.id} - <strong>Status:</strong>{' '}
-                  {order.status}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {/* Orders Table */}
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold text-gray-800">Orders</h2>
+          {filteredOrders.length > 0 ? (
+            <div className="mt-4 overflow-x-auto">
+              <table className="table-auto w-full border-collapse border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-100 text-gray-800">
+                    <th className="border border-gray-300 px-4 py-2">
+                      Order ID
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Outlet ID
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">Status</th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Customer
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Total Price
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Schedule
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrders.map((order, index) => (
+                    <tr key={index} className="text-gray-700">
+                      <td className="border border-gray-300 px-4 py-2">
+                        {order.id}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {order.outletId || 'N/A'}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {order.status}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {order.customerName || 'N/A'}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {order.totalPrice || 'N/A'}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {order.schedule || 'N/A'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-gray-700 mt-2">No orders found.</p>
+          )}
+        </div>
       </div>
     </div>
   );

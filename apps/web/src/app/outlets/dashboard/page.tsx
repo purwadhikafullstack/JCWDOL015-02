@@ -20,7 +20,7 @@ export default function OutletDashboard() {
     } else {
       router.push('/worker/login');
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (outlet) {
@@ -36,7 +36,7 @@ export default function OutletDashboard() {
           console.error('Error fetching orders:', error);
         });
     }
-  }, [outlet]);
+  }, [backendUrl, outlet]);
 
   const handleProcessOrder = (
     orderId: number,
@@ -49,83 +49,108 @@ export default function OutletDashboard() {
   };
 
   return (
-    <div>
+    <div
+      className="min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage:
+          'url("https://as1.ftcdn.net/v2/jpg/08/65/54/64/1000_F_865546440_feHvE9ohNV0RaFAdYWs9vk4IEOYPPh6b.jpg")',
+      }}
+    >
       <LogoutWorker />
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="p-6 bg-white rounded-lg shadow-md w-full max-w-md">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+      <header className="mt-4 bg-white bg-opacity-80 text-black py-5 shadow-xl rounded-lg">
+        <div className="container mx-auto text-center px-4">
+          <h1 className="text-3xl font-extrabold tracking-tight drop-shadow-md">
             Outlet Dashboard
-          </h2>
+          </h1>
+          <p className="text-lg mt-2 font-medium text-black">
+            Manage your orders and outlet details effortlessly
+          </p>
+        </div>
+      </header>
 
-          {outlet ? (
-            <div>
-              <p>
-                <strong>Outlet Name:</strong> {outlet.outletName}
-              </p>
-              <p>
-                <strong>Outlet Email:</strong> {outlet.outletEmail}
-              </p>
+      <main className="container mx-auto py-10 px-6">
+        {outlet ? (
+          <div className="bg-white p-8 rounded-xl shadow-lg">
+            <div className="mb-8 border-b pb-6">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Welcome, {outlet.outletName}!
+              </h2>
+              <p className="text-gray-500 mt-2">Email: {outlet.outletEmail}</p>
+            </div>
 
-              <h3 className="mt-6 mb-2 text-lg font-semibold">Orders</h3>
-              {orders.length > 0 ? (
-                <ul>
-                  {orders.map((order) => (
-                    <li
-                      key={order.id}
-                      className="mb-4 p-4 border rounded-lg bg-gray-50"
-                    >
-                      <p>
-                        <strong>Order ID:</strong> {order.id}
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Orders</h3>
+            {orders.length > 0 ? (
+              <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {orders.map((order) => (
+                  <li
+                    key={order.id}
+                    className="p-6 bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-2 hover:scale-105"
+                  >
+                    <div className="flex flex-col gap-3">
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">Order ID:</span>{' '}
+                        {order.id}
                       </p>
-                      <p>
-                        <strong>Status:</strong> {order.status}
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">Status:</span>{' '}
+                        {order.status}
                       </p>
-                      <p>
-                        <strong>Pickup Schedule:</strong>{' '}
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">Pickup Schedule:</span>{' '}
                         {new Date(order.pickupSchedule).toLocaleString()}
                       </p>
-                      <p>
-                        <strong>Total Items:</strong> {order.totalItems}
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">Total Items:</span>{' '}
+                        {order.totalItems}
                       </p>
-                      <p>
-                        <strong>Total Price:</strong> {order.totalPrice}
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">Total Price:</span> $
+                        {order.totalPrice
+                          ? order.totalPrice.toFixed(2)
+                          : '0.00'}
                       </p>
-                      <p>
-                        <strong>Payment Status:</strong> {order.paymentStatus}
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">Payment Status:</span>{' '}
+                        {order.paymentStatus}
                       </p>
-                      <p>
-                        <strong>Distance:</strong>{' '}
-                        {order.pickupDeliveryRequests[0]?.distance || 0}
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">Distance:</span>{' '}
+                        {order.pickupDeliveryRequests[0]?.distance || 0} km
                       </p>
-                      {order.status === 'arrived_at_outlet' && (
-                        <div className="bg-yellow-100 text-yellow-800 p-2 mb-2 rounded">
-                          <p>⚠️ This order needs to be processed</p>
-                          <button
-                            onClick={() =>
-                              handleProcessOrder(
-                                order.id,
-                                order.userId,
-                                order.pickupDeliveryRequests[0]?.distance || 0,
-                              )
-                            }
-                            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                          >
-                            Process Order
-                          </button>
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No orders found for this outlet.</p>
-              )}
-            </div>
-          ) : (
-            <p>Loading...</p>
-          )}
-        </div>
-      </div>
+                    </div>
+
+                    {order.status === 'arrived_at_outlet' && (
+                      <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mt-4 rounded-lg">
+                        <p className="text-yellow-800 font-medium">
+                          ⚠️ This order needs to be processed
+                        </p>
+                        <button
+                          onClick={() =>
+                            handleProcessOrder(
+                              order.id,
+                              order.userId,
+                              order.pickupDeliveryRequests[0]?.distance || 0,
+                            )
+                          }
+                          className="mt-3 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+                        >
+                          Process Order
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-600">No orders found for this outlet.</p>
+            )}
+          </div>
+        ) : (
+          <div className="text-center mt-10">
+            <p className="text-lg text-gray-600 animate-pulse">Loading...</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

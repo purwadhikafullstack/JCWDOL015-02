@@ -165,7 +165,17 @@ export default function OrderList(): JSX.Element {
       }}
     >
       <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Sales Report</h1>
+        <h1 className="text-2xl text-center font-bold text-gray-800 mb-4">
+          Sales Report
+        </h1>
+        {/* Kembali ke Dashboard Button */}
+        <div className="mt-5 mb-6 flex justify-center">
+          <Link href="/admin">
+            <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+              Go ke Dashboard
+            </button>
+          </Link>
+        </div>
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* Filter by Outlet */}
@@ -291,14 +301,6 @@ export default function OrderList(): JSX.Element {
             <p>No orders found</p>
           </div>
         )}
-        {/* Kembali ke Dashboard Button */}
-        <div className="mt-6 flex justify-center">
-          <Link href="/admin">
-            <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
-              Go ke Dashboard
-            </button>
-          </Link>
-        </div>
       </div>
     </div>
   );

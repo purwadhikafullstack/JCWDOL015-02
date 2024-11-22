@@ -44,9 +44,16 @@ const AdminPage = () => {
             </button>
           </Link>
 
+          {/* Button for View Order */}
+          <Link href="/admin/viewOrder">
+            <button className="w-full py-3 px-6 text-center text-white font-semibold bg-black rounded-lg shadow-lg hover:bg-black-700 hover:shadow-xl transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+              View Order
+            </button>
+          </Link>
+
           {/* Button for View Sales */}
           <Link href="/admin/viewSales">
-            <button className="w-full py-3 px-6 text-center text-white font-semibold bg-yellow-400 rounded-lg shadow-lg hover:bg-orange-700 hover:shadow-xl transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+            <button className="w-full py-3 px-6 text-center text-white font-semibold bg-yellow-400 rounded-lg shadow-lg hover:bg-yellow-700 hover:shadow-xl transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
               View Sales Report
             </button>
           </Link>
