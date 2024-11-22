@@ -84,7 +84,7 @@ const AllOrderPage = () => {
           {orders?.map((order) => (
             <div
               key={order.id}
-              className={` ${order?.status == 'waiting_for_payment' ? 'border-green-700' : 'border-beigeCustom'} border-2 w-[95%] md:w-[80%] my-2 text-center rounded-box  cursor-pointer duration-300`}
+              className={` ${order?.status == 'delivered_to_customer' ? 'border-gray-200' : 'border-grayCustom'} border-2 w-[95%] md:w-[80%] my-2 text-center rounded-box  cursor-pointer duration-300`}
             >
               <div className="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box ">
                 <input type="checkbox" />

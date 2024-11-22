@@ -54,16 +54,17 @@ export class OrderController {
   async searcOrder(req: Request, res: Response) {
     try {
       const { date, orderId } = req.body;
-      if (date == null && orderId == null)
-        throw 'date or orderId is required !';
+      if (date == null && orderId == null) throw 'date or orderId is required !';
       if (date) {
-        const targetDate = new Date(date).setUTCHours(0, 0, 0, 0);
-        const endOfDay = new Date(targetDate).setUTCHours(23, 59, 59, 999);
+        const targetDate = new Date(date);
+        targetDate.setUTCHours(targetDate.getUTCHours() - 7); // Kurangi 7 jam untuk WIB
+        const startOfDay = new Date(targetDate).setUTCHours(0, 0, 0, 0);
+        const endOfDay = new Date(startOfDay).setUTCHours(23, 59, 59, 999);
         const orderByDate = await prisma.order.findMany({
           where: {
             createdAt: {
-              gte: new Date(targetDate).toISOString(),
-              lte: new Date(endOfDay).toISOString(),
+              gte: new Date(startOfDay),
+              lte: new Date(endOfDay),
             },
           },
         });

@@ -51,7 +51,7 @@ const BtnPayment = (props:Props) => {
     <button
         onClick={() => handlePaymentClick(props)} 
         disabled={isLoading}
-        className="mt-3 mb-2 md:mb-0 md:mt-5 cursor-pointer bg-black text-white py-2 hover:scale-110 px-4 rounded-full transition duration-200 shadow-sm shadow-[#00000048] text-base md:text-lg uppercase tracking-wide my-1 flex items-center gap-2"
+        className="mt-1 mb-2 md:mb-0 md:mt-2 w-full text-center cursor-pointer bg-grayCustom text-black py-2 hover:bg-black hover:text-beigeCustom px-4 rounded-full transition duration-200 shadow-sm shadow-[#00000048] md:text-lg uppercase tracking-wide my-1"
     >
         {isLoading ? 'Processing..' : 'Pay Now'}
     </button>
