@@ -167,7 +167,7 @@ export class PickupDeliveryRequestController {
         }
         else {
           const updateOrder =  await axios.patch(`${process.env.BACKEND_URL}/api/order/${order.id}`, {
-            status: "delivered_to_customer",
+            status: "on_the_way_to_customer",
             userId: order.userId,
           });
         }}

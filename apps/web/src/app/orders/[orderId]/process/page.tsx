@@ -96,7 +96,7 @@ export default function ProcessOrderPage() {
     return (
         <div className="p-6 bg-white rounded-lg shadow-md w-full max-w-md mx-auto mt-10">
             <h2 className="text-2xl font-bold mb-4">
-                Process Order {orderId} , userID : {userId} , distance : {distance}
+                nimbang baju
             </h2>
             <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
                 {Object.keys(orderItems).map((item) => (
