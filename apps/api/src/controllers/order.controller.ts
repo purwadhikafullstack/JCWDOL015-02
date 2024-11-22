@@ -3,6 +3,7 @@ import prisma from '@/prisma';
 import { OrderStatus } from '@prisma/client';
 import { findNearestOutlet } from '@/helpers/haversine';
 import axios from 'axios';
+import { generateUniqueId } from '@/helpers/generateId';
 
 export class OrderController {
   async getAllOrder(req: Request, res: Response) {
@@ -138,8 +139,10 @@ export class OrderController {
       const { nearestOutlet, distance } = await findNearestOutlet(addressId);
       if (!nearestOutlet?.outletId) throw 'Outlet not found!';
 
+      const uniqueId = await generateUniqueId();
       const newOrder = await prisma.order.create({
         data: {
+          id: uniqueId,
           userId,
           addressId,
           outletId: nearestOutlet.outletId,

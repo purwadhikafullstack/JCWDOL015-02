@@ -111,7 +111,7 @@ model Address {
 }
 
 model Order {
-  id            Int         @id @default(autoincrement())
+  id            Int         @id  @default(autoincrement())
   userId        Int
   addressId     Int         
   outletId      Int
