@@ -78,6 +78,14 @@ export default function OutletDashboard() {
     setFilteredOrders(filtered);
   };
 
+  const handleSalesReport = () => {
+    router.push('/outlets/salesOutlet');
+  };
+
+  const handleEmployeeReport = () => {
+    router.push('/outlets/employeeOutlet');
+  };
+
   return (
     <div
       className="min-h-screen bg-cover bg-center"
@@ -95,6 +103,20 @@ export default function OutletDashboard() {
           <p className="text-lg mt-2 font-medium text-black">
             Manage your orders and outlet details effortlessly
           </p>
+          <div className="mt-4 flex justify-center gap-6">
+            <button
+              onClick={handleSalesReport}
+              className="p-2 bg-green-600 text-white rounded-lg shadow-sm hover:bg-green-700"
+            >
+              Sales Report
+            </button>
+            <button
+              onClick={handleEmployeeReport}
+              className="p-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700"
+            >
+              Employee Report
+            </button>
+          </div>
         </div>
       </header>
 
@@ -193,33 +215,30 @@ export default function OutletDashboard() {
                     {order.status === 'arrived_at_outlet' && (
                       <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mt-4 rounded-lg">
                         <p className="text-yellow-800 font-medium">
-                          ⚠️ This order needs to be processed
+                          ⚠️ This order needs to be processed soon.
                         </p>
-                        <button
-                          onClick={() =>
-                            handleProcessOrder(
-                              order.id,
-                              order.userId,
-                              order.pickupDeliveryRequests[0]?.distance || 0,
-                            )
-                          }
-                          className="mt-3 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                        >
-                          Process Order
-                        </button>
                       </div>
                     )}
+
+                    {/* <div className="flex justify-end mt-4">
+                      <button
+                        onClick={() =>
+                          handleProcessOrder(order.id, order.userId, 0)
+                        }
+                        className="py-2 px-6 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Process
+                      </button>
+                    </div> */}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-600">No orders found for this outlet.</p>
+              <p>No orders found.</p>
             )}
           </div>
         ) : (
-          <div className="text-center mt-10">
-            <p className="text-lg text-gray-600 animate-pulse">Loading...</p>
-          </div>
+          <p>Loading...</p>
         )}
       </main>
     </div>
