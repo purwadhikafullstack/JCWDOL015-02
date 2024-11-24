@@ -119,8 +119,8 @@ export class OutletController {
       const updatedData: any = {
         name,
         email,
-        lon: String(lon),
-        lat: String(lat),
+        // lon: String(lon),
+        // lat: String(lat),
         address,
       };
 
@@ -189,6 +189,7 @@ export class OutletController {
         outletId: outlet.id,
         outletName: outlet.name,
         outletEmail: outlet.email,
+        role: 'admin',
       });
     } catch (error) {
       console.error('Error during login:', error);

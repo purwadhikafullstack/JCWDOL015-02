@@ -13,13 +13,12 @@ export default function OutletDetail() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch Orders on Component Mount
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/order');
         setOrders(response.data);
-        setFilteredOrders(response.data); // Initialize filteredOrders with all orders
+        setFilteredOrders(response.data);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error fetching orders.');
       }
@@ -38,19 +37,16 @@ export default function OutletDetail() {
     setError(null);
 
     try {
-      // Fetch Outlet Details
       const outletResponse = await axios.get(
         `http://localhost:8000/api/outlet/id/${outletId}`,
       );
       setOutletData(outletResponse.data);
 
-      // Fetch Address by Outlet ID
       const addressResponse = await axios.get(
         `http://localhost:8000/api/address/outlet/${outletId}`,
       );
       setAddressData(addressResponse.data.data || null);
 
-      // Filter Orders by Outlet ID
       const filtered = orders.filter(
         (order) => order.outletId === Number(outletId),
       );
@@ -59,10 +55,14 @@ export default function OutletDetail() {
       setError(err.response?.data?.error || 'Error fetching data.');
       setOutletData(null);
       setAddressData(null);
-      setFilteredOrders([]); // Clear filtered orders on error
+      setFilteredOrders([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getUserName = (user: any) => {
+    return user?.username || 'N/A';
   };
 
   const resetFilter = () => {
@@ -70,12 +70,12 @@ export default function OutletDetail() {
     setAddressData(null);
     setError(null);
     setOutletId('');
-    setFilteredOrders(orders); // Reset to show all orders
+    setFilteredOrders(orders);
   };
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed"
+      className="flex items-start justify-center min-h-screen bg-cover bg-center pt-10"
       style={{
         backgroundImage: `url('https://keranji.id/storage/artikel/content/828-Desain-Toko-Laundry-Minimalis-4.jpg')`,
       }}
@@ -89,11 +89,9 @@ export default function OutletDetail() {
             href="/admin"
             className="p-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
           >
-            Go to Dashboard
+            Dashboard
           </Link>
         </div>
-
-        {/* Input Outlet ID */}
         <div className="mb-4">
           <label
             htmlFor="outletId"
@@ -110,9 +108,7 @@ export default function OutletDetail() {
             className="w-full bg-white text-gray-800 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
-
-        {/* Tombol Search Outlet */}
-        <div className="flex justify-between items-center space-x-2 mb-6">
+        <div className="flex items-center space-x-2 mb-6">
           <button
             onClick={fetchOutlet}
             className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
@@ -126,15 +122,11 @@ export default function OutletDetail() {
             Reset
           </button>
         </div>
-
-        {/* Error Message */}
         {error && (
           <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg">
             <p>{error}</p>
           </div>
         )}
-
-        {/* Orders Table */}
         <div className="mt-6">
           <h2 className="text-lg font-semibold text-gray-800">Orders</h2>
           {filteredOrders.length > 0 ? (
@@ -155,9 +147,6 @@ export default function OutletDetail() {
                     <th className="border border-gray-300 px-4 py-2">
                       Total Price
                     </th>
-                    <th className="border border-gray-300 px-4 py-2">
-                      Schedule
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -173,13 +162,10 @@ export default function OutletDetail() {
                         {order.status}
                       </td>
                       <td className="border border-gray-300 px-4 py-2">
-                        {order.customerName || 'N/A'}
+                        {getUserName(order?.user)}
                       </td>
                       <td className="border border-gray-300 px-4 py-2">
                         {order.totalPrice || 'N/A'}
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {order.schedule || 'N/A'}
                       </td>
                     </tr>
                   ))}

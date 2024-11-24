@@ -28,7 +28,12 @@ export class OutletWorkerController {
   async getAllOutletWorkers(req: Request, res: Response): Promise<Response> {
     try {
       const outletWorkers: OutletWorker[] =
-        await prisma.outletWorker.findMany();
+        await prisma.outletWorker.findMany({
+          include: {
+            jobHistory: true,
+            pickupDeliveries: true
+          }
+        });
 
       if (!outletWorkers.length) {
         return res.status(404).send({ error: 'No outlet workers found' });

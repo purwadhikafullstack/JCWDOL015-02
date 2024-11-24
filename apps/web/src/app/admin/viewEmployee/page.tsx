@@ -14,10 +14,16 @@ interface Outlet {
   updatedAt: string;
 }
 
+interface WorkerJobHistory {
+  order: {
+    status: string;
+  };
+}
+
 interface OutletWorker {
-  outlet: any;
+  outlet: Outlet | null;
   id: number;
-  outletId: Outlet | null;
+  outletId: number | null;
   name: string;
   password: string;
   email: string;
@@ -37,6 +43,14 @@ const OutletWorkers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // State for worker job history
+  const [workerJobHistory, setWorkerJobHistory] = useState<WorkerJobHistory[]>(
+    [],
+  );
+  const [jobHistoryLoading, setJobHistoryLoading] = useState<boolean>(false);
+  const [jobHistoryError, setJobHistoryError] = useState<string | null>(null);
+
+  // Fetch outlet workers on component mount
   useEffect(() => {
     const fetchWorkers = async () => {
       setLoading(true);
@@ -57,8 +71,19 @@ const OutletWorkers = () => {
     fetchWorkers();
   }, []);
 
-  const getOutletName = (outlet: Outlet | null) => {
-    return outlet?.name || 'N/A';
+  const fetchWorkerJobHistory = async (workerId: number) => {
+    setJobHistoryLoading(true);
+    setJobHistoryError(null);
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/work-history/${workerId}`,
+      );
+      setWorkerJobHistory(response.data);
+    } catch (err: any) {
+      setJobHistoryError('Error fetching job history');
+    } finally {
+      setJobHistoryLoading(false);
+    }
   };
 
   const handleFilter = () => {
@@ -66,26 +91,22 @@ const OutletWorkers = () => {
 
     if (outletFilter) {
       const searchKeyword = outletFilter.toLowerCase();
-      filtered = filtered.filter((order) => {
-        const outletName = order.outlet?.name?.toLowerCase() || '';
-        return outletName.indexOf(searchKeyword) !== -1;
-      });
+      filtered = filtered.filter(
+        (worker) => worker.outletId?.toString().includes(searchKeyword), // Cari berdasarkan outletId
+      );
     }
 
     if (dateFilter) {
       filtered = filtered.filter((worker) => {
         const workerDate = new Date(worker.createdAt);
-        let formattedDate = '';
         switch (dateFilterType) {
           case 'day':
-            formattedDate = workerDate.toISOString().split('T')[0];
-            return formattedDate === dateFilter;
+            return workerDate.toISOString().split('T')[0] === dateFilter;
           case 'month':
-            formattedDate = `${workerDate.getFullYear()}-${String(workerDate.getMonth() + 1).padStart(2, '0')}`;
-            return formattedDate === dateFilter;
+            const workerMonth = `${workerDate.getFullYear()}-${String(workerDate.getMonth() + 1).padStart(2, '0')}`;
+            return workerMonth === dateFilter;
           case 'year':
-            formattedDate = `${workerDate.getFullYear()}`;
-            return formattedDate === dateFilter;
+            return workerDate.getFullYear().toString() === dateFilter;
           default:
             return false;
         }
@@ -142,6 +163,13 @@ const OutletWorkers = () => {
     }
   };
 
+  const getCompletedOrdersCount = (workerId: number) => {
+    const completedOrders = workerJobHistory.filter(
+      (history) => history.order.status === 'completed',
+    );
+    return completedOrders.length;
+  };
+
   return (
     <div
       className="min-h-screen bg-cover bg-center p-8"
@@ -159,106 +187,90 @@ const OutletWorkers = () => {
             href="/admin"
             className="p-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
           >
-            Go to Dashboard
+            Dashboard
           </Link>
         </div>
         <div className="mb-6">
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Filter by Outlet
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Outlet Name"
-              value={outletFilter}
-              onChange={(e) => setOutletFilter(e.target.value)}
-              className="w-full bg-white text-gray-800 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Filter by Date
-            </label>
-            {renderDateInput()}
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Date Filter Type
-            </label>
-            <select
-              value={dateFilterType}
-              onChange={(e) =>
-                setDateFilterType(e.target.value as 'day' | 'month' | 'year')
-              }
-              className="w-full bg-white text-gray-800 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="day">Per Day</option>
-              <option value="month">Per Month</option>
-              <option value="year">Per Year</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-end space-x-2 mt-4">
+          <label className="block text-gray-700 font-medium mb-2">
+            Filter by Outlet
+          </label>
+          <input
+            type="text"
+            placeholder="Enter Outlet ID"
+            value={outletFilter}
+            onChange={(e) => setOutletFilter(e.target.value)}
+            className="w-full bg-white text-gray-800 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <label className="block text-gray-700 font-medium mb-2 mt-4">
+            Filter by Date
+          </label>
+          {renderDateInput()}
+          <label className="block text-gray-700 font-medium mb-2 mt-4">
+            Date Filter Type
+          </label>
+          <select
+            value={dateFilterType}
+            onChange={(e) =>
+              setDateFilterType(e.target.value as 'day' | 'month' | 'year')
+            }
+            className="w-full bg-white text-gray-800 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="day">Per Day</option>
+            <option value="month">Per Month</option>
+            <option value="year">Per Year</option>
+          </select>
+          <div className="flex mt-4 gap-4">
             <button
               onClick={handleFilter}
-              className="w-full md:w-auto bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
             >
-              Apply Filters
+              Apply
             </button>
             <button
               onClick={handleReset}
-              className="w-full md:w-auto bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400"
+              className="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400"
             >
-              Reset Filters
+              Reset
             </button>
           </div>
         </div>
-
         {loading ? (
           <p className="text-gray-600 mt-4">Loading...</p>
         ) : error ? (
           <p className="text-red-600 mt-4">{error}</p>
         ) : filteredWorkers.length > 0 ? (
-          <div className="overflow-x-auto mt-4">
-            <table className="table-auto w-full border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="border border-gray-300 px-4 py-2">Name</th>
-                  <th className="border border-gray-300 px-4 py-2">Outlet</th>
-                  <th className="border border-gray-300 px-4 py-2">Email</th>
-                  <th className="border border-gray-300 px-4 py-2">Role</th>
-                  <th className="border border-gray-300 px-4 py-2">Created</th>
-                  <th className="border border-gray-300 px-4 py-2">Updated</th>
+          <table className="table-auto w-full mt-4">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="px-4 py-2 text-left">Worker ID</th>
+                <th className="px-4 py-2 text-left">Outlet ID</th>
+                <th className="px-4 py-2 text-left">Worker</th>
+                <th className="px-4 py-2 text-left">Role</th>
+                <th className="px-4 py-2 text-left">Date</th>
+                <th className="px-4 py-2 text-left">Completed Orders</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredWorkers.map((worker: any) => (
+                <tr key={worker.id}>
+                  <td className="px-4 py-2">{worker.id}</td>
+                  <td className="px-4 py-2">{worker.outletId}</td>
+                  <td className="px-4 py-2">{worker.name}</td>
+                  <td className="px-4 py-2">{worker.role}</td>
+                  <td className="px-4 py-2">
+                    {new Date(worker.createdAt).toLocaleDateString()}
+                  </td>
+                  {worker.role == 'driver' ? (
+                    <td className="px-4 py-2">
+                      {worker.pickupDeliveries.length}
+                    </td>
+                  ) : (
+                    <td className="px-4 py-2">{worker.jobHistory.length}</td>
+                  )}
                 </tr>
-              </thead>
-              <tbody>
-                {filteredWorkers.map((worker) => (
-                  <tr key={worker.id}>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {worker.name}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {getOutletName(worker.outlet)}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {worker.email}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {worker.role}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {worker.createdAt}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {worker.updatedAt}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <p className="text-gray-600 mt-4">No workers found.</p>
         )}

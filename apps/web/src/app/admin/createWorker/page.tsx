@@ -45,13 +45,13 @@ export default function CreateWorker() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      className="flex flex-col items-center min-h-screen bg-cover bg-center"
       style={{
         backgroundImage:
           "url('https://keranji.id/storage/artikel/content/828-Desain-Toko-Laundry-Minimalis-4.jpg')",
       }}
     >
-      <div className="bg-white bg-opacity-80 p-8 rounded-lg shadow-lg max-w-lg w-full">
+      <div className="bg-white bg-opacity-80 p-8 rounded-lg shadow-lg max-w-lg w-full mt-12">
         <h1 className="text-2xl font-bold mb-4 text-center text-gray-800">
           Create Worker
         </h1>

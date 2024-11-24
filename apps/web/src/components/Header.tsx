@@ -57,49 +57,7 @@ const Header = () => {
         className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
         onClick={() => setUserMenuIsOpen(false)}
       >
-        Dashboard
-      </Link>
-      <Link
-        href={'/user/account_management'}
-        className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
-        onClick={() => setUserMenuIsOpen(false)}
-      >
-        Admin Account Management
-      </Link>
-      <Link
-        href={'/user/outlet_management'}
-        className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
-        onClick={() => setUserMenuIsOpen(false)}
-      >
-        Outlet Management
-      </Link>
-      <Link
-        href={'/user/laundry_item_management'}
-        className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
-        onClick={() => setUserMenuIsOpen(false)}
-      >
-        Laundry Item Management
-      </Link>
-      <Link
-        href={'/user/assign_management'}
-        className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
-        onClick={() => setUserMenuIsOpen(false)}
-      >
-        Assign Management
-      </Link>
-      <Link
-        href={'/user/order_management'}
-        className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
-        onClick={() => setUserMenuIsOpen(false)}
-      >
-        Order Management
-      </Link>
-      <Link
-        href={'/user/report_analysis'}
-        className="w-full px-4 py-2 hover:bg-gray-100 duration-150 cursor-pointer border-b border-b-black"
-        onClick={() => setUserMenuIsOpen(false)}
-      >
-        Report and Analysis
+        Super Admin Dashboard
       </Link>
     </>
   );

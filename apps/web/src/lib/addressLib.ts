@@ -26,7 +26,19 @@ export const getAddresByUserIdFetchDb = async (id: number) => {
   });
   const result = await res.json();
   return { result, ok: res.ok };
-}
+};
+
+export const getAddresByOutletIdFetchDb = async (id: number) => {
+  const res = await fetch(`${BASE_URL}/address/outlet/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+  const result = await res.json();
+  return { result, ok: res.ok };
+};
 
 export const getAddressByIdFetchDb = async (id: number) => {
   const res = await fetch(`${BASE_URL}/address/id/${id}`, {
@@ -38,7 +50,7 @@ export const getAddressByIdFetchDb = async (id: number) => {
   });
   const result = await res.json();
   return { result, ok: res.ok };
-}
+};
 
 export const updateAddressFetchDb = async (data: any) => {
   const res = await fetch(`${BASE_URL}/address/update`, {
@@ -48,10 +60,10 @@ export const updateAddressFetchDb = async (data: any) => {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-  })
+  });
   const result = await res.json();
   return { result, ok: res.ok };
-}
+};
 
 export const deleteAddressFetchDb = async (id: number) => {
   const res = await fetch(`${BASE_URL}/address/delete/${id}`, {
@@ -60,10 +72,10 @@ export const deleteAddressFetchDb = async (id: number) => {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-  })
+  });
   const result = await res.json();
   return { result, ok: res.ok };
-}
+};
 
 export const setPrimaryAddressFetchDb = async (data: IPrimaryAddress) => {
   const res = await fetch(`${BASE_URL}/address/set-main`, {
@@ -73,19 +85,19 @@ export const setPrimaryAddressFetchDb = async (data: IPrimaryAddress) => {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-  })
+  });
   const result = await res.json();
   return { result, ok: res.ok };
-}
+};
 
-export const getAllOutletAddressFetchDb = async (page:number) => {
+export const getAllOutletAddressFetchDb = async (page: number) => {
   const res = await fetch(`${BASE_URL}/address/outlets/outlet?page=${page}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-  })
+  });
   const result = await res.json();
   return { result, ok: res.ok };
-}
+};

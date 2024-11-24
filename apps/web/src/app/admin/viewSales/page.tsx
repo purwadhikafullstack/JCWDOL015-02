@@ -172,7 +172,7 @@ export default function OrderList(): JSX.Element {
         <div className="mt-5 mb-6 flex justify-center">
           <Link href="/admin">
             <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
-              Go ke Dashboard
+              Dashboard
             </button>
           </Link>
         </div>
@@ -234,8 +234,8 @@ export default function OrderList(): JSX.Element {
             </button>
           </div>
         </div>{' '}
-        <div className="flex items-end space-x-2">
-          <h5>total income:</h5>
+        <div className="flex mb-2 items-end space-x-2">
+          <h5>Total Income:</h5>
 
           {/* Reset Button */}
           <h5>{incomes.toLocaleString()}</h5>
