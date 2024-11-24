@@ -9,6 +9,9 @@ import LogoutWorker from '@/components/(auth)/LogoutWorker';
 export default function OutletDashboard() {
   const [outlet, setOutlet] = useState<OutletData | null>(null);
   const [orders, setOrders] = useState<OrderData[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<OrderData[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const router = useRouter();
   const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
 
@@ -31,6 +34,7 @@ export default function OutletDashboard() {
             (order: OrderData) => order.outletId === outlet.outletId,
           );
           setOrders(filteredOrders);
+          setFilteredOrders(filteredOrders);
         })
         .catch((error) => {
           console.error('Error fetching orders:', error);
@@ -46,6 +50,32 @@ export default function OutletDashboard() {
     router.push(
       `/orders/${orderId}/process?userId=${userId}&distance=${distance}`,
     );
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    filterOrders(query, statusFilter);
+  };
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    filterOrders(searchQuery, status);
+  };
+
+  const handleReset = () => {
+    setSearchQuery('');
+    setStatusFilter('');
+    setFilteredOrders(orders); // Reset filtered orders to show all orders
+  };
+
+  const filterOrders = (query: string, status: string) => {
+    const lowerCaseQuery = query.toLowerCase();
+    const filtered = orders.filter((order) => {
+      const matchesQuery = order.id.toString().includes(lowerCaseQuery);
+      const matchesStatus = status ? order.status === status : true;
+      return matchesQuery && matchesStatus;
+    });
+    setFilteredOrders(filtered);
   };
 
   return (
@@ -78,10 +108,51 @@ export default function OutletDashboard() {
               <p className="text-gray-500 mt-2">Email: {outlet.outletEmail}</p>
             </div>
 
+            <div className="flex flex-wrap items-center gap-4 mb-6">
+              <input
+                type="text"
+                placeholder="Search by Order ID"
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="p-2 bg-white text-gray-800 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => handleStatusFilter(e.target.value)}
+                className="p-2 bg-white text-gray-800 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">All</option>
+                <option value="waiting_for_pickup">waiting_for_pickup</option>
+                <option value="on_the_way_to_outlet">
+                  on_the_way_to_outlet
+                </option>
+                <option value="arrived_at_outle">arrived_at_outlet</option>
+                <option value="weighed">weighed</option>
+                <option value="washed">washed</option>
+                <option value="ironed">ironed</option>
+                <option value="packed">packed</option>
+                <option value="waiting_for_payment">waiting_for_payment</option>
+                <option value="ready_for_delivery">ready_for_delivery</option>
+                <option value="on_the_way_to_customer">
+                  on_the_way_to_customer
+                </option>
+                <option value="delivered_to_customer">
+                  delivered_to_customer
+                </option>
+                <option value="recalculate">recalculate</option>
+              </select>
+              <button
+                onClick={handleReset}
+                className="p-2 bg-gray-600 text-white rounded-lg shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                Reset
+              </button>
+            </div>
+
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Orders</h3>
-            {orders.length > 0 ? (
+            {filteredOrders.length > 0 ? (
               <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {orders.map((order) => (
+                {filteredOrders.map((order) => (
                   <li
                     key={order.id}
                     className="p-6 bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-2 hover:scale-105"
