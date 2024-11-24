@@ -79,7 +79,7 @@ export default function OutletDashboard() {
   };
 
   const handleSalesReport = () => {
-    router.push('/outlets/salesOutlet');
+    router.push('/outlets/employeeOutlet');
   };
 
   const handleEmployeeReport = () => {
@@ -148,7 +148,7 @@ export default function OutletDashboard() {
                 <option value="on_the_way_to_outlet">
                   on_the_way_to_outlet
                 </option>
-                <option value="arrived_at_outle">arrived_at_outlet</option>
+                <option value="arrived_at_outlet">arrived_at_outlet</option>
                 <option value="weighed">weighed</option>
                 <option value="washed">washed</option>
                 <option value="ironed">ironed</option>
@@ -212,7 +212,8 @@ export default function OutletDashboard() {
                       </p>
                     </div>
 
-                    {order.status === 'arrived_at_outlet' && (
+                    {(order.status === 'arrived_at_outlet' ||
+                      order.status === 'recalculate') && (
                       <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mt-4 rounded-lg">
                         <p className="text-yellow-800 font-medium">
                           ⚠️ This order needs to be processed soon.
@@ -220,25 +221,36 @@ export default function OutletDashboard() {
                       </div>
                     )}
 
-                    {/* <div className="flex justify-end mt-4">
-                      <button
-                        onClick={() =>
-                          handleProcessOrder(order.id, order.userId, 0)
-                        }
-                        className="py-2 px-6 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        Process
-                      </button>
-                    </div> */}
+                    <div className="flex justify-end mt-4">
+                      {(order.status === 'arrived_at_outlet' ||
+                        order.status === 'recalculate') && (
+                        <button
+                          onClick={() =>
+                            handleProcessOrder(
+                              order.id,
+                              order.userId,
+                              order.pickupDeliveryRequests[0]?.distance || 0,
+                            )
+                          }
+                          className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        >
+                          Process
+                        </button>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p>No orders found.</p>
+              <div className="text-center py-10">
+                <p className="text-lg text-gray-700">No orders available.</p>
+              </div>
             )}
           </div>
         ) : (
-          <p>Loading...</p>
+          <div className="text-center py-10">
+            <p className="text-lg text-gray-700">Loading outlet data...</p>
+          </div>
         )}
       </main>
     </div>
