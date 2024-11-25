@@ -62,6 +62,10 @@ export default function OutletDashboard() {
     filterOrders(searchQuery, status);
   };
 
+  const handleByPassOrder = (orderId:number) =>{
+    router.push(`/orders/${orderId}/bypass`)
+  }
+
   const handleReset = () => {
     setSearchQuery('');
     setStatusFilter('');
@@ -222,14 +226,25 @@ export default function OutletDashboard() {
                     )}
 
                     <div className="flex justify-end mt-4">
-                      {(order.status === 'arrived_at_outlet' ||
-                        order.status === 'recalculate') && (
+                      {(order.status === 'arrived_at_outlet') && (
                         <button
                           onClick={() =>
                             handleProcessOrder(
                               order.id,
                               order.userId,
                               order.pickupDeliveryRequests[0]?.distance || 0,
+                            )
+                          }
+                          className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        >
+                          Process
+                        </button>
+                      )}
+                      {(order.status === 'recalculate') && (
+                        <button
+                          onClick={() =>
+                            handleByPassOrder(
+                              +order.id,
                             )
                           }
                           className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"

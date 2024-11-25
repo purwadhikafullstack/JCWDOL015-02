@@ -15,6 +15,7 @@ export class WorkerJobHistoryRouter {
   private initializeRoutes(): void {
     this.router.get('/', this.workerJobHistoryController.getAllWorkerJobHistory.bind(this.workerJobHistoryController));
     this.router.get('/:id', this.workerJobHistoryController.getWorkerJobHistoryById.bind(this.workerJobHistoryController));
+    this.router.get('/:id/order', this.workerJobHistoryController.getWorkerJobHistoryByOrderId.bind(this.workerJobHistoryController));
     this.router.post('/', this.workerJobHistoryController.createWorkerJobHistory.bind(this.workerJobHistoryController));
     this.router.put('/:id', this.workerJobHistoryController.updateWorkerJobHistory.bind(this.workerJobHistoryController));
     this.router.delete('/:id', this.workerJobHistoryController.deleteWorkerJobHistory.bind(this.workerJobHistoryController));

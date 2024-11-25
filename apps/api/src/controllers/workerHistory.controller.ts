@@ -44,6 +44,27 @@ export class WorkerJobHistoryController {
       return res.status(500).send({ error: 'Failed to fetch worker job history' });
     }
   }
+  async getWorkerJobHistoryByOrderId(req: Request, res: Response) {
+    const { id } = req.params;
+
+    try {
+      const jobHistory = await prisma.workerJobHistory.findMany({
+        where: { orderId: Number(id) },
+        include: {
+          order: true,
+        },
+      });
+
+      if (!jobHistory) {
+        return res.status(404).send({ error: 'WorkerJobHistory not found' });
+      }
+
+      return res.status(200).send(jobHistory);
+    } catch (error) {
+      console.error('Error fetching worker job history by ID:', error);
+      return res.status(500).send({ error: 'Failed to fetch worker job history' });
+    }
+  }
 
   // Create a new WorkerJobHistory record
   async createWorkerJobHistory(req: Request, res: Response) {
