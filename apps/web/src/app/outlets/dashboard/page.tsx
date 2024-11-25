@@ -79,7 +79,7 @@ export default function OutletDashboard() {
   };
 
   const handleSalesReport = () => {
-    router.push('/outlets/employeeOutlet');
+    router.push('/outlets/salesOutlet');
   };
 
   const handleEmployeeReport = () => {
@@ -126,6 +126,7 @@ export default function OutletDashboard() {
             <div className="mb-8 border-b pb-6">
               <h2 className="text-2xl font-semibold text-gray-800">
                 Welcome, {outlet.outletName}!
+                <p>Outletd ID : {outlet.outletId}</p>
               </h2>
               <p className="text-gray-500 mt-2">Email: {outlet.outletEmail}</p>
             </div>

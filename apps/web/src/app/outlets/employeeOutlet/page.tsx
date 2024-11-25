@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import { OutletData } from '@/type/worker/outletType';
+import router from 'next/router';
 
 // Type Definitions
 interface Outlet {
@@ -35,6 +37,7 @@ interface OutletWorker {
 }
 
 const OutletWorkers = () => {
+  const [outlet, setOutlet] = useState<OutletData | null>(null); // State untuk menyimpan data outlet
   const [outletWorkers, setOutletWorkers] = useState<OutletWorker[]>([]);
   const [filteredWorkers, setFilteredWorkers] = useState<OutletWorker[]>([]);
   const [dateFilter, setDateFilter] = useState<string>('');
@@ -51,6 +54,16 @@ const OutletWorkers = () => {
   const [jobHistoryLoading, setJobHistoryLoading] = useState<boolean>(false);
   const [jobHistoryError, setJobHistoryError] = useState<string | null>(null);
 
+  useEffect(() => {
+    // Mengambil data outlet dari Local Storage
+    const data = localStorage.getItem('outletAdmin');
+    if (data) {
+      const outletData: OutletData = JSON.parse(data);
+      setOutlet(outletData);
+    } else {
+      router.push('/worker/login'); // Redirect ke halaman login jika data outlet tidak ditemukan
+    }
+  }, [router]);
   // Fetch outlet workers on component mount
   useEffect(() => {
     const fetchWorkers = async () => {
@@ -60,8 +73,14 @@ const OutletWorkers = () => {
         const response = await axios.get<OutletWorker[]>(
           'http://localhost:8000/api/outlet-workers/',
         );
-        setOutletWorkers(response.data);
-        setFilteredWorkers(response.data);
+
+        // Filter workers based on the outletId
+        const workers = response.data.filter(
+          (worker) => worker.outletId === outlet?.outletId,
+        );
+
+        setOutletWorkers(workers);
+        setFilteredWorkers(workers);
       } catch (err: any) {
         setError(err.response?.data?.error || 'Error fetching outlet workers');
       } finally {
@@ -70,7 +89,7 @@ const OutletWorkers = () => {
     };
 
     fetchWorkers();
-  }, []);
+  }, [outlet]);
 
   const fetchWorkerJobHistory = async (workerId: number) => {
     setJobHistoryLoading(true);
@@ -165,7 +184,7 @@ const OutletWorkers = () => {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center p-8"
+      className="min-h-screen bg-cover bg-center p-8 bg-white"
       style={{
         backgroundImage:
           'url("https://keranji.id/storage/artikel/content/828-Desain-Toko-Laundry-Minimalis-4.jpg")',
@@ -175,6 +194,17 @@ const OutletWorkers = () => {
         <h1 className="text-2xl text-center font-bold text-gray-800 mb-6">
           Employee Performance Report
         </h1>
+        {outlet && (
+          <div className="mt-4">
+            <h2 className="text-2xl text-center font-semibold text-gray-800">
+              {outlet.outletName}
+              <p>Outlet ID: {outlet.outletId}</p>
+            </h2>
+            <p className="text-gray-500 text-center mt-2">
+              Email: {outlet.outletEmail}
+            </p>
+          </div>
+        )}
         <div className="mt-5 mb-6 flex justify-center">
           <Link href="/outlets/dashboard">
             <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
@@ -182,7 +212,7 @@ const OutletWorkers = () => {
             </button>
           </Link>
         </div>
-        <div className="mb-6">
+        <div className="mb-6 ">
           <label className="block text-gray-700 font-medium mb-2">
             Filter by Date
           </label>
@@ -216,45 +246,45 @@ const OutletWorkers = () => {
             </button>
           </div>
         </div>
-        {loading ? (
-          <p className="text-gray-600 mt-4">Loading...</p>
-        ) : error ? (
-          <p className="text-red-600 mt-4">{error}</p>
-        ) : filteredWorkers.length > 0 ? (
-          <table className="table-auto w-full mt-4">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="px-4 py-2 text-left">Worker ID</th>
-                <th className="px-4 py-2 text-left">Outlet ID</th>
-                <th className="px-4 py-2 text-left">Worker</th>
-                <th className="px-4 py-2 text-left">Role</th>
-                <th className="px-4 py-2 text-left">Date</th>
-                <th className="px-4 py-2 text-left">Completed Orders</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredWorkers.map((worker) => (
-                <tr key={worker.id}>
-                  <td className="px-4 py-2">{worker.id}</td>
-                  <td className="px-4 py-2">{worker.outletId}</td>
-                  <td className="px-4 py-2">{worker.name}</td>
-                  <td className="px-4 py-2">{worker.role}</td>
-                  <td className="px-4 py-2">
-                    {new Date(worker.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-2">
-                    {worker.role === 'driver'
-                      ? worker.pickupDeliveries.length
-                      : worker.jobHistory.length}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p className="text-gray-600 mt-4">No workers found.</p>
-        )}
       </div>
+      {loading ? (
+        <p className="text-gray-600 mt-4">Loading...</p>
+      ) : error ? (
+        <p className="text-red-600 mt-4">{error}</p>
+      ) : filteredWorkers.length > 0 ? (
+        <table className="table-auto w-full mt-4 bg-white">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="px-4 py-2 text-left">Worker ID</th>
+              <th className="px-4 py-2 text-left">Outlet ID</th>
+              <th className="px-4 py-2 text-left">Worker</th>
+              <th className="px-4 py-2 text-left">Role</th>
+              <th className="px-4 py-2 text-left">Date</th>
+              <th className="px-4 py-2 text-left">Completed Orders</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredWorkers.map((worker) => (
+              <tr key={worker.id}>
+                <td className="px-4 py-2">{worker.id}</td>
+                <td className="px-4 py-2">{worker.outletId}</td>
+                <td className="px-4 py-2">{worker.name}</td>
+                <td className="px-4 py-2">{worker.role}</td>
+                <td className="px-4 py-2">
+                  {new Date(worker.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-4 py-2">
+                  {worker.role === 'driver'
+                    ? worker.pickupDeliveries.length
+                    : worker.jobHistory.length}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="text-gray-600 mt-4">No workers found.</p>
+      )}
     </div>
   );
 };

@@ -1,32 +1,51 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
+import { OrderData, OutletData } from '@/type/worker/outletType';
 
 export default function SalesReport() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [outlet, setOutlet] = useState<OutletData | null>(null); // State untuk menyimpan data outlet
+  const [orders, setOrders] = useState<OrderData[]>([]);
   const [totalSales, setTotalSales] = useState<number>(0);
+  const router = useRouter();
   const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
 
   useEffect(() => {
-    // Mengambil data pesanan dari API
-    axios
-      .get(`${backendUrl}/api/order`)
-      .then((response) => {
-        if (response.data && Array.isArray(response.data)) {
-          setOrders(response.data);
-          calculateTotalSales(response.data); // Menghitung total penjualan
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching orders:', error);
-      });
-  }, [backendUrl]);
+    // Mengambil data outlet dari Local Storage
+    const data = localStorage.getItem('outletAdmin');
+    if (data) {
+      const outletData: OutletData = JSON.parse(data);
+      setOutlet(outletData);
+    } else {
+      router.push('/worker/login'); // Redirect ke halaman login jika data outlet tidak ditemukan
+    }
+  }, [router]);
 
-  const calculateTotalSales = (orders: any[]) => {
-    // Menghitung total sales dari pesanan yang status bayar 'paid'
-    const total = orders.reduce((sum, order) => {
+  useEffect(() => {
+    // Mendapatkan data pesanan berdasarkan outletId
+    if (outlet) {
+      axios
+        .get(`${backendUrl}/api/order`)
+        .then((response) => {
+          if (response.data && Array.isArray(response.data)) {
+            const filteredOrders = response.data.filter(
+              (order: OrderData) => order.outletId === outlet.outletId,
+            );
+            setOrders(filteredOrders);
+            calculateTotalSales(filteredOrders); // Menghitung total penjualan
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching orders:', error);
+        });
+    }
+  }, [backendUrl, outlet]);
+
+  const calculateTotalSales = (filteredOrders: OrderData[]) => {
+    const total = filteredOrders.reduce((sum, order) => {
       if (order.paymentStatus === 'paid' && order.totalPrice != null) {
         return sum + order.totalPrice;
       }
@@ -48,9 +67,15 @@ export default function SalesReport() {
           <h1 className="text-3xl font-extrabold tracking-tight drop-shadow-md">
             Sales Report
           </h1>
-          <p className="text-lg mt-2 font-medium text-black">
-            Overview of total sales from orders
-          </p>
+          {outlet && (
+            <div className="mt-4">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                {outlet.outletName}
+                <p>Outlet ID: {outlet.outletId}</p>
+              </h2>
+              <p className="text-gray-500 mt-2">Email: {outlet.outletEmail}</p>
+            </div>
+          )}
         </div>
         <div className="mt-5 mb-6 flex justify-center">
           <Link href="/outlets/dashboard">
@@ -99,7 +124,6 @@ export default function SalesReport() {
                       {order.id}
                     </td>
                     <td className="py-2 px-4 border-b border-gray-300">
-                      {/* Pastikan totalPrice bukan null/undefined */}
                       {order.totalPrice != null
                         ? `$${order.totalPrice.toFixed(2)}`
                         : 'N/A'}
@@ -108,7 +132,6 @@ export default function SalesReport() {
                       {order.paymentStatus}
                     </td>
                     <td className="py-2 px-4 border-b border-gray-300">
-                      {/* Format tanggal jika pickupSchedule ada */}
                       {order.pickupSchedule
                         ? new Date(order.pickupSchedule).toLocaleDateString()
                         : 'N/A'}
@@ -118,7 +141,7 @@ export default function SalesReport() {
               </tbody>
             </table>
           ) : (
-            <p>No orders found.</p>
+            <p>No orders found for this outlet.</p>
           )}
         </div>
       </main>
