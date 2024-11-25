@@ -62,6 +62,10 @@ export default function OutletDashboard() {
     filterOrders(searchQuery, status);
   };
 
+  const handleByPassOrder = (orderId: number) => {
+    router.push(`/orders/${orderId}/bypass`);
+  };
+
   const handleReset = () => {
     setSearchQuery('');
     setStatusFilter('');
@@ -213,8 +217,7 @@ export default function OutletDashboard() {
                       </p>
                     </div>
 
-                    {(order.status === 'arrived_at_outlet' ||
-                      order.status === 'recalculate') && (
+                    {order.status === 'arrived_at_outlet' && (
                       <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mt-4 rounded-lg">
                         <p className="text-yellow-800 font-medium">
                           ⚠️ This order needs to be processed soon.
@@ -233,6 +236,14 @@ export default function OutletDashboard() {
                               order.pickupDeliveryRequests[0]?.distance || 0,
                             )
                           }
+                          className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        >
+                          Process
+                        </button>
+                      )}
+                      {order.status === 'recalculate' && (
+                        <button
+                          onClick={() => handleByPassOrder(+order.id)}
                           className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
                           Process
