@@ -77,8 +77,7 @@ CREATE TABLE `Order` (
     `totalWeight` DOUBLE NULL,
     `totalItems` INTEGER NOT NULL DEFAULT 0,
     `totalPrice` DOUBLE NULL,
-    `paymentStatus` VARCHAR(191) NOT NULL DEFAULT 'unpaid',
-    `paymentLink` VARCHAR(191) NULL,
+    `paymentStatus` ENUM('pending', 'unpaid', 'paid') NOT NULL DEFAULT 'pending',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
