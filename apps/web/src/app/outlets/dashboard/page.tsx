@@ -226,8 +226,7 @@ export default function OutletDashboard() {
                     )}
 
                     <div className="flex justify-end mt-4">
-                      {(order.status === 'arrived_at_outlet' ||
-                        order.status === 'recalculate') && (
+                      {order.status === 'arrived_at_outlet' && (
                         <button
                           onClick={() =>
                             handleProcessOrder(

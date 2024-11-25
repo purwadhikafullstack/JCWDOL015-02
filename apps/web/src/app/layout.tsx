@@ -4,8 +4,8 @@ import './globals.css';
 import { Footer } from '@/components/Footer';
 import Header from '@/components/Header';
 import { ToastContainer } from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css";
-import StoreProvider from '@/redux/StoreProvider';
+import 'react-toastify/dist/ReactToastify.css';
+import StoreProvider from '@/redux/storeProvider';
 const inter = Inter({ subsets: ['latin'] });
 import dotenv from 'dotenv';
 dotenv.config();
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: 'Owned and operated by LaunON Style',
   icons: {
     icon: '/favicon.ico',
-  }
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className}`}>
         <StoreProvider>
-          <Header/>
+          <Header />
           {children}
           <Footer />
           <ToastContainer

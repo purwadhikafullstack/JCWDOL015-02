@@ -70,11 +70,17 @@ export default function IronStation() {
   }, [orderId]);
 
   return (
-    <div>
-      <button className="bg-blue-500" onClick={approved}>
+    <div className="flex gap-6 p-3 mt-4 mb-4">
+      <button
+        className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+        onClick={approved}
+      >
         Approve
       </button>
-      <button className="bg-red-500" onClick={decline}>
+      <button
+        className="px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+        onClick={decline}
+      >
         Decline
       </button>
     </div>
