@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import prisma from '@/prisma';
-import { Order, OrderStatus, WorkerRoles } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 import { findNearestOutlet } from '@/helpers/haversine';
 import axios from 'axios';
+import { generateUniqueId } from '@/helpers/generateId';
 
 export class OrderController {
   async getAllOrder(req: Request, res: Response) {
@@ -46,16 +47,7 @@ export class OrderController {
       return res.status(200).send({status: 'ok',message: 'Get Order By Id Successfully',
           data: {order,customerIntro,customerAddress,outletName}
         });
-      return res.status(200).send({
-        status: 'ok',
-        message: 'Get Order By Id Successfully',
-        data: order,
-      });
     } catch (error) {
-      if (error instanceof Error)
-        return res
-          .status(400)
-          .send({ status: 'error', message: error.message });
       res.status(400).send({ status: 'error', message: error });
     }
   }
@@ -63,16 +55,17 @@ export class OrderController {
   async searcOrder(req: Request, res: Response) {
     try {
       const { date, orderId } = req.body;
-      if (date == null && orderId == null)
-        throw 'date or orderId is required !';
+      if (date == null && orderId == null) throw 'date or orderId is required !';
       if (date) {
-        const targetDate = new Date(date).setUTCHours(0, 0, 0, 0);
-        const endOfDay = new Date(targetDate).setUTCHours(23, 59, 59, 999);
+        const targetDate = new Date(date);
+        targetDate.setUTCHours(targetDate.getUTCHours() - 7); // Kurangi 7 jam untuk WIB
+        const startOfDay = new Date(targetDate).setUTCHours(0, 0, 0, 0);
+        const endOfDay = new Date(startOfDay).setUTCHours(23, 59, 59, 999);
         const orderByDate = await prisma.order.findMany({
           where: {
             createdAt: {
-              gte: new Date(targetDate).toISOString(),
-              lte: new Date(endOfDay).toISOString(),
+              gte: new Date(startOfDay),
+              lte: new Date(endOfDay),
             },
           },
         });
@@ -146,8 +139,10 @@ export class OrderController {
       const { nearestOutlet, distance } = await findNearestOutlet(addressId);
       if (!nearestOutlet?.outletId) throw 'Outlet not found!';
 
+      const uniqueId = await generateUniqueId();
       const newOrder = await prisma.order.create({
         data: {
+          id: uniqueId,
           userId,
           addressId,
           outletId: nearestOutlet.outletId,
@@ -186,7 +181,6 @@ export class OrderController {
           .status(400)
           .send({ status: 'error', message: error.message });
       }
-      res.status(400).send({ status: 'error', message: error });
     }
   }
 
@@ -269,11 +263,11 @@ export class OrderController {
           where: { id: orderIdInt },
           include: { pickupDeliveryRequests: true },
         });
-  
+
         if (!order) {
           return res.status(404).send({ error: 'Order not found' });
         }
-  
+
         if (order.paymentStatus === 'paid' && order.pickupDeliveryRequests?.length) {
           const pdrData = {
             orderId:+orderId,

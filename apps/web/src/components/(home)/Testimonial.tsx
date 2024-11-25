@@ -17,8 +17,8 @@ const Testimonial = () => {
   return (
     <section className="w-full flex flex-col justify-center items-center bg-lightCustom md:py-10">
       <div className="text-center mt-3 md:mt-10 px-5 md:px-0">
-          <h1 className="text-2xl md:text-5xl font-semibold uppercase tracking-wide text-black mb-0 mt-12 md:mb-3 md:mt-0">What Our Customer Say?</h1>
-          <p>Lihat bagaimana pelanggan LaunKlin mengambil pilihan yang tepat dan mendapatkan hasil yang luar biasa.</p>
+          <h1 className="text-xl md:text-4xl font-semibold uppercase tracking-wide text-black mt-12 md:mt-0">What Our Customer Say?</h1>
+          <p className='text-sm md:text-base'>Lihat bagaimana pelanggan LaunKlin mengambil pilihan yang tepat dan mendapatkan hasil yang luar biasa.</p>
         </div>
 
       <div className="w-full max-w-2xl mx-auto">

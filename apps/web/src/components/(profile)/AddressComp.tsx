@@ -1,9 +1,8 @@
 "use client"
-import { MdDeleteSweep } from "react-icons/md";
 import { AiOutlineWarning } from 'react-icons/ai';
 import CardUserAddress from "./CardUserAddress";
 import CreateAddress from "./CreateAddress";
-import { getAddresByUserIdFetchDb, getAddressByIdFetchDb } from "@/lib/addressLib";
+import { getAddresByUserIdFetchDb } from "@/lib/addressLib";
 import { useCallback, useEffect, useState } from "react";
 import { ICustomerAddress } from "@/type/customerType";
 import FormUpdateAddress from "./FormUpdateAddress";

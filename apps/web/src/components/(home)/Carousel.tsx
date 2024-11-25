@@ -37,11 +37,11 @@ const Carousel = () => {
       </div>
 
       {/* Content Carousel */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white z-10">
+      <div className="w-full px-2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white z-10">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
           Clean Is <span className='text-beigeCustom'>ON.</span> With Laun<span className='text-beigeCustom'>ON.</span>
         </h1>
-        <p className="mt-4 text-lg sm:text-xl">
+        <p className="mt-4 text-sm md:text-lg">
           Nikmati layanan laundry yang cepat, bersih, dan terpercaya di LaunON.
         </p>
         <button className="mt-11 hover:bg-black hover:text-beigeCustom bg-beigeCustom text-black py-2 px-4 rounded-full transition duration-200 shadow-2xl shadow-black">

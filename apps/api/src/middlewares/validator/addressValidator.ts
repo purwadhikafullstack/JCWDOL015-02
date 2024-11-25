@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 
 
-export const validateCreateAddress = [
+export const validateAddress = [
     body("phone")
       .notEmpty()
       .withMessage("phone is required"),
