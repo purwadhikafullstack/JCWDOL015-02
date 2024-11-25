@@ -1,5 +1,5 @@
 import { AddressController } from '@/controllers/address.controllers';
-import { validateCreateAddress } from '@/middlewares/validator/addressValidator';
+import { validateAddress } from '@/middlewares/validator/addressValidator';
 
 import { Router } from 'express';
 
@@ -25,7 +25,7 @@ export class AddressRouter {
     this.router.patch('/set-main', this.addressController.setMainAddress);
     this.router.post(
       '/create',
-      validateCreateAddress,
+      validateAddress,
       this.addressController.createAddress,
     );
     this.router.put('/update', this.addressController.updateAddress);

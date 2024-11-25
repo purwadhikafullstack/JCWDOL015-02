@@ -46,7 +46,7 @@ export default class App {
     this.app.use(
       cors({
         origin: ['http://localhost:3000', 'http://localhost:8000'],
-        methods: 'GET,POST,PUT,DELETE',
+        methods: 'GET,POST,PUT,PATCH,DELETE',
         credentials: true,
       }),
     );
