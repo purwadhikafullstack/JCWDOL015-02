@@ -7,15 +7,13 @@ type CardAddressProps = {
   address: string;
   phone: string;
   isMain: boolean;
-  addressId: number
+  addressId: number;
 };
 
 const CardUserAddress: React.FC<CardAddressProps> = (props) => {
   const { city, address, phone, isMain, addressId } = { ...props };
   return (
-    <div
-      className={`card bg-base-100 w-96 shadow-xl`}
-    >
+    <div className={`card bg-gray-300 w-96 shadow-xl`}>
       <div className={`card-body h-56`}>
         <div className="flex justify-between items-center">
           <h2 className="card-title">{city}</h2>
@@ -27,7 +25,7 @@ const CardUserAddress: React.FC<CardAddressProps> = (props) => {
             <BtnPinAddress addressId={addressId} />
           )}
         </div>
-        <div className='w-full h-16'>
+        <div className="w-full h-16">
           <p className="font-medium line-clamp-2">{address}</p>
         </div>
         <p className="font-medium flex justify-start items-center gap-1">

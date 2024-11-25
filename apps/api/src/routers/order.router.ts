@@ -20,8 +20,11 @@ export class OrderRouter {
     this.router.post('/create', validateCreateOrder, this.orderController.createOrder);
     this.router.put('/:orderId', this.orderController.updateOrder);
     this.router.patch('/:orderId', this.orderController.updateOrderStatus);
-    this.router.patch('/price/:orderId', this.orderController.updateOrderPriceAndWeight);
-    this.router.delete('/:orderId',  this.orderController.deleteOrder);
+    this.router.patch(
+      '/price/:orderId',
+      this.orderController.updateOrderPriceAndWeight,
+    );
+    this.router.delete('/:orderId', this.orderController.deleteOrder);
     this.router.post('/confirm', this.orderController.confirmOrder);
   }
 

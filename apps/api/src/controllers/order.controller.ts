@@ -11,7 +11,8 @@ export class OrderController {
       const orders = await prisma.order.findMany({
         include: {
           pickupDeliveryRequests: true,
-          user:true,
+          user: true,
+          outlet: true,
         },
       });
 
@@ -35,18 +36,25 @@ export class OrderController {
       if (!order) throw 'Order not found';
       const customerAddress = await prisma.address.findUnique({
         where: { id: order.addressId },
-      })
+      });
       const customerIntro = await prisma.user.findUnique({
         where: { id: order.userId },
-        select: { username: true, email: true }
-      })
+        select: { username: true, email: true },
+      });
       const outletName = await prisma.outlet.findUnique({
         where: { id: order.outletId },
-        select: { name: true }
-      })
-      return res.status(200).send({status: 'ok',message: 'Get Order By Id Successfully',
-          data: {order,customerIntro,customerAddress,outletName}
-        });
+        select: { name: true },
+      });
+      return res.status(200).send({
+        status: 'ok',
+        message: 'Get Order By Id Successfully',
+        data: { order, customerIntro, customerAddress, outletName },
+      });
+      return res.status(200).send({
+        status: 'ok',
+        message: 'Get Order By Id Successfully',
+        data: order,
+      });
     } catch (error) {
       res.status(400).send({ status: 'error', message: error });
     }
@@ -69,25 +77,21 @@ export class OrderController {
             },
           },
         });
-        return res
-          .status(200)
-          .send({
-            status: 'ok',
-            message: 'Get Order By Date Successfully',
-            data: orderByDate,
-          });
+        return res.status(200).send({
+          status: 'ok',
+          message: 'Get Order By Date Successfully',
+          data: orderByDate,
+        });
       }
       if (orderId) {
         const orderById = await prisma.order.findMany({
           where: { id: Number(orderId) },
         });
-        return res
-          .status(200)
-          .send({
-            status: 'ok',
-            message: 'Get Order By Id Successfully',
-            data: orderById,
-          });
+        return res.status(200).send({
+          status: 'ok',
+          message: 'Get Order By Id Successfully',
+          data: orderById,
+        });
       }
     } catch (error) {
       if (error instanceof Error)
@@ -170,13 +174,15 @@ export class OrderController {
         status: 'ok',
         message: `Successful Pickup Request. Outlet ${newOrder.outletId} will take your order, and driver ${driver?.name} will pick up your laundry. Distance: ${distance} km`,
         data: new Date(pickupSchedule),
-        orderId: newOrder.id
+        orderId: newOrder.id,
       });
     } catch (error: any) {
       if (error instanceof Error) {
-        return res.status(400).send({ status: "error", message: error.message });
+        return res
+          .status(400)
+          .send({ status: 'error', message: error.message });
       } else {
-        res.status(400).send({ status: "error", message: error });
+        res.status(400).send({ status: 'error', message: error });
         return res
           .status(400)
           .send({ status: 'error', message: error.message });
@@ -234,29 +240,29 @@ export class OrderController {
   async updateOrderStatus(req: Request, res: Response) {
     const { orderId } = req.params;
     const { status, userId } = req.body;
-  
+
     if (!orderId) {
       return res.status(400).send({ error: 'Order ID is required' });
     }
-  
+
     if (!status) {
       return res.status(400).send({ error: 'Order status is required' });
     }
-  
+
     const orderIdInt = Number(orderId);
     const userIdInt = Number(userId);
-  
+
     if (isNaN(orderIdInt)) {
       return res.status(400).send({ error: 'Invalid Order ID' });
     }
-  
+
     if (isNaN(userIdInt)) {
       return res.status(400).send({ error: 'Invalid User ID' });
     }
-  
+
     let readyForDelivery = false;
     let updatedOrder: any;
-  
+
     try {
       if (status === 'waiting_for_payment') {
         const order = await prisma.order.findUnique({
@@ -268,9 +274,12 @@ export class OrderController {
           return res.status(404).send({ error: 'Order not found' });
         }
 
-        if (order.paymentStatus === 'paid' && order.pickupDeliveryRequests?.length) {
+        if (
+          order.paymentStatus === 'paid' &&
+          order.pickupDeliveryRequests?.length
+        ) {
           const pdrData = {
-            orderId:+orderId,
+            orderId: +orderId,
             distance: order.pickupDeliveryRequests[0].distance,
             driverId: order.pickupDeliveryRequests[0].driverId,
             fromAddressId: order.pickupDeliveryRequests[0].toAddressId,
@@ -278,22 +287,25 @@ export class OrderController {
             requestType: 'deliver',
             status: 'Wait to pick up at outlet',
           };
-  
-          const pdr = await axios.post(`${process.env.BACKEND_URL}/api/pdr`, pdrData);
-  
+
+          const pdr = await axios.post(
+            `${process.env.BACKEND_URL}/api/pdr`,
+            pdrData,
+          );
+
           if (pdr?.data) {
             readyForDelivery = true;
           }
         }
       }
-  
+
       const statusToUpdate = readyForDelivery ? 'ready_for_delivery' : status;
-  
+
       updatedOrder = await prisma.order.update({
         where: { id: orderIdInt },
         data: { status: statusToUpdate as OrderStatus },
       });
-  
+
       await prisma.notification.create({
         data: {
           userId: userIdInt,
@@ -301,7 +313,7 @@ export class OrderController {
           message: `The status of your order has been updated to ${statusToUpdate}.`,
         },
       });
-  
+
       return res.status(200).send({
         status: 'ok',
         message: 'Order status updated successfully and notification sent',
@@ -309,15 +321,14 @@ export class OrderController {
       });
     } catch (error: any) {
       console.error('Error updating order status:', error);
-  
+
       if (error.code === 'P2025') {
         return res.status(404).send({ error: 'Order not found' });
       }
-  
+
       return res.status(500).send({ error: 'Error updating order status' });
     }
   }
-  
 
   async updateOrderPriceAndWeight(req: Request, res: Response) {
     const { orderId } = req.params;
@@ -330,7 +341,6 @@ export class OrderController {
     if (!weight || !distance || !totalItems) {
       return res.status(400).send({ error: 'order data is required' });
     }
-    
 
     if (typeof weight !== 'number' || typeof distance !== 'number') {
       return res
@@ -344,7 +354,7 @@ export class OrderController {
 
     // Calculate total price based on weight and distance
     const calculatedPrice = weight * pricePerKg + distance * pricePerKm;
-    console.log("totalItem: ",totalItems)
+    console.log('totalItem: ', totalItems);
 
     try {
       const updatedOrder = await prisma.order.update({
@@ -401,10 +411,17 @@ export class OrderController {
   async confirmOrder(req: Request, res: Response) {
     try {
       const { orderId } = req.body;
-      const order = await prisma.order.findUnique({where: { id: Number(orderId) }})
+      const order = await prisma.order.findUnique({
+        where: { id: Number(orderId) },
+      });
       if (!order) throw 'Order not found';
-      await prisma.order.update({ where: { id: Number(orderId) }, data: { status: 'delivered_to_customer' } })
-      return res.status(200).send({ status: 'ok', message: 'Order confirmed successfully' });
+      await prisma.order.update({
+        where: { id: Number(orderId) },
+        data: { status: 'delivered_to_customer' },
+      });
+      return res
+        .status(200)
+        .send({ status: 'ok', message: 'Order confirmed successfully' });
     } catch (error) {
       res.status(400).send({ status: 'error', message: error });
     }
