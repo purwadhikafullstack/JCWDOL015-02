@@ -1,5 +1,5 @@
 import { AddressController } from '@/controllers/address.controllers';
-import { validateCreateAddress } from '@/middlewares/validator/addressValidator';
+import { validateAddress } from '@/middlewares/validator/addressValidator';
 
 import { Router } from 'express';
 
