@@ -1,25 +1,25 @@
-import { NextFunction, Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { NextFunction, Request, Response } from 'express';
+import { body, validationResult } from 'express-validator';
 
 export const validateRegister = [
-  body("username")
+  body('username')
     .notEmpty()
-    .withMessage("username is required")
+    .withMessage('username is required')
     .isString()
-    .withMessage("username must be strings")
+    .withMessage('username must be strings')
     .isLength({ min: 3 })
-    .withMessage("Username must be at least 3 characters long"),
-  body("email")
+    .withMessage('Username must be at least 3 characters long'),
+  body('email')
     .notEmpty()
-    .withMessage("email is required")
+    .withMessage('email is required')
     .isEmail()
-    .withMessage("invalid email"),
+    .withMessage('invalid email'),
 
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).send({
-        status: "error",
+        status: 'error',
         message: errors.array(),
       });
     }
@@ -28,22 +28,22 @@ export const validateRegister = [
 ];
 
 export const validateLogin = [
-  body("email")
+  body('email')
     .notEmpty()
-    .withMessage("email is required")
+    .withMessage('email is required')
     .isEmail()
-    .withMessage("invalid email"),
-  body("password")
+    .withMessage('invalid email'),
+  body('password')
     .notEmpty()
-    .withMessage("password is required")
+    .withMessage('password is required')
     .isString()
-    .withMessage("password must be strings"),
+    .withMessage('password must be strings'),
 
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).send({
-        status: "error",
+        status: 'error',
         message: errors.array(),
       });
     }
@@ -52,20 +52,18 @@ export const validateLogin = [
 ];
 
 export const validateSetPass = [
-  body("verifyToken")
+  body('verifyToken').notEmpty().withMessage('verifyToken is required'),
+  body('password')
     .notEmpty()
-    .withMessage("verifyToken is required"),
-  body("password")
-    .notEmpty()
-    .withMessage("password is required")
+    .withMessage('password is required')
     .isString()
-    .withMessage("password must be strings"),
+    .withMessage('password must be strings'),
 
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).send({
-        status: "error",
+        status: 'error',
         message: errors.array(),
       });
     }

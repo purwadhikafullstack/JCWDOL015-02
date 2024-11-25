@@ -331,15 +331,15 @@ export class AddressController {
     const { id } = req.params;
     try {
       if (!id) throw new Error('Address id not found');
-      const deletedAddress = await prisma.address.delete({
-        where: { id: Number(id) },
-      });
-      if (!deletedAddress) throw new Error('Address not found');
-      return res.status(200).send({
-        status: 'ok',
-        message: 'Delete Address Successfully',
-        data: deletedAddress,
-      });
+      // const deletedAddress = await prisma.address.delete({
+      //   where: { id: Number(id) },
+      // });
+      // if (!deletedAddress) throw new Error('Address not found');
+      // return res.status(200).send({
+      //   status: 'ok',
+      //   message: 'Delete Address Successfully',
+      //   data: deletedAddress,
+      // });
     } catch (error: any) {
       if (error instanceof Error) {
         return res

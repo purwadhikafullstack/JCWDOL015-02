@@ -16,7 +16,9 @@ export class WorkerJobHistoryController {
       return res.status(200).send(jobHistories);
     } catch (error) {
       console.error('Error fetching worker job histories:', error);
-      return res.status(500).send({ error: 'Failed to fetch worker job histories' });
+      return res
+        .status(500)
+        .send({ error: 'Failed to fetch worker job histories' });
     }
   }
 
@@ -41,10 +43,32 @@ export class WorkerJobHistoryController {
       return res.status(200).send(jobHistory);
     } catch (error) {
       console.error('Error fetching worker job history by ID:', error);
-      return res.status(500).send({ error: 'Failed to fetch worker job history' });
+      return res
+        .status(500)
+        .send({ error: 'Failed to fetch worker job history' });
     }
   }
 
+  async getWorkerJobHistoryByOrderId(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const jobHistory = await prisma.workerJobHistory.findMany({
+        where: { orderId: Number(id) },
+        include: {
+          order: true,
+        },
+      });
+      if (!jobHistory) {
+        return res.status(404).send({ error: 'WorkerJobHistory not found' });
+      }
+      return res.status(200).send(jobHistory);
+    } catch (error) {
+      console.error('Error fetching worker job history by ID:', error);
+      return res
+        .status(500)
+        .send({ error: 'Failed to fetch worker job history' });
+    }
+  }
   // Create a new WorkerJobHistory record
   async createWorkerJobHistory(req: Request, res: Response) {
     const { workerId, orderId, station, pickupDelivery } = req.body;
@@ -62,7 +86,9 @@ export class WorkerJobHistoryController {
       return res.status(201).send(newJobHistory);
     } catch (error) {
       console.error('Error creating worker job history:', error);
-      return res.status(500).send({ error: 'Failed to create worker job history' });
+      return res
+        .status(500)
+        .send({ error: 'Failed to create worker job history' });
     }
   }
 
@@ -83,14 +109,16 @@ export class WorkerJobHistoryController {
       });
 
       return res.status(200).send(updatedJobHistory);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error updating worker job history:', error);
 
       if (error.code === 'P2025') {
         return res.status(404).send({ error: 'WorkerJobHistory not found' });
       }
 
-      return res.status(500).send({ error: 'Failed to update worker job history' });
+      return res
+        .status(500)
+        .send({ error: 'Failed to update worker job history' });
     }
   }
 
@@ -103,15 +131,19 @@ export class WorkerJobHistoryController {
         where: { id: Number(id) },
       });
 
-      return res.status(200).send({ message: 'WorkerJobHistory deleted successfully' });
-    } catch (error:any) {
+      return res
+        .status(200)
+        .send({ message: 'WorkerJobHistory deleted successfully' });
+    } catch (error: any) {
       console.error('Error deleting worker job history:', error);
 
       if (error.code === 'P2025') {
         return res.status(404).send({ error: 'WorkerJobHistory not found' });
       }
 
-      return res.status(500).send({ error: 'Failed to delete worker job history' });
+      return res
+        .status(500)
+        .send({ error: 'Failed to delete worker job history' });
     }
   }
 }
