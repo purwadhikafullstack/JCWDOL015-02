@@ -20,7 +20,7 @@ export default function IronStation() {
       let updatedStatus = '';
   
       if (!lastWorkerHistory) {
-        // Jika tidak ada work history, set status menjadi 'weighed'
+
         updatedStatus = 'weighed';
       } else if (lastWorkerHistory.station === 'washer') {
         updatedStatus = 'washed';
@@ -74,9 +74,20 @@ export default function IronStation() {
   
 
   return (
- <div>
-   <button className="bg-blue-500" onClick={approved}>Approve</button>
-   <button className="bg-red-500" onClick={decline}>Decline</button>
- </div>
+    <div className='min-h-[60vh] flex flex-col justify-center items-center bg-gray-100'>
+    <div className='flex flex-col items-center gap-4'>
+      <h1 className="text-xl text-center font-semibold text-gray-800 mb-4">
+        The order cannot be continued due to an error while processing the order
+      </h1>
+      <button className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
+        Solved, Allow worker to continue the order process
+      </button>
+      <button className="bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-red-700 transition duration-200">
+        Issue not resolved
+      </button>
+    </div>
+  </div>
+  
+
   );
 }
