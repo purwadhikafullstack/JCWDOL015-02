@@ -40,14 +40,14 @@ const AdminPage = () => {
           {/* Button for View Worker */}
           <Link href="/admin/viewWorker">
             <button className="w-full py-3 px-6 text-center text-white font-semibold bg-orange-600 rounded-lg shadow-lg hover:bg-orange-700 hover:shadow-xl transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
-              View Worker
+              View Workers
             </button>
           </Link>
 
           {/* Button for View Order */}
           <Link href="/admin/viewOrder">
             <button className="w-full py-3 px-6 text-center text-white font-semibold bg-black rounded-lg shadow-lg hover:bg-black-700 hover:shadow-xl transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
-              View Order
+              View Orders
             </button>
           </Link>
 

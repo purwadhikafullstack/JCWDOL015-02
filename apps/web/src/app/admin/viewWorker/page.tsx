@@ -191,6 +191,9 @@ const OutletWorkersPage = () => {
               </h2>
               <div className="text-sm text-gray-600">
                 <p>
+                  <strong>Worker ID:</strong> {worker.id}
+                </p>
+                <p>
                   <strong>Role:</strong> {worker.role}
                 </p>
                 <p>
