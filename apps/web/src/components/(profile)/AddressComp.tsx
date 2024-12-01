@@ -14,22 +14,16 @@ import FormUpdateAddress from './FormUpdateAddress';
 import { useAppSelector } from '@/redux/hooks';
 
 type AddressCompProps = {
-  outletId?: number; // Tipe outletId
+  userId?: number; // Tipe outletId
 };
-const AddressComp: React.FC<AddressCompProps> = ({ outletId }) => {
+const AddressComp: React.FC<AddressCompProps> = ({ userId }) => {
   const user = useAppSelector((state) => state.auth);
   const [addresses, setAddresses] = useState<ICustomerAddress[]>([]);
   const allUserAddress = useCallback(async () => {
     try {
-      if (outletId) {
-        const { result, ok } = await getAddresByOutletIdFetchDb(outletId);
-        if (!ok) throw result.message;
-        setAddresses([...result.data]);
-      } else {
         const { result, ok } = await getAddresByUserIdFetchDb(user.id);
         if (!ok) throw result.message;
         setAddresses([...result.data]);
-      }
     } catch (error) {
       console.log(error);
     }
@@ -45,13 +39,14 @@ const AddressComp: React.FC<AddressCompProps> = ({ outletId }) => {
           <h1 className="text-lg md:text-2xl font-bold uppercase tracking-wider">
             Your Address :
           </h1>
-          {addresses.length > 0 && outletId ? null : (
-            <CreateAddress outletId={outletId} />
+          {addresses.length > 0 && userId ? null : (
+            <CreateAddress outletId={userId} />
           )}
         </div>
         <div className="w-full min-h-full flex flex-wrap justify-center items-start gap-3 p-5">
           {addresses.length > 0 ? (
             addresses
+              .filter((item) => item.isDeleted === false)
               .sort((a, b) => (b.isMain ? 1 : 0) - (a.isMain ? 1 : 0))
               .map((item) => (
                 <div key={item.id}>
