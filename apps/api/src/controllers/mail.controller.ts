@@ -28,7 +28,7 @@ export class MailController {
           userTokenExp,
         }
       })
-      const templatePath = path.join(__dirname, "../templates/verificationMail.hbs");
+      const templatePath = path.join(__dirname, "../templates/mailOnlyVerify.hbs");
       const tempalteSource = fs.readFileSync(templatePath, "utf-8");
       const compiledTemplate = handlebars.compile(tempalteSource);
       const html = compiledTemplate({username, link: `${process.env.FRONTEND_URL}/auth/verify-account/${userToken}`});

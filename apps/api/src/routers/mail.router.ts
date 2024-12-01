@@ -1,4 +1,5 @@
 import { MailController } from '@/controllers/mail.controller';
+import { validateVerifyAccount } from '@/middlewares/validator/mailValidator';
 import { Router } from 'express';
 
 export class MailRouter {
@@ -14,7 +15,7 @@ export class MailRouter {
   private initializeRoutes(): void {
     this.router.post('/send-reset-password', this.mailController.sendMailResetPassword)
     this.router.post('/send-update-mail', this.mailController.sendMailUpdateEmail)
-    this.router.post('/send-only-verify', this.mailController.sendMailOnlyVerification)
+    this.router.post('/send-only-verify', validateVerifyAccount, this.mailController.sendMailOnlyVerification)
   }
 
   getRouter(): Router {
