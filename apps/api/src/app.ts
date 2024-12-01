@@ -13,7 +13,7 @@ import { PORT } from './config';
 import cookieParser from 'cookie-parser';
 import { SampleRouter } from './routers/sample.router';
 import { AttendanceRouter } from './routers/attendence.router';
-import { AddressRouter} from './routers/address.router ';
+import { AddressRouter } from './routers/address.router ';
 import { OutletRouter } from './routers/outlet.router';
 import { OrderRouter } from './routers/order.router';
 import { SuperAdminRouter } from './routers/superAdmin.router';
@@ -43,10 +43,19 @@ export default class App {
 
   private configure(): void {
     this.app.use(cookieParser());
-    this.app.use(cors({credentials: true,origin:['http://localhost:3000', 'http://localhost:8000']}));
+    this.app.use(
+      cors({
+        origin: ['http://localhost:3000', 'http://localhost:8000'],
+        methods: 'GET,POST,PUT,PATCH,DELETE',
+        credentials: true,
+      }),
+    );
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use('/api/public', express.static(path.join(__dirname, '../public')))
+    this.app.use(
+      '/api/public',
+      express.static(path.join(__dirname, '../public')),
+    );
   }
 
   private handleError(): void {
@@ -77,18 +86,19 @@ export default class App {
     const googleRouter = new GoogleRouter();
     const mailRouter = new MailRouter();
     const authRouter = new AuthRouter();
-    const userRouter = new UserRouter()
+    const userRouter = new UserRouter();
     const sampleRouter = new SampleRouter();
-    const attendanceRouter = new AttendanceRouter(); 
-    const addressRouter= new AddressRouter()
-    const outletRouter = new OutletRouter()
-    const orderRouter = new OrderRouter()
-    const superAdminRouter = new SuperAdminRouter()
-    const notificationRouter = new NotificationRouter()
-    const outletWorkerRouter = new OutletWorkerRouter()
-    const pickupDeliveryRequestRouter = new PickupDeliveryRequestRouter()
-    const orderItemRouter = new OrderItemRouter()
-    const workHistoryRouter = new WorkerJobHistoryRouter()
+    const attendanceRouter = new AttendanceRouter();
+    const addressRouter = new AddressRouter();
+    const outletRouter = new OutletRouter();
+
+    const orderRouter = new OrderRouter();
+    const superAdminRouter = new SuperAdminRouter();
+    const notificationRouter = new NotificationRouter();
+    const outletWorkerRouter = new OutletWorkerRouter();
+    const pickupDeliveryRequestRouter = new PickupDeliveryRequestRouter();
+    const orderItemRouter = new OrderItemRouter();
+    const workHistoryRouter = new WorkerJobHistoryRouter();
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
@@ -96,20 +106,21 @@ export default class App {
 
     this.app.use('/api/payment', paymentRouter.getRouter());
     this.app.use('/api/google', googleRouter.getRouter());
-    this.app.use('/api/mail', mailRouter.getRouter())
+    this.app.use('/api/mail', mailRouter.getRouter());
     this.app.use('/api/auth', authRouter.getRouter());
-    this.app.use('/api/user', userRouter.getRouter());
+    this.app.use('/api/users', userRouter.getRouter());
     this.app.use('/api/samples', sampleRouter.getRouter());
     this.app.use('/api/address', addressRouter.getRouter());
     this.app.use('/api/attendence', attendanceRouter.getRouter());
     this.app.use('/api/order', orderRouter.getRouter());
     this.app.use('/api/outlet', outletRouter.getRouter());
-    this.app.use('/api/super-admin', superAdminRouter.getRouter())
-    this.app.use('/api/notification', notificationRouter.getRouter())
-    this.app.use('/api/worker', outletWorkerRouter.getRouter())
-    this.app.use('/api/pdr', pickupDeliveryRequestRouter.getRouter())
-    this.app.use('/api/order-item', orderItemRouter.getRouter())
-    this.app.use('/api/work-history', workHistoryRouter.getRouter())
+    this.app.use('/api/outlet-workers', outletWorkerRouter.getRouter());
+    this.app.use('/api/super-admin', superAdminRouter.getRouter());
+    this.app.use('/api/notification', notificationRouter.getRouter());
+    this.app.use('/api/worker', outletWorkerRouter.getRouter());
+    this.app.use('/api/pdr', pickupDeliveryRequestRouter.getRouter());
+    this.app.use('/api/order-item', orderItemRouter.getRouter());
+    this.app.use('/api/work-history', workHistoryRouter.getRouter());
   }
 
   public start(): void {
