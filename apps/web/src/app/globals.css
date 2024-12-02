@@ -8,12 +8,26 @@
   --custom-light: #f1efef;
 }
 
-/* .bg-1{
-    background-color: #F1EFEF;
+body {
+  color: black;
 }
-.bg-2{
-    background-color: #CCC8AA;
+
+.bg-washer {
+  background-image: url('/services/wash-only.jpg');
 }
-.color-3{
-    background-color: #7D7C7C;
-} */
+.bg-ironer {
+  background-image: url('/services/iron-only.jpg');
+}
+.bg-packer {
+  background-image: url('/services/complete.jpg');
+}
+.bg-driver {
+  background-image: url('/services/driver.jpg');
+}
+.bg-img {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom;
+  position: relative;
+}
+

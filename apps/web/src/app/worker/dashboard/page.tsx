@@ -1,101 +1,142 @@
 "use client"; 
-
+import LogoutWorker from '@/components/(auth)/LogoutWorker';
 import AttendanceToday from '@/components/(worker)/attendenceToday';
+import DriverServices from '@/components/(worker)/driverServices';
+import IronerDashboard from '@/components/(worker)/ironerDashboard';
+import PackerDashboard from '@/components/(worker)/packerDashboard';
+import WasherDashboard from '@/components/(worker)/washerDashboard';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Attendance } from '@/type/worker/workerType';
 
-export default function Attendance() {
-    const [workerId, setWorkerId] = useState('');
-    const [message, setMessage] = useState('');
-    const [checkIn, setCheckin] = useState(false)
+interface WorkerDetail {
+    id: number;
+    name: string;
+    role: string;
+    email: string;
+}
 
-    const handleCheckIn = async () => {
+export default function DashboardWorker() {
+    const [role, setRole] = useState<string | null>(null);
+    const [workerDetail, setWorkerDetail] = useState<WorkerDetail | null>(null);
+    const [showAttendance, setShowAttendance] = useState<boolean>(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+    const [attendance, setAttendance] = useState<Attendance | null>(null);
+    const router = useRouter();
+    const today = new Date().toISOString().split('T')[0];
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
+
+    useEffect(() => {
+        const data = localStorage.getItem('outletWorker');
+        if (data) {
+            const workerData = JSON.parse(data);
+            setRole(workerData.role);
+            setWorkerDetail(workerData);
+            fetchAttendance(workerData.id);
+        } else {
+            router.push('/worker/login');
+        }
+    }, []);
+
+    const fetchAttendance = async (workerId: number) => {
         try {
-            const response = await fetch('http://localhost:8000/api/attendance/checkin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    workerId,
-                    date: new Date().toISOString(),
-                    checkIn: new Date().toISOString(),
-                }),
-            });
-
-            const data = await response.json();
-          
+            const response = await fetch(
+                `${backendUrl}/api/attendence/date?workerId=${workerId}&date=${today}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
             if (response.ok) {
-                setMessage('Check-in successful');
+                const data = await response.json();
+                setAttendance(data || null);
             } else {
-                setMessage(data.error || 'Check-in failed');
+                setAttendance(null); // Jika respons kosong atau error
             }
-        } catch (error) {
-            setMessage('An error occurred during check-in');
+        } catch (err: any) {
+            console.error('Error fetching attendance:', err);
+            setAttendance(null); // Pastikan nilai null saat error
         }
     };
 
-    const handleCheckOut = async () => {
-        try {
-            const response = await fetch(`http://localhost:8000/api/attendance/${workerId}/checkout`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    checkOut: new Date().toISOString(),
-                }),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                setMessage('Check-out successful');
-            } else {
-                setMessage(data.error || 'Check-out failed');
-            }
-        } catch (error) {
-            setMessage('An error occurred during check-out');
-        }
+    const toggleAttendance = () => {
+        setShowAttendance((prev) => !prev);
     };
 
     return (
-        <div>
-            <AttendanceToday/>
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-                <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-                    <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Attendance</h2>
-
-                    {message && (
-                        <p className="mb-4 text-center text-green-600">{message}</p>
-                    )}
-
-                    <div className="mb-4">
-                        <label htmlFor="workerId" className="block text-sm font-medium text-gray-700">Worker ID</label>
-                        <input
-                            type="text"
-                            id="workerId"
-                            value={workerId}
-                            onChange={(e) => setWorkerId(e.target.value)}
-                            className="w-full px-4 py-2 mt-1 text-gray-800 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter Worker ID"
-                            required
-                        />
+        <div className="bg-white min-h-screen">
+            <div className="bg-grayCustom text-beigeCustom flex justify-between items-center p-4">
+                <LogoutWorker />
+                <nav className="relative">
+                    {/* Dropdown Trigger */}
+                    <button
+                        onClick={() => setIsDropdownOpen((prev) => !prev)}
+                        className="md:hidden bg-slate-700 p-2 rounded text-sm">
+                        Menu
+                    </button>
+                    
+                    {/* Navigation Menu */}
+                    <div
+                        className={`${
+                            isDropdownOpen ? 'block' : 'hidden'
+                        } absolute right-0 top-10 bg-stone-500 text-beigeCustom w-fit shadow-lg rounded z-50 md:hidden`}>
+                        <button
+                            onClick={toggleAttendance}
+                            className="block px-4 py-2 hover:bg-gray-200 w-full text-left">
+                            My Attendance
+                        </button>
+                        <Link
+                            href={`/worker/workHistory/${workerDetail?.id}/${role === 'driver' ? 'driver' : 'crew'}`}
+                            className="block px-4 py-2 hover:bg-gray-200 w-full text-left">
+                            My Work History
+                        </Link>
                     </div>
 
-                    <button
-                        onClick={handleCheckIn}
-                        className="w-full px-4 py-2 mb-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-300"
-                    >
-                        Check In
-                    </button>
-
-                    <button
-                        onClick={handleCheckOut}
-                        className="w-full px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-300"
-                    >
-                        Check Out
-                    </button>
-                </div>
+                    {/* Full Screen Menu */}
+                    <div className="hidden md:flex space-x-4">
+                        <button
+                            onClick={toggleAttendance}
+                            className="hover:underline">
+                            My Attendance
+                        </button>
+                        <Link
+                            href={`/worker/workHistory/${workerDetail?.id}/${role === 'driver' ? 'driver' : 'crew'}`}
+                            className="hover:underline">
+                            My Work History
+                        </Link>
+                    </div>
+                </nav>
             </div>
+
+            {showAttendance && (
+                <div className="p-4 relative bg-gray-200 rounded shadow-lg">
+                    <AttendanceToday onclick={toggleAttendance} />
+                </div>
+            )}
+
+            {/* Kondisi jika tidak ada attendance */}
+            {attendance === null && (
+                <div className="p-4 text-red-500 text-center static bg-beigeCustom">
+                    <strong>You haven&apos;t checked in yet</strong> <br /> consider to checkin first on the attendence menu before doing any tasks
+                </div>
+            )}
+
+            {/* Dashboard based on role */}
+            {role === 'driver' && workerDetail && (
+                <DriverServices workerDetail={workerDetail} />
+            )}
+            {role === 'washer' && workerDetail && (
+                <WasherDashboard />
+            )}
+            {role === 'ironer' && workerDetail && (
+                <IronerDashboard />
+            )}
+            {role === 'packer' && workerDetail && (
+                <PackerDashboard />
+            )}
         </div>
     );
 }

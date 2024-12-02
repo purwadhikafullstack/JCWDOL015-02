@@ -11,12 +11,12 @@ const ChooseUs = () => {
           <p>Kemudahan dan efisiensi bagi pelanggan dalam mengurus kebutuhan cucian dengan berbagai fitur unggulan kami.</p>
         </div>
 
-        <div className="w-full flex flex-wrap justify-evenly items-start my-10">
+        <div className="w-full flex flex-wrap justify-evenly items-start my-10 text-black">
             <div className="w-full md:w-1/3 lg:w-1/4 text-center flex flex-col justify-center items-center my-5 mx-3">
                 <div className='w-fit h-fit p-4 bg-beigeCustom rounded-full mb-2'>
                     <BsStopwatch className='w-16 h-16 md:w-24 md:h-24'/>
                 </div>
-                <div className="px-14">
+                <div className="px-2 md:px-14">
                 <h1 className="text-xl font-bold md:text-lg tracking-wider text-center">Express Clean</h1>
                 <p>Layanan cuci kilat dengan waktu yang  cocok untuk pelanggan dengan kebutuhan mendesak.</p>
                 </div>
@@ -25,7 +25,7 @@ const ChooseUs = () => {
                 <div className='w-fit h-fit p-4 bg-beigeCustom rounded-full mb-2'>
                     <GiFallingLeaf className='w-16 h-16 md:w-24 md:h-24'/>
                 </div>
-                <div className="px-14">
+                <div className="px-2 md:px-14">
                 <h1 className="text-xl font-bold md:text-lg tracking-wider text-center">Eco Wash</h1>
                 <p>Program cuci ramah lingkungan menggunakan deterjen dan proses yang minim dampak terhadap lingkungan.</p>
                 </div>
@@ -34,7 +34,7 @@ const ChooseUs = () => {
                 <div className='w-fit h-fit p-4 bg-beigeCustom rounded-full mb-2'>
                     <LuHeartHandshake className='w-16 h-16 md:w-24 md:h-24'/>
                 </div>
-                <div className="px-14">
+                <div className="px-2 md:px-14">
                 <h1 className="text-xl font-bold md:text-lg tracking-wider text-center">Full Responsibility</h1>
                 <p>Tanggung jawab penuh untuk memastikan kepuasan pelanggan menjadi prioritas utama.</p>
                 </div>
@@ -43,7 +43,7 @@ const ChooseUs = () => {
                 <div className='w-fit h-fit p-4 bg-beigeCustom rounded-full mb-2'>
                     <TbMapSearch className='w-16 h-16 md:w-24 md:h-24'/>
                 </div>
-                <div className="px-14">
+                <div className="px-2 md:px-14">
                 <h1 className="text-xl font-bold md:text-lg tracking-wider text-center">Laundry Tracking</h1>
                 <p> Memungkinkan pelanggan memantau status pesanan secara real-time.</p>
                 </div>
@@ -52,7 +52,7 @@ const ChooseUs = () => {
                 <div className='w-fit h-fit p-4 bg-beigeCustom rounded-full mb-2'>
                     <AiOutlineSchedule className='w-16 h-16 md:w-24 md:h-24'/>
                 </div>
-                <div className="px-14">
+                <div className="px-2 md:px-14">
                 <h1 className="text-xl font-bold md:text-lg tracking-wider text-center">Pick & Drop Schedule</h1>
                 <p>Fleksibilitas dalam mengatur waktu antar / jemput on schedule</p>
                 </div>

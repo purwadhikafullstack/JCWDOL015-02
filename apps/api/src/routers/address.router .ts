@@ -1,4 +1,5 @@
 import { AddressController } from '@/controllers/address.controllers';
+import { validateAddress } from '@/middlewares/validator/addressValidator';
 
 import { Router } from 'express';
 
@@ -13,13 +14,22 @@ export class AddressRouter {
   }
 
   private initializeRoutes(): void {
-    this.router.get('/', this.addressController.getAllAddresses)
+    this.router.get('/', this.addressController.getAllAddresses);
     this.router.get('/id/:id', this.addressController.getAddressById);
-    this.router.get('/role/:role', this.addressController.getAllAddressByRole);
-    this.router.post('/', this.addressController.createAddress);
-    this.router.post('/reverse', this.addressController.createAddressReverse);
-    this.router.put('/', this.addressController.updateAddress);
-    this.router.delete('/', this.addressController.deleteAddress);
+    this.router.get(
+      '/outlets/:role',
+      this.addressController.getAllAddressByRole,
+    );
+    this.router.get('/user/:id', this.addressController.getAddresByUserId);
+    this.router.get('/outlet/:id', this.addressController.getAddresByOutletId);
+    this.router.patch('/set-main', this.addressController.setMainAddress);
+    this.router.post(
+      '/create',
+      validateAddress,
+      this.addressController.createAddress,
+    );
+    this.router.put('/update', this.addressController.updateAddress);
+    this.router.delete('/delete/:id', this.addressController.deleteAddress);
   }
 
   getRouter(): Router {

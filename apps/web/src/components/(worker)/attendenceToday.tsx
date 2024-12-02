@@ -1,28 +1,37 @@
-import { formatDate, formatTime } from '@/lib/dateTime';
+'use client';
+import {  formatTime } from '@/lib/dateTime';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { IoIosLogOut } from "react-icons/io";
+import { IoIosLogIn } from "react-icons/io";
+import { Attendance } from '@/type/worker/workerType';
+import { FaCheckCircle } from "react-icons/fa";
 
-interface Attendance {
-    id:number;
-    workerId: number;
-    date: string;
-    checkIn: string | null;
-    checkOut: string | null;
+
+
+interface AttendanceTodayProps {
+    onclick: () => void; 
 }
 
-export default function Attendance() {
+export default function AttendanceToday({ onclick }: AttendanceTodayProps) {
     const [attendance, setAttendance] = useState<Attendance | null>(null);
     const [error, setError] = useState<string>('');
     const [showCheckInButton, setShowCheckInButton] = useState<boolean>(false);
-
+    const [today, setToday] = useState<string>();
+    const [workerId, setWorkerId] = useState<any | null>(null) 
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
     useEffect(() => {
         const outletWorker = JSON.parse(localStorage.getItem('outletWorker') || '{}');
         const workerId = outletWorker.id;
+        setWorkerId(workerId)
+        
 
         const today = new Date().toISOString().split('T')[0];
+        setToday(today);
 
         const fetchAttendance = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/attendence/date?workerId=${workerId}&date=${today}`, {
+                const response = await fetch(`${backendUrl}/api/attendence/date?workerId=${workerId}&date=${today}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -32,14 +41,14 @@ export default function Attendance() {
                 if (!response.ok) {
                     const errorData = await response.json();
                     if (errorData.error === "Attendance record not found for the specified worker and date") {
-                        setShowCheckInButton(true); // Tampilkan tombol Check In jika attendance tidak ditemukan
+                        setShowCheckInButton(true);
                     } else {
                         setError(errorData.error || 'Failed to fetch attendance');
                     }
                 } else {
                     const data: Attendance = await response.json();
                     setAttendance(data);
-                    setShowCheckInButton(false); // Sembunyikan tombol Check In jika attendance ditemukan
+                    setShowCheckInButton(false);
                 }
             } catch (err) {
                 setError((err as Error).message);
@@ -59,7 +68,7 @@ export default function Attendance() {
         const today = new Date().toISOString().split('T')[0];
 
         try {
-            const response = await fetch('http://localhost:8000/api/attendence', {
+            const response = await fetch(`${backendUrl}/api/attendence`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +83,8 @@ export default function Attendance() {
             if (response.ok) {
                 const data: Attendance = await response.json();
                 setAttendance(data);
-                setShowCheckInButton(false); 
+                setShowCheckInButton(false);
+                window.location.reload();
             } else {
                 const errorData = await response.json();
                 setError(errorData.error || 'Failed to check in');
@@ -85,10 +95,10 @@ export default function Attendance() {
     };
 
     const handleCheckOut = async () => {
-        const attendenceId = attendance?.id
+        const attendenceId = attendance?.id;
 
         try {
-            const response = await fetch(`http://localhost:8000/api/attendence/id/${attendenceId}`, {
+            const response = await fetch(`${backendUrl}/api/attendence/id/${attendenceId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -110,42 +120,52 @@ export default function Attendance() {
         }
     };
 
-
     return (
-        <div>
-            <h1>Attendance for Today</h1>
-            {error && <p className="text-red-500">{error}</p>}
-            {attendance ? (
-                <div>
-                    <p>Date: {formatDate(attendance.date)}</p>
-                    <p>Check In: {formatTime(attendance.checkIn)}</p>
-                    <p>Check Out: {formatTime(attendance.checkOut)}</p>
-
-
-                    {attendance.checkIn && attendance.checkOut ? (
-                        <p className="mt-4 text-green-600">Sampai jumpa lagi, selamat beristirahat!</p>
-                    ) : (
-                        <button
-                            // Implementasikan handleCheckout untuk memperbarui data attendance dengan checkOut
-                            className="px-4 py-2 mt-4 text-white bg-red-500 rounded hover:bg-blue-600"
-                            onClick={handleCheckOut}
-                        >
-                            Check Out
-                        </button>
-                    )}
-                </div>
-            ) : (
-                !error && <p>Loading attendance data...</p>
-            )}
-
-            {showCheckInButton && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-beigeCustom w-96 p-6 rounded-md shadow-lg relative">
                 <button
-                    onClick={handleCheckIn}
-                    className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+                    onClick={onclick} // Memanggil fungsi onClick yang diterima sebagai prop
+                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 z-10"
                 >
-                    Check In
+                    &times;
                 </button>
-            )}
+                <p className="text-lg font-bold text-center mb-4 border-b border-b-black">Date: {today}</p>
+                {error && <p className="text-red-500 text-center">{error}</p>}
+                {attendance && (
+                    <div className="">
+                        <div className='flex items-center justify-center gap-2'>
+                            <IoIosLogIn /><p><b className="text-blue-700">Check In</b>: {formatTime(attendance.checkIn)}</p>
+                        </div>
+                        <div className='flex items-center justify-center gap-2'>
+                            <IoIosLogOut /><p><b className="text-red-700">Check Out</b>: {formatTime(attendance.checkOut)}</p>
+                        </div>
+                        {attendance.checkIn && attendance.checkOut ? (
+                            <p className="mt-4 font-bold text-center flex items-center gap-2 justify-center">Your shift is complete <FaCheckCircle /></p>
+                        ) : (
+                            <button
+                                className="px-4 py-2 mt-4 w-full text-white bg-red-500 rounded hover:bg-red-600"
+                                onClick={handleCheckOut}
+                            >
+                                Check Out
+                            </button>
+                        )}
+                    </div>
+                )}
+                {showCheckInButton && (
+                    <button
+                        onClick={handleCheckIn}
+                        className="px-4 py-2 mt-4 w-full text-white bg-blue-500 rounded hover:bg-blue-600"
+                    >
+                        Check In
+                    </button>
+                )}
+                <Link
+                    href={`/worker/attendenceHistory/${workerId}`}
+                    className="block mt-4 text-blue-500 hover:underline text-center"
+                >
+                    My Attendance History
+                </Link>
+            </div>
         </div>
     );
 }

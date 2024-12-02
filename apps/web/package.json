@@ -12,6 +12,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
     "cross-env": "^7.0.3",
+    "didyoumean": "^1.2.2",
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",
     "jwt-decode": "^4.0.0",
