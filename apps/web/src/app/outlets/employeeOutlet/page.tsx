@@ -50,6 +50,7 @@ const OutletWorkers = () => {
   );
   const [jobHistoryLoading, setJobHistoryLoading] = useState<boolean>(false);
   const [jobHistoryError, setJobHistoryError] = useState<string | null>(null);
+  const [outletId, setOutletId] = useState<number>(0) 
 
   // Fetch outlet workers on component mount
   useEffect(() => {
@@ -69,6 +70,13 @@ const OutletWorkers = () => {
       }
     };
 
+    const getOutletId = async () =>{
+      const data  = localStorage.getItem('outletAdmin')
+      if (!data) return null
+      const outlet = JSON.parse(data)
+      setOutletId(+outlet.outletId)
+    }
+    getOutletId()
     fetchWorkers();
   }, []);
 
@@ -175,10 +183,15 @@ const OutletWorkers = () => {
         <h1 className="text-2xl text-center font-bold text-gray-800 mb-6">
           Employee Performance Report
         </h1>
-        <div className="mt-5 mb-6 flex justify-center">
+        <div className="mt-5 mb-6 flex justify-center gap-2">
           <Link href="/outlets/dashboard">
             <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
               Dashboard
+            </button>
+          </Link>
+          <Link href={`/worker/attendenceHistory/${outletId}/outletAdmin`}>
+            <button className="bg-slate-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+              Worker Attendences
             </button>
           </Link>
         </div>
